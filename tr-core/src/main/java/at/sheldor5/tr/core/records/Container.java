@@ -9,9 +9,9 @@ import java.util.List;
  */
 public abstract class Container<T extends Comparable<? super T>> implements Comparable<Container> {
 
-  private final List<T> items = new ArrayList<T>();
-  private final int value;
-  private boolean sorted = false;
+  protected final List<T> items = new ArrayList<T>();
+  protected final int value;
+  protected boolean sorted = false;
 
   public Container(final int value) {
     this.value = value;
@@ -35,7 +35,7 @@ public abstract class Container<T extends Comparable<? super T>> implements Comp
         sorted = true;
       }
     }
-    return items;
+    return new ArrayList<T>(items);
   }
 
   public abstract long getSummary();

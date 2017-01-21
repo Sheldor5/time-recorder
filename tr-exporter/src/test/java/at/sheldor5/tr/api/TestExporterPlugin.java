@@ -10,8 +10,8 @@ import java.io.InputStream;
 /**
  * Created by Michael Palata <a href="https://github.com/Sheldor5">@github.com/Sheldor5</a> on 20.01.2017.
  */
-@ExporterPlugin(name = "test", displayNamePropertyIdentifier = "test.plugin.displayname")
-public class TestExporterPlugin implements ExporterPluginInterface {
+@Exporter(name = "test", displayNamePropertyIdentifier = "test.plugin.displayname")
+public class TestExporterPlugin implements ExporterPlugin {
 
   private static final MimeType DEFAULT = new MimeType();
 

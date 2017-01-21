@@ -1,6 +1,6 @@
 package at.sheldor5.tr.exporter.pdf;
 
-import at.sheldor5.tr.api.ExporterPluginInterface;
+import at.sheldor5.tr.api.ExporterPlugin;
 import at.sheldor5.tr.core.records.Day;
 import at.sheldor5.tr.core.records.Month;
 import at.sheldor5.tr.core.records.Year;
@@ -12,7 +12,7 @@ import java.io.InputStream;
 /**
  * Created by Michael Palata <a href="https://github.com/Sheldor5">@github.com/Sheldor5</a> on 13.01.2017.
  */
-public class PdfExporter implements ExporterPluginInterface {
+public class PdfExporter implements ExporterPlugin {
 
   private static final MimeType MIMETYPE;
 

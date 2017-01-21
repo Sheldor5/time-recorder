@@ -21,8 +21,8 @@ END
 
 CREATE TABLE [users] (
 	[pk_user_id] INT IDENTITY(1, 1) PRIMARY KEY,
-	[username] VARCHAR(64) UNIQUE NOT NULL,
-	[password] VARCHAR(32) NOT NULL,
+	[username] VARCHAR(32) UNIQUE NOT NULL,
+	[password] CHARACTER(32) NOT NULL,
 	[forename] VARCHAR(64) NOT NULL,
 	[surname] VARCHAR(64) NOT NULL
 )
@@ -34,6 +34,7 @@ END
 CREATE TABLE [records] (
 	[pk_record_id] INT IDENTITY(1, 1) PRIMARY KEY,
 	[fk_user_id] INT FOREIGN KEY REFERENCES [users]([pk_user_id]) NOT NULL,
-	[datetime] DATETIME UNIQUE NOT NULL,
+	[date] DATE NOT NULL,
+	[time] TIME NOT NULL,
 	[type] BIT NOT NULL
 )

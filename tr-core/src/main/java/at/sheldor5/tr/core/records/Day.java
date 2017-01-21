@@ -1,7 +1,7 @@
 package at.sheldor5.tr.core.records;
 
 import at.sheldor5.tr.core.objects.Record;
-
+import at.sheldor5.tr.core.utils.TimeUtils;
 import java.util.List;
 
 /**
@@ -14,23 +14,29 @@ public class Day extends Container<Record> {
   }
 
   @Override
-  public final long getSummary() {
+  public final synchronized long getSummary() {
+
+    final List<Record> items = this.getItems();
+
+    if (items.get(0).getType() == RecordType.CHECKOUT) {
+      items.add(0, new Record(-1, items.get(0).getDate(), TimeUtils.getStartOfDay(), RecordType.CHECKIN));
+    }
+
+    if (items.get(items.size()-1).getType() == RecordType.CHECKIN) {
+      items.add(items.size(), new Record(-1, items.get(0).getDate(), TimeUtils.getEndOfDay(), RecordType.CHECKOUT));
+    }
+
+    if (items.size() % 2 != 0) {
+      throw new RuntimeException("uneven count of records");
+    }
+
     long sum = 0;
+    long start;
+    long end;
 
-    List<Record> records = this.getItems();
-
-    if (records.get(0).getType() == RecordType.CHECKOUT) {
-      records.add(0, new Record(-1, Record.getStartOfDay(records.get(0).getTimestamp()), RecordType.CHECKIN));
-    }
-
-    if (records.get(records.size()-1).getType() == RecordType.CHECKIN) {
-      records.add(records.size(), new Record(-1, Record.getEndOfDay(records.get(records.size()-1).getTimestamp()), RecordType.CHECKOUT));
-    }
-
-    long start, end;
-    for (int i = 0; i < records.size(); i++) {
-      start = records.get(i++).getTimestamp().getTime();
-      end = records.get(i).getTimestamp().getTime();
+    for (int i = 0; i < items.size(); i++) {
+      start = items.get(i++).getTime().getTime();
+      end = items.get(i).getTime().getTime();
       sum += (end - start);
     }
 

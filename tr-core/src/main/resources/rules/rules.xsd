@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<trr:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:trr="http://www.w3.org/2001/XMLSchema">
+    <trr:element name="rules" type="rulesType"/>
+    <trr:complexType name="rulesType">
+        <trr:sequence>
+            <trr:element type="ruleType" name="rule" maxOccurs="unbounded" minOccurs="0"/>
+        </trr:sequence>
+    </trr:complexType>
+    <trr:complexType name="beforeType">
+        <trr:sequence>
+            <trr:element name="time" type="trr:time"/>
+            <trr:element name="days" type="daysType"/>
+            <trr:element name="multiplier" type="trr:double"/>
+        </trr:sequence>
+    </trr:complexType>
+    <trr:complexType name="afterType">
+        <trr:sequence>
+            <trr:element name="time">
+                <trr:simpleType>
+                    <trr:restriction base="trr:time">
+                        <trr:enumeration value="19:00:00"/>
+                        <trr:enumeration value="00:00:00"/>
+                    </trr:restriction>
+                </trr:simpleType>
+            </trr:element>
+            <trr:element type="daysType" name="days"/>
+            <trr:element name="multiplier">
+                <trr:simpleType>
+                    <trr:restriction base="trr:double"/>
+                </trr:simpleType>
+            </trr:element>
+        </trr:sequence>
+    </trr:complexType>
+    <trr:complexType name="ruleType">
+        <trr:sequence>
+            <trr:element type="beforeType" name="before" minOccurs="0"/>
+            <trr:element type="afterType" name="after"/>
+        </trr:sequence>
+        <trr:attribute type="trr:string" name="name" use="optional"/>
+    </trr:complexType>
+    <trr:complexType name="daysType">
+        <trr:sequence>
+            <trr:element name="day" maxOccurs="unbounded" minOccurs="0">
+                <trr:simpleType>
+                    <trr:restriction base="trr:string">
+                        <trr:enumeration value="monday"/>
+                        <trr:enumeration value="tuesday"/>
+                        <trr:enumeration value="wednesday"/>
+                        <trr:enumeration value="thursday"/>
+                        <trr:enumeration value="friday"/>
+                        <trr:enumeration value="saturday"/>
+                        <trr:enumeration value="sunday"/>
+                    </trr:restriction>
+                </trr:simpleType>
+            </trr:element>
+        </trr:sequence>
+    </trr:complexType>
+</trr:schema>

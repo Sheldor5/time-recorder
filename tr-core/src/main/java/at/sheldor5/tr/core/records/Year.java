@@ -11,7 +11,7 @@ public class Year extends Container<Month> {
   @Override
   public long getSummary() {
     long sum = 0;
-    for (final Month month : this.getItems()) {
+    for (final Month month : items) {
       sum += month.getSummary();
     }
     return sum;

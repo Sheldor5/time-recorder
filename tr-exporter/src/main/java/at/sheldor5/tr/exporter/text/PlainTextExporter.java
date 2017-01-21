@@ -1,9 +1,10 @@
 package at.sheldor5.tr.exporter.text;
 
-import at.sheldor5.tr.api.ExporterPluginInterface;
+import at.sheldor5.tr.api.ExporterPlugin;
 import at.sheldor5.tr.core.records.Day;
 import at.sheldor5.tr.core.records.Month;
 import at.sheldor5.tr.core.records.Year;
+import at.sheldor5.tr.core.utils.TimeUtils;
 
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
@@ -12,7 +13,7 @@ import java.io.*;
 /**
  * Created by Michael Palata <a href="https://github.com/Sheldor5">@github.com/Sheldor5</a> on 13.01.2017.
  */
-public class PlainTextExporter implements ExporterPluginInterface {
+public class PlainTextExporter implements ExporterPlugin {
 
   private static final String MONTH_SUMMARY_FORMAT = "%02dh %02dm %02ds";
   private static final MimeType MIMETYPE;
@@ -50,11 +51,11 @@ public class PlainTextExporter implements ExporterPluginInterface {
     long millis, sum = 0;
     for (final Month month : year.getItems()) {
       millis = month.getSummary();
-      sb.append(String.format("%-12s%s\n", getMonthString(month.getValue()), String.format("%25s", getHumanReadableTime(millis))));
+      sb.append(String.format("%-12s%s\n", getMonthString(month.getValue()), String.format("%25s", TimeUtils.getHumanReadableTime(millis))));
       sum += millis;
     }
     sb.append(String.format("%37s\n", "").replace(' ', '_'));
-    sb.append(String.format("%-12s%s", "Summe", String.format("%25s", getHumanReadableTime(sum))));
+    sb.append(String.format("%-12s%s", "Summe", String.format("%25s", TimeUtils.getHumanReadableTime(sum))));
 
     try {
       return new ByteArrayInputStream(sb.toString().getBytes("UTF-8"));
@@ -99,12 +100,5 @@ public class PlainTextExporter implements ExporterPluginInterface {
       default:
         return "unknown";
     }
-  }
-
-  public static String getHumanReadableTime(long millis) {
-    long seconds = (millis / 1000) % 60;
-    long minutes = (millis / (1000 * 60)) % 60;
-    long hours = (millis / (1000 * 60 * 60));
-    return String.format(MONTH_SUMMARY_FORMAT, hours, minutes, seconds);
   }
 }

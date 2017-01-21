@@ -5,7 +5,7 @@ package at.sheldor5.tr.core.objects;
  */
 public class User {
 
-  private int userId;
+  private int id;
   private String username;
   private String forename;
   private String surname;
@@ -14,22 +14,22 @@ public class User {
 
   }
 
-  public User(int userId, final String username, final String forename, final String surname) {
-    setUserId(userId);
+  public User(int id, final String username, final String forename, final String surname) {
+    setId(id);
     setUsername(username);
     setForename(forename);
     setSurname(surname);
   }
 
-  public int getUserId() {
-    return userId;
+  public int getId() {
+    return id;
   }
 
-  public void setUserId(int userId) {
-    if (userId < 0) {
+  public void setId(int id) {
+    if (id < 0) {
       throw new IllegalArgumentException("UserID was negative");
     }
-    this.userId = userId;
+    this.id = id;
   }
 
   public String getUsername() {
@@ -71,6 +71,6 @@ public class User {
       return false;
     }
     final User user = (User) other;
-    return username.equals(user.username) && forename.equals(user.forename) && surname.equals(user.surname) && userId == user.userId;
+    return username.equals(user.username) && forename.equals(user.forename) && surname.equals(user.surname) && id == user.id;
   }
 }

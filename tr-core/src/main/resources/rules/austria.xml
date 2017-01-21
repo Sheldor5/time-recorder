@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules>
+    <rule name="50% ÜS">
+        <before>
+            <time>06:00:00</time>
+            <days>
+                <day>monday</day>
+                <day>thuesday</day>
+                <day>wednesday</day>
+                <day>thursday</day>
+                <day>friday</day>
+                <day>saturday</day>
+            </days>
+            <multiplier>1.5</multiplier>
+        </before>
+        <after>
+            <time>19:00:00</time>
+            <days>
+                <day>monday</day>
+                <day>thuesday</day>
+                <day>wednesday</day>
+                <day>thursday</day>
+                <day>friday</day>
+            </days>
+            <multiplier>1.5</multiplier>
+        </after>
+    </rule>
+    <rule name="100% ÜS">
+        <after>
+            <time>00:00:00</time>
+            <days>
+                <day>sunday</day>
+            </days>
+            <multiplier>2.0</multiplier>
+        </after>
+    </rule>
+</rules>

@@ -1,6 +1,6 @@
 package at.sheldor5.tr.exporter;
 
-import at.sheldor5.tr.api.ExporterPluginInterface;
+import at.sheldor5.tr.api.ExporterPlugin;
 import at.sheldor5.tr.exporter.utils.ExporterUtils;
 import at.sheldor5.tr.core.records.RecordsTest;
 import at.sheldor5.tr.core.records.Year;
@@ -32,7 +32,7 @@ public class PlainTextExporterTest extends ExporterUtils {
   @Test
   public void testPlainTextExporter() {
     Year year = RecordsTest.getSimpleTestYear(2016);
-    ExporterPluginInterface exporter = new PlainTextExporter();
+    ExporterPlugin exporter = new PlainTextExporter();
     InputStream inputStream = exporter.export(year);
     ExporterUtils.toFile(inputStream, OUTPUT);
   }

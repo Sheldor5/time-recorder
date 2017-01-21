@@ -4,23 +4,45 @@ package at.sheldor5.tr.core.records;
  * Created by Michael Palata <a href="https://github.com/Sheldor5">@github.com/Sheldor5</a> on 13.01.2017.
  */
 public enum RecordType {
-  CHECKIN(1),
-  CHECKOUT(0);
+  CHECKIN(1, true, "CHECKIN"),
+  CHECKOUT(0, false, "CHECKOUT");
 
-  private final boolean bit;
+  private final int i;
+  private final boolean b;
+  private final String s;
 
-  RecordType(int i) {
-    bit = (i == 1);
+  RecordType(int i, boolean b, final String s) {
+    this.i = i;
+    this.b = b;
+    this.s = s;
   }
 
   public boolean getBoolean() {
-    return bit;
+    return b;
   }
 
-  public static RecordType getType(boolean bit) {
-    if (bit) {
+  public int getInteger() {
+    return i;
+  }
+
+  @Override
+  public String toString() {
+    return s;
+  }
+
+  public static RecordType getType(boolean b) {
+    if (b) {
       return CHECKIN;
     }
     return CHECKOUT;
+  }
+
+  public static RecordType getType(int i) {
+    if (i == 1) {
+      return CHECKIN;
+    } else if (i == 0) {
+      return CHECKOUT;
+    }
+    return null;
   }
 }

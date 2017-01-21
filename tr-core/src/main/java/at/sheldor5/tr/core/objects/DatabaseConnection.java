@@ -1,8 +1,17 @@
 package at.sheldor5.tr.core.objects;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URISyntaxException;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import at.sheldor5.tr.core.utils.GlobalProperties;
 import org.apache.logging.log4j.LogManager;
@@ -72,4 +81,71 @@ public class DatabaseConnection {
 
     LOGGER.info("Successfully connected to Database");
   }
+
+  protected static boolean tablesExist() throws SQLException {
+    DatabaseMetaData meta;
+
+    meta = connection.getMetaData();
+    final ResultSet sys = meta.getTables(null, null, "time-recorder", new String[] {"TABLE"});
+    if (!sys.next()) {
+      return false;
+    }
+    sys.close();
+
+    meta = connection.getMetaData();
+    final ResultSet users = meta.getTables(null, null, "users", new String[] {"TABLE"});
+    if (!users.next()) {
+      return false;
+    }
+    users.close();
+
+    meta = connection.getMetaData();
+    final ResultSet records = meta.getTables(null, null, "records", new String[] {"TABLE"});
+    if (!records.next()) {
+      return false;
+    }
+    records.close();
+
+    return true;
+  }
+
+  protected static void createTables() {
+    LOGGER.info("Creating application database tables ...");
+    try (final BufferedReader reader =
+                 new BufferedReader(new InputStreamReader(new FileInputStream(
+                         new File(DatabaseConnection.class.getResource("/sql/sqlserver/create_tables.sql").toURI()))))) {
+      final StringBuilder stringBuilder = new StringBuilder();
+      String line, command;
+      while (true) {
+        line = reader.readLine();
+        if (line == null || line.isEmpty()) {
+          command = stringBuilder.toString();
+          if (!command.isEmpty()) {
+            executeCommand(command);
+          }
+          stringBuilder.setLength(0);
+          if (line == null) {
+            break;
+          }
+        } else if (line.startsWith("--")) {
+          continue;
+        } else {
+          stringBuilder.append(line);
+          stringBuilder.append('\n');
+        }
+      }
+    } catch (final Exception generalException) {
+      generalException.printStackTrace();
+    }
+    LOGGER.info("Successfully created application database tables ...");
+  }
+
+  private static void executeCommand(final String command) throws SQLException {
+    final Statement statement = connection.createStatement();
+    statement.executeUpdate(command);
+    if (!connection.getAutoCommit()) {
+      connection.commit();
+    }
+  }
+
 }

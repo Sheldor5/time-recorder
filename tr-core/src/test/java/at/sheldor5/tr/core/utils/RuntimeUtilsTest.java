@@ -1,7 +1,5 @@
 package at.sheldor5.tr.core.utils;
 
-import at.sheldor5.tr.api.ExporterPluginInterface;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 

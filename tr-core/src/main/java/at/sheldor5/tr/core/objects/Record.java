@@ -1,7 +1,10 @@
 package at.sheldor5.tr.core.objects;
 
 import at.sheldor5.tr.core.records.RecordType;
+import at.sheldor5.tr.core.utils.TimeUtils;
 
+import java.sql.Date;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -11,13 +14,15 @@ import java.time.LocalTime;
  */
 public class Record implements Comparable<Record> {
 
-  private Timestamp timestamp;
-  private RecordType type;
   private int id;
+  private Date date;
+  protected Time time;
+  private RecordType type;
 
-  public Record(int id, final Timestamp timestamp, final RecordType type) {
+  public Record(int id, final Date date, final Time time, final RecordType type) {
     this.id = id;
-    this.timestamp = timestamp;
+    this.date = TimeUtils.truncateTime(date);
+    this.time = TimeUtils.truncateDate(time);
     this.type = type;
   }
 
@@ -33,12 +38,20 @@ public class Record implements Comparable<Record> {
     this.id = id;
   }
 
-  public Timestamp getTimestamp() {
-    return timestamp;
+  public Date getDate() {
+    return date;
   }
 
-  public void setTimestamp(final Timestamp timestamp) {
-    this.timestamp = timestamp;
+  public void setDate(final Date date) {
+    this.date = TimeUtils.truncateTime(date);
+  }
+
+  public Time getTime() {
+    return time;
+  }
+
+  public void setTime(final Time time) {
+    this.time = TimeUtils.truncateDate(time);
   }
 
   public RecordType getType() {
@@ -49,8 +62,13 @@ public class Record implements Comparable<Record> {
     this.type = type;
   }
 
+  @Override
   public int compareTo(final Record other) {
-    return timestamp.compareTo(other.timestamp);
+    int diff = date.compareTo(other.date);
+    if (diff == 0) {
+      return time.compareTo(time);
+    }
+    return diff;
   }
 
   @Override
@@ -59,25 +77,7 @@ public class Record implements Comparable<Record> {
       return false;
     }
     final Record record = (Record) other;
-    long diff = timestamp.getTime() - record.timestamp.getTime();
-    if (diff < 0) {
-      diff *= -1;
-    }
-    return diff < 1000 && type == record.type && id == record.id;
-  }
-
-  public static Timestamp now() {
-    return new Timestamp(System.currentTimeMillis());
-  }
-
-  public static Timestamp getStartOfDay(final Timestamp timestamp) {
-    LocalDateTime beginning = LocalDateTime.of(timestamp.toLocalDateTime().toLocalDate(), LocalTime.MIN);
-    return Timestamp.valueOf(beginning);
-  }
-
-  public static Timestamp getEndOfDay(final Timestamp timestamp) {
-    LocalDateTime beginning = LocalDateTime.of(timestamp.toLocalDateTime().toLocalDate(), LocalTime.MAX);
-    return Timestamp.valueOf(beginning);
+    return date.equals(record.date) && time.equals(record.time);
   }
 
 }
