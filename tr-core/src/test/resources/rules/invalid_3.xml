@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules xmlns="https://github.com/Sheldor5/time-recorder">
+    <rule name="invalid_3" key-date="1900-01-01">
+        <before>
+            <time>19:00:00</time>
+            <days>
+            </days>
+            <multiplier>1.5</multiplier>
+        </before>
+    </rule>
+</rules>

@@ -1,58 +1,81 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<trr:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:trr="http://www.w3.org/2001/XMLSchema">
-    <trr:element name="rules" type="rulesType"/>
-    <trr:complexType name="rulesType">
-        <trr:sequence>
-            <trr:element type="ruleType" name="rule" maxOccurs="unbounded" minOccurs="0"/>
-        </trr:sequence>
-    </trr:complexType>
-    <trr:complexType name="beforeType">
-        <trr:sequence>
-            <trr:element name="time" type="trr:time"/>
-            <trr:element name="days" type="daysType"/>
-            <trr:element name="multiplier" type="trr:double"/>
-        </trr:sequence>
-    </trr:complexType>
-    <trr:complexType name="afterType">
-        <trr:sequence>
-            <trr:element name="time">
-                <trr:simpleType>
-                    <trr:restriction base="trr:time">
-                        <trr:enumeration value="19:00:00"/>
-                        <trr:enumeration value="00:00:00"/>
-                    </trr:restriction>
-                </trr:simpleType>
-            </trr:element>
-            <trr:element type="daysType" name="days"/>
-            <trr:element name="multiplier">
-                <trr:simpleType>
-                    <trr:restriction base="trr:double"/>
-                </trr:simpleType>
-            </trr:element>
-        </trr:sequence>
-    </trr:complexType>
-    <trr:complexType name="ruleType">
-        <trr:sequence>
-            <trr:element type="beforeType" name="before" minOccurs="0"/>
-            <trr:element type="afterType" name="after"/>
-        </trr:sequence>
-        <trr:attribute type="trr:string" name="name" use="optional"/>
-    </trr:complexType>
-    <trr:complexType name="daysType">
-        <trr:sequence>
-            <trr:element name="day" maxOccurs="unbounded" minOccurs="0">
-                <trr:simpleType>
-                    <trr:restriction base="trr:string">
-                        <trr:enumeration value="monday"/>
-                        <trr:enumeration value="tuesday"/>
-                        <trr:enumeration value="wednesday"/>
-                        <trr:enumeration value="thursday"/>
-                        <trr:enumeration value="friday"/>
-                        <trr:enumeration value="saturday"/>
-                        <trr:enumeration value="sunday"/>
-                    </trr:restriction>
-                </trr:simpleType>
-            </trr:element>
-        </trr:sequence>
-    </trr:complexType>
-</trr:schema>
+<xs:schema
+        attributeFormDefault="unqualified"
+        elementFormDefault="qualified"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        targetNamespace="https://github.com/Sheldor5/time-recorder"
+        xmlns:trr="https://github.com/Sheldor5/time-recorder">
+
+    <xs:element name="rules" type="trr:rulesType"/>
+
+    <xs:complexType name="rulesType">
+        <xs:sequence>
+            <xs:element name="rule" type="trr:ruleType" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="ruleType">
+        <xs:choice maxOccurs="unbounded">
+            <xs:element name="before" type="trr:timeType" maxOccurs="unbounded"/>
+            <xs:element name="after" type="trr:timeType" maxOccurs="unbounded"/>
+            <xs:element name="effort" type="trr:effortType" maxOccurs="unbounded"/>
+        </xs:choice>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="key-date" type="xs:date" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="timeType">
+        <xs:sequence>
+            <xs:element name="time">
+                <xs:simpleType>
+                    <xs:restriction base="xs:time"/>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="days" type="trr:daysType">
+                <xs:unique name="dayKey">
+                    <xs:selector xpath="trr:day"/>
+                    <xs:field xpath="."/>
+                </xs:unique>
+            </xs:element>
+            <xs:element name="multiplier">
+                <xs:simpleType>
+                    <xs:restriction base="xs:decimal"/>
+                </xs:simpleType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="effortType">
+        <xs:sequence>
+            <xs:element name="limit">
+                <xs:simpleType>
+                    <xs:restriction base="xs:time"/>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="multiplier">
+                <xs:simpleType>
+                    <xs:restriction base="xs:decimal"/>
+                </xs:simpleType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="daysType">
+        <xs:sequence>
+            <xs:element name="day" type="trr:dayType" minOccurs="1" maxOccurs="7"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:simpleType name="dayType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="monday"/>
+            <xs:enumeration value="tuesday"/>
+            <xs:enumeration value="wednesday"/>
+            <xs:enumeration value="thursday"/>
+            <xs:enumeration value="friday"/>
+            <xs:enumeration value="saturday"/>
+            <xs:enumeration value="sunday"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+</xs:schema>
