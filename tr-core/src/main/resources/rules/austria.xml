@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rules xmlns="https://github.com/Sheldor5/time-recorder">
-    <rule name="50% &#220;S" key-date="1900-01-01">
+    <rule>
         <!-- Working between 10 PM and 5 AM is worth 150% -->
+        <name>50% &#220;S</name>
+        <key-date>1900-01-01</key-date>
         <before>
             <!-- Working between midnight and 5 AM is worth 150% -->
             <time>05:00:00</time>
@@ -28,8 +30,10 @@
             <multiplier>1.5</multiplier>
         </after>
     </rule>
-    <rule name="100% &#220;S" key-date="1900-01-01">
+    <rule>
         <!-- Working on sunday is worth 200% -->
+        <name>50% &#220;S</name>
+        <key-date>1900-01-01</key-date>
         <after>
             <time>00:00:00</time>
             <days>
@@ -38,8 +42,11 @@
             <multiplier>2.0</multiplier>
         </after>
     </rule>
-    <rule name="&#220;berstunden" key-date="1900-01-01">
+    <rule>
         <!-- Long hours are worth 150% -->
+        <name>&#220;berstunden</name>
+        <key-date>1900-01-01</key-date>
+        <description>&#220;berstunden werden mit 50% Zuschlag verg&#252;tet</description>
         <effort>
             <limit>08:00:00</limit>
             <multiplier>1.5</multiplier>

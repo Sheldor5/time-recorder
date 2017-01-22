@@ -3,6 +3,7 @@ package at.sheldor5.tr.core.records;
 /**
  * Created by Michael Palata <a href="https://github.com/Sheldor5">@github.com/Sheldor5</a> on 21.01.2017.
  */
+@Deprecated
 public class Summary {
 
   private static final String SUMMARY_FORMAT = "%d:%02d:%02d";

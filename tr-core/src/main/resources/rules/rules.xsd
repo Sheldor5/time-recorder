@@ -15,13 +15,28 @@
     </xs:complexType>
 
     <xs:complexType name="ruleType">
-        <xs:choice maxOccurs="unbounded">
-            <xs:element name="before" type="trr:timeType" maxOccurs="unbounded"/>
-            <xs:element name="after" type="trr:timeType" maxOccurs="unbounded"/>
-            <xs:element name="effort" type="trr:effortType" maxOccurs="unbounded"/>
-        </xs:choice>
-        <xs:attribute name="name" type="xs:string" use="required"/>
-        <xs:attribute name="key-date" type="xs:date" use="required"/>
+        <xs:sequence>
+            <xs:element name="name">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string"/>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="key-date">
+                <xs:simpleType>
+                    <xs:restriction base="xs:date"/>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="description" minOccurs="0">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string"/>
+                </xs:simpleType>
+            </xs:element>
+            <xs:choice maxOccurs="unbounded">
+                <xs:element name="before" type="trr:timeType" maxOccurs="unbounded"/>
+                <xs:element name="after" type="trr:timeType" maxOccurs="unbounded"/>
+                <xs:element name="effort" type="trr:effortType" maxOccurs="unbounded"/>
+            </xs:choice>
+        </xs:sequence>
     </xs:complexType>
 
     <xs:complexType name="timeType">
@@ -39,7 +54,7 @@
             </xs:element>
             <xs:element name="multiplier">
                 <xs:simpleType>
-                    <xs:restriction base="xs:decimal"/>
+                    <xs:restriction base="xs:double"/>
                 </xs:simpleType>
             </xs:element>
         </xs:sequence>
@@ -54,16 +69,19 @@
             </xs:element>
             <xs:element name="multiplier">
                 <xs:simpleType>
-                    <xs:restriction base="xs:decimal"/>
+                    <xs:restriction base="xs:double"/>
                 </xs:simpleType>
             </xs:element>
         </xs:sequence>
     </xs:complexType>
 
     <xs:complexType name="daysType">
-        <xs:sequence>
-            <xs:element name="day" type="trr:dayType" minOccurs="1" maxOccurs="7"/>
-        </xs:sequence>
+        <xs:choice>
+            <xs:sequence>
+                <xs:element name="day" type="trr:dayType" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:element name="all"/>
+        </xs:choice>
     </xs:complexType>
 
     <xs:simpleType name="dayType">

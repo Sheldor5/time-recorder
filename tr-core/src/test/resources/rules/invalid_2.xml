@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rules xmlns="https://github.com/Sheldor5/time-recorder">
-    <rule name="invalid_2" key-date="1900-01-01">
+    <rule>
     </rule>
 </rules>

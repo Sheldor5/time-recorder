@@ -2,12 +2,8 @@ package at.sheldor5.tr.core.objects;
 
 import at.sheldor5.tr.core.records.RecordType;
 import at.sheldor5.tr.core.utils.TimeUtils;
-
 import java.sql.Date;
 import java.sql.Time;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 /**
  * Java Bean for time records.
@@ -15,9 +11,9 @@ import java.time.LocalTime;
 public class Record implements Comparable<Record> {
 
   private int id;
-  private Date date;
+  protected Date date;
   protected Time time;
-  private RecordType type;
+  RecordType type;
 
   public Record(int id, final Date date, final Time time, final RecordType type) {
     this.id = id;
@@ -26,15 +22,15 @@ public class Record implements Comparable<Record> {
     this.type = type;
   }
 
-  public Record() {
+  Record() {
 
   }
 
-  public int getId() {
+  int getId() {
     return id;
   }
 
-  public void setId(int id) {
+  void setId(int id) {
     this.id = id;
   }
 
@@ -42,7 +38,7 @@ public class Record implements Comparable<Record> {
     return date;
   }
 
-  public void setDate(final Date date) {
+  protected void setDate(final Date date) {
     this.date = TimeUtils.truncateTime(date);
   }
 
@@ -50,7 +46,7 @@ public class Record implements Comparable<Record> {
     return time;
   }
 
-  public void setTime(final Time time) {
+  void setTime(final Time time) {
     this.time = TimeUtils.truncateDate(time);
   }
 
@@ -58,7 +54,7 @@ public class Record implements Comparable<Record> {
     return type;
   }
 
-  public void setType(final RecordType type) {
+  void setType(final RecordType type) {
     this.type = type;
   }
 

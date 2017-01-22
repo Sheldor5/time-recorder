@@ -9,7 +9,6 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Time;
-import java.text.ParseException;
 import java.util.List;
 import java.util.Random;
 
@@ -147,13 +146,6 @@ public class PersistenceManagerTest {
      */
     int year = 2017 - 1900;
 
-    /* disable debug logging */
-    final LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
-    final Configuration config = ctx.getConfiguration();
-    final LoggerConfig loggerConfig = config.getLoggerConfig(LogManager.ROOT_LOGGER_NAME);
-    loggerConfig.setLevel(Level.INFO);
-    ctx.updateLoggers();
-
     for (int mm = 0; mm < 12; mm++) {
       int lastDayOfMonth = TimeUtils.getLastDayOfMonth(year, mm + 1);
       for (int dd = 1; dd <= lastDayOfMonth; dd++) {
@@ -177,10 +169,6 @@ public class PersistenceManagerTest {
         Assert.assertEquals("Day should have 4 records", 4, records.size());
       }
     }
-
-    /* re-enable debug logging */
-    loggerConfig.setLevel(Level.DEBUG);
-    ctx.updateLoggers();
   }
 
   @Test
@@ -206,11 +194,12 @@ public class PersistenceManagerTest {
     final Record out2 = new Record(0, new Date(y, m, d), new Time(16, 30, 0), RecordType.CHECKOUT);
     persistenceManager.addRecord(user, out2);
 
-    final Day day = persistenceManager.getDay(user, d, m + 1, y + 1900);
+    y = 2017;
+    final Day day = persistenceManager.getDay(user, d, m + 1, y);
 
     Assert.assertEquals("Day should have 4 records", 4, day.getItems().size());
     Assert.assertEquals("Day should count 8 hours of work", 8, day.getSummary() / (3600000L));
-    Assert.assertEquals("Day should count 8 hours of work", "8:00:00", TimeUtils.getHumanReadableTime(day.getSummary()));
+    Assert.assertEquals("Day should count 8 hours of work", "8:00:00", TimeUtils.getHumanReadableSummary(day.getSummary()));
 
   }
 

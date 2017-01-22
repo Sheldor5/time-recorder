@@ -51,11 +51,11 @@ public class PlainTextExporter implements ExporterPlugin {
     long millis, sum = 0;
     for (final Month month : year.getItems()) {
       millis = month.getSummary();
-      sb.append(String.format("%-12s%s\n", getMonthString(month.getValue()), String.format("%25s", TimeUtils.getHumanReadableTime(millis))));
+      sb.append(String.format("%-12s%s\n", getMonthString(month.getValue()), String.format("%25s", TimeUtils.getHumanReadableSummary(millis))));
       sum += millis;
     }
     sb.append(String.format("%37s\n", "").replace(' ', '_'));
-    sb.append(String.format("%-12s%s", "Summe", String.format("%25s", TimeUtils.getHumanReadableTime(sum))));
+    sb.append(String.format("%-12s%s", "Summe", String.format("%25s", TimeUtils.getHumanReadableSummary(sum))));
 
     try {
       return new ByteArrayInputStream(sb.toString().getBytes("UTF-8"));
