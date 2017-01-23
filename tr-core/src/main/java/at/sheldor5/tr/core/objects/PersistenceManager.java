@@ -9,9 +9,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Time;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -142,8 +144,8 @@ class PersistenceManager {
             Statement.RETURN_GENERATED_KEYS);
 
     statement.setInt(1, user.getId());
-    statement.setDate(2, record.getDate());
-    statement.setTime(3, record.getTime());
+    statement.setDate(2, Date.valueOf(record.getDate()));
+    statement.setTime(3, Time.valueOf(record.getTime()));
     statement.setBoolean(4, record.getType().getBoolean());
 
     if (LOGGER.isDebugEnabled()) {
@@ -188,8 +190,8 @@ class PersistenceManager {
 
     if (result.next()) {
       record.setId(result.getInt("pk_record_id"));
-      record.setDate(result.getDate("date"));
-      record.setTime(result.getTime("time"));
+      record.setDate(result.getDate("date").toLocalDate());
+      record.setTime(result.getTime("time").toLocalTime());
       record.setType(RecordType.getType(result.getBoolean("type")));
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug("Found record ({} {}, {}) with ID {}",
@@ -229,8 +231,8 @@ class PersistenceManager {
       do {
         final Record record = new Record();
         record.setId(result.getInt("pk_record_id"));
-        record.setDate(result.getDate("date"));
-        record.setTime(result.getTime("time"));
+        record.setDate(result.getDate("date").toLocalDate());
+        record.setTime(result.getTime("time").toLocalTime());
         record.setType(RecordType.getType(result.getBoolean("type")));
         list.add(record);
         if (LOGGER.isDebugEnabled()) {
@@ -305,8 +307,8 @@ class PersistenceManager {
       do {
         final Record record = new Record();
         record.setId(result.getInt("pk_record_id"));
-        record.setDate(result.getDate("date"));
-        record.setTime(result.getTime("time"));
+        record.setDate(result.getDate("date").toLocalDate());
+        record.setTime(result.getTime("time").toLocalTime());
         record.setType(RecordType.getType(result.getBoolean("type")));
         list.add(record);
         if (LOGGER.isDebugEnabled()) {

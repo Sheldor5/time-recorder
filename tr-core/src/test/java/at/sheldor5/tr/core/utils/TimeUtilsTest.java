@@ -1,9 +1,8 @@
 package at.sheldor5.tr.core.utils;
 
-import java.sql.Date;
-import java.sql.Time;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -14,22 +13,6 @@ public class TimeUtilsTest {
 
   private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
   private static final DateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm:ss");
-
-  @Test
-  public void test_date() {
-    final Date date = new Date(System.currentTimeMillis());
-    final String expected = DATE_FORMAT.format(date);
-    final Date actual = TimeUtils.truncateTime(date);
-    Assert.assertEquals(expected, actual.toString());
-  }
-
-  @Test
-  public void test_time() {
-    final Time time = new Time(System.currentTimeMillis());
-    final String expected = TIME_FORMAT.format(time);
-    final Time actual = TimeUtils.truncateDate(time);
-    Assert.assertEquals(expected, actual.toString());
-  }
 
   @Test
   public void test_millis_to_readable() {
@@ -66,24 +49,14 @@ public class TimeUtilsTest {
   }
 
   @Test
-  public void test_get_time_from_simple_values() {
-    Time actual;
-    long expected;
-
-    actual = TimeUtils.getTime(1, 0, 0, 0L);
-    expected = TimeUtils.HOUR_IN_MILLIS;
-    Assert.assertEquals("Milliseconds should match", expected, actual.getTime());
-
-    actual = TimeUtils.getTime(10, 0, 0, 0L);
-    expected = TimeUtils.HOUR_IN_MILLIS * 10L;
-    Assert.assertEquals("Milliseconds should match", expected, actual.getTime());
-
-    actual = TimeUtils.getTime(1, 2, 3, 456L);
-    expected = 456L; // millis
-    expected += 3 * TimeUtils.SECOND_IN_MILLIS; // seconds
-    expected += 2 * TimeUtils.MINUTE_IN_MILLIS; // minutes
-    expected += 1 * TimeUtils.HOUR_IN_MILLIS; // hours
-    Assert.assertEquals("Milliseconds should match", expected, actual.getTime());
+  public void test_string_to_time() {
+    Assert.assertEquals("Conversion from time to millis failes", 1L * TimeUtils.HOUR_IN_MILLIS, TimeUtils.getMillis("1:00:00"));
+    Assert.assertEquals("Conversion from time to millis failes",
+            12L * TimeUtils.HOUR_IN_MILLIS
+                    + 34L * TimeUtils.MINUTE_IN_MILLIS
+                    + 56L * TimeUtils.SECOND_IN_MILLIS,
+            TimeUtils.getMillis("12:34:56"));
+    Assert.assertEquals("Conversion from time to millis failes", 100L * TimeUtils.HOUR_IN_MILLIS, TimeUtils.getMillis("100:00:00"));
   }
 
   @Test

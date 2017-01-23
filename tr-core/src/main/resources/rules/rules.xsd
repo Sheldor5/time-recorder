@@ -46,16 +46,16 @@
                     <xs:restriction base="xs:time"/>
                 </xs:simpleType>
             </xs:element>
+            <xs:element name="multiplier">
+                <xs:simpleType>
+                    <xs:restriction base="xs:double"/>
+                </xs:simpleType>
+            </xs:element>
             <xs:element name="days" type="trr:daysType">
                 <xs:unique name="dayKey">
                     <xs:selector xpath="trr:day"/>
                     <xs:field xpath="."/>
                 </xs:unique>
-            </xs:element>
-            <xs:element name="multiplier">
-                <xs:simpleType>
-                    <xs:restriction base="xs:double"/>
-                </xs:simpleType>
             </xs:element>
         </xs:sequence>
     </xs:complexType>
@@ -78,9 +78,13 @@
     <xs:complexType name="daysType">
         <xs:choice>
             <xs:sequence>
-                <xs:element name="day" type="trr:dayType" minOccurs="1" maxOccurs="unbounded"/>
+                <xs:element name="day" type="trr:dayType" maxOccurs="unbounded"/>
             </xs:sequence>
             <xs:element name="all"/>
+            <xs:sequence>
+                <xs:element name="from" type="trr:dayType"/>
+                <xs:element name="to" type="trr:dayType"/>
+            </xs:sequence>
         </xs:choice>
     </xs:complexType>
 

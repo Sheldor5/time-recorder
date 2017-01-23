@@ -9,8 +9,12 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Random;
+import java.util.TimeZone;
 
 import at.sheldor5.tr.core.utils.StringUtils;
 import at.sheldor5.tr.core.utils.TimeUtils;
@@ -38,8 +42,8 @@ public class PersistenceManagerTest {
   private static final String USER_FORE = "Michael";
   private static final String USER_SUR = "Palata";
   private static final Random RANDOM = new Random();
-  private static final Date TODAY = new Date(new java.util.Date().getTime());
-  private static final Time NOW = new Time(System.currentTimeMillis());
+  private static final LocalDate TODAY = LocalDate.now();
+  private static final LocalTime NOW = LocalTime.now();
 
   private static Connection connection;
   private static PersistenceManager persistenceManager;
@@ -123,8 +127,9 @@ public class PersistenceManagerTest {
     int userId = persistenceManager.addUser(user, USER_PASS);
     Assert.assertTrue("Returned User ID from INSERT should be greater than 0", userId > 0);
     Assert.assertTrue("User ID should be greater than 0", user.getId() > 0);
-
     final Record expected = new Record(0, TODAY, NOW, RecordType.CHECKIN);
+    expected.time = expected.time.truncatedTo(ChronoUnit.SECONDS);
+    //TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
     int recordId = persistenceManager.addRecord(user, expected);
     Assert.assertTrue("Returned Record ID from INSERT should be greater than 0", recordId > 0);
     Assert.assertTrue("Record ID should be greater than 0", expected.getId() > 0);
@@ -144,28 +149,26 @@ public class PersistenceManagerTest {
     /**
      * @see java.util.Date#Date(int, int, int) !
      */
-    int year = 2017 - 1900;
+    int yyyy = 2017;
 
-    for (int mm = 0; mm < 12; mm++) {
-      int lastDayOfMonth = TimeUtils.getLastDayOfMonth(year, mm + 1);
+    for (int mm = 1; mm <= 12; mm++) {
+      int lastDayOfMonth = TimeUtils.getLastDayOfMonth(yyyy, mm);
       for (int dd = 1; dd <= lastDayOfMonth; dd++) {
-        final Record in1 = new Record(0, new Date(year, mm, dd), new Time(8, 0, 0), RecordType.CHECKIN);
+        final Record in1 = new Record(0, LocalDate.of(yyyy, mm, dd), LocalTime.of(8, 0), RecordType.CHECKIN);
         persistenceManager.addRecord(user, in1);
-        final Record out1 = new Record(0, new Date(year, mm, dd), new Time(12, 0, 0), RecordType.CHECKOUT);
+        final Record out1 = new Record(0, LocalDate.of(yyyy, mm, dd), LocalTime.of(12, 0), RecordType.CHECKOUT);
         persistenceManager.addRecord(user, out1);
-        final Record in2 = new Record(0, new Date(year, mm, dd), new Time(12, 30, 0), RecordType.CHECKIN);
+        final Record in2 = new Record(0, LocalDate.of(yyyy, mm, dd), LocalTime.of(12, 30), RecordType.CHECKIN);
         persistenceManager.addRecord(user, in2);
-        final Record out2 = new Record(0, new Date(year, mm, dd), new Time(16, 30, 0), RecordType.CHECKOUT);
+        final Record out2 = new Record(0, LocalDate.of(yyyy, mm, dd), LocalTime.of(16, 30), RecordType.CHECKOUT);
         persistenceManager.addRecord(user, out2);
       }
     }
 
-    year = 2017;
-
-    for (int mm = 0; mm < 12; mm++) {
-      int lastDayOfMonth = TimeUtils.getLastDayOfMonth(year, mm + 1);
+    for (int mm = 1; mm <= 12; mm++) {
+      int lastDayOfMonth = TimeUtils.getLastDayOfMonth(yyyy, mm);
       for (int dd = 1; dd <= lastDayOfMonth; dd++) {
-        final List<Record> records = persistenceManager.getRecordsOfDay(user, dd, mm + 1, year);
+        final List<Record> records = persistenceManager.getRecordsOfDay(user, dd, mm , yyyy);
         Assert.assertEquals("Day should have 4 records", 4, records.size());
       }
     }
@@ -181,21 +184,20 @@ public class PersistenceManagerTest {
     /**
      * @see java.util.Date#Date(int, int, int) !
      */
-    int y = 2017 - 1900;
-    int m = 0;
-    int d = 1;
+    int yyyy = 2017;
+    int mm = 1;
+    int dd = 1;
 
-    final Record in1 = new Record(0, new Date(y, m, d), new Time(8, 0, 0), RecordType.CHECKIN);
+    final Record in1 = new Record(0, LocalDate.of(yyyy, mm, dd), LocalTime.of(8, 0, 0), RecordType.CHECKIN);
     persistenceManager.addRecord(user, in1);
-    final Record out1 = new Record(0, new Date(y, m, d), new Time(12, 0, 0), RecordType.CHECKOUT);
+    final Record out1 = new Record(0, LocalDate.of(yyyy, mm, dd), LocalTime.of(12, 0, 0), RecordType.CHECKOUT);
     persistenceManager.addRecord(user, out1);
-    final Record in2 = new Record(0, new Date(y, m, d), new Time(12, 30, 0), RecordType.CHECKIN);
+    final Record in2 = new Record(0, LocalDate.of(yyyy, mm, dd), LocalTime.of(12, 30, 0), RecordType.CHECKIN);
     persistenceManager.addRecord(user, in2);
-    final Record out2 = new Record(0, new Date(y, m, d), new Time(16, 30, 0), RecordType.CHECKOUT);
+    final Record out2 = new Record(0, LocalDate.of(yyyy, mm, dd), LocalTime.of(16, 30, 0), RecordType.CHECKOUT);
     persistenceManager.addRecord(user, out2);
 
-    y = 2017;
-    final Day day = persistenceManager.getDay(user, d, m + 1, y);
+    final Day day = persistenceManager.getDay(user, dd, mm, yyyy);
 
     Assert.assertEquals("Day should have 4 records", 4, day.getItems().size());
     Assert.assertEquals("Day should count 8 hours of work", 8, day.getSummary() / (3600000L));
