@@ -1,17 +1,8 @@
 package at.sheldor5.tr.core.rules;
 
 
-import at.sheldor5.tr.core.objects.Record;
-import at.sheldor5.tr.core.objects.Session;
-import at.sheldor5.tr.core.records.RecordType;
-import at.sheldor5.tr.core.utils.TimeUtils;
-import org.junit.Assert;
 import org.junit.Test;
 
-import java.sql.Date;
-import java.sql.Time;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 

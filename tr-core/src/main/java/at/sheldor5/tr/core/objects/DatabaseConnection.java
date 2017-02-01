@@ -3,9 +3,7 @@ package at.sheldor5.tr.core.objects;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -37,9 +35,14 @@ public class DatabaseConnection {
    *
    * @return Global Singleton Instance of this {@link DatabaseConnection}.
    */
-  public static Connection getConnection() throws SQLException {
+  public static Connection getConnection() {
     if (connection == null) {
-      connect();
+      try {
+        connect();
+      } catch (final SQLException sqle) {
+        LOGGER.fatal(sqle);
+        return null;
+      }
     }
     return connection;
   }
@@ -55,7 +58,7 @@ public class DatabaseConnection {
     try {
       Class.forName(jdbcClass);
     } catch (final ClassNotFoundException cnfe) {
-      throw new RuntimeException("JDBC Class <" + jdbcClass + "> not found!");
+      throw new RuntimeException("JDBC class <" + jdbcClass + "> not found");
     }
 
     // get full JDBC URL
@@ -74,12 +77,12 @@ public class DatabaseConnection {
               host, instance.isEmpty() ? "" : "\\" + instance, name, user, pass, charset);
     }
 
-    LOGGER.info("Connecting to Database using JDBC URL \"{}\"", jdbc);
+    LOGGER.info("Connecting to database using JDBC URL \"{}\"", jdbc);
 
     // connect
     connection = DriverManager.getConnection(jdbc);
 
-    LOGGER.info("Successfully connected to Database");
+    LOGGER.info("Successfully connected to database");
   }
 
   protected static boolean tablesExist() throws SQLException {

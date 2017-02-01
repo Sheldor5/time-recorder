@@ -1,8 +1,8 @@
 package at.sheldor5.tr.api;
 
-import at.sheldor5.tr.core.records.Day;
-import at.sheldor5.tr.core.records.Month;
-import at.sheldor5.tr.core.records.Year;
+import at.sheldor5.tr.api.objects.Day;
+import at.sheldor5.tr.api.objects.Month;
+import at.sheldor5.tr.api.objects.Year;
 
 import javax.activation.MimeType;
 import java.io.InputStream;

@@ -1,8 +1,8 @@
 package at.sheldor5.tr.exporter.utils;
 
-import at.sheldor5.tr.core.records.Day;
-import at.sheldor5.tr.core.records.Month;
-import at.sheldor5.tr.core.records.Year;
+import at.sheldor5.tr.api.objects.Day;
+import at.sheldor5.tr.api.objects.Month;
+import at.sheldor5.tr.api.objects.Year;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -19,7 +19,8 @@ public class ExporterUtils {
 
   public static void toFile(final InputStream source, final File destination) throws IOException {
     if (!destination.exists()) {
-      throw new FileNotFoundException("");
+      destination.getParentFile().mkdirs();
+      // throw new FileNotFoundException("");
     }
     final FileOutputStream out = new FileOutputStream(destination);
     byte[] buffer = new byte[BUF_LEN];

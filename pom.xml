@@ -32,6 +32,8 @@
     </dependencyManagement>
 
     <modules>
+        <module>tr-api</module>
+        <module>tr-sdk</module>
         <module>tr-core</module>
         <module>tr-exporter</module>
         <module>tr-web</module>

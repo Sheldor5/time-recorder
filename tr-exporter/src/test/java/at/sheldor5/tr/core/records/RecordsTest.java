@@ -1,18 +1,19 @@
 package at.sheldor5.tr.core.records;
 
-import at.sheldor5.tr.core.objects.Record;
-import org.junit.Assert;
-import org.junit.Test;
+import at.sheldor5.tr.api.objects.Day;
+import at.sheldor5.tr.api.objects.Month;
+import at.sheldor5.tr.api.objects.Record;
+import at.sheldor5.tr.api.objects.RecordType;
+import at.sheldor5.tr.api.objects.Session;
+import at.sheldor5.tr.api.objects.Year;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
-/**
- * Created by Michael Palata <a href="https://github.com/Sheldor5">@github.com/Sheldor5</a> on 13.01.2017.
- */
 public class RecordsTest {
 
-  @Test
+  /*@Test
   public void testTimestampConversion() {
     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
     System.out.println("Current time:\t" + timestamp);
@@ -39,18 +40,30 @@ public class RecordsTest {
     String time = String.format("%02dh %02dm %02ds", hour, minute, second);
     Assert.assertEquals((8 * 28 * 12), hour);
     System.out.println("Time worked this year:\t" + time);
-  }
+  }*/
 
   public static Year getSimpleTestYear(int y) {
     Year year = new Year(y);
+    LocalTime t1 = LocalTime.of(8, 0);
+    LocalTime t2 = LocalTime.of(12, 0);
+    LocalTime t3 = LocalTime.of(12, 30);
+    LocalTime t4 = LocalTime.of(16, 30);
     for (int m = 12; m > 0; m--) {
       Month month = new Month(m);
       for (int d = 28; d > 0; d--) {
         Day day = new Day(d);
-        day.addItem(new Record(Timestamp.valueOf(LocalDateTime.of(2016, m, d, 8, 0)), RecordType.CHECKIN));
-        day.addItem(new Record(Timestamp.valueOf(LocalDateTime.of(2016, m, d, 12, 0)), RecordType.CHECKOUT));
-        day.addItem(new Record(Timestamp.valueOf(LocalDateTime.of(2016, m, d, 12, 30)), RecordType.CHECKIN));
-        day.addItem(new Record(Timestamp.valueOf(LocalDateTime.of(2016, m, d, 16, 30)), RecordType.CHECKOUT));
+        LocalDate date = LocalDate.of(y, m, d);
+
+        Session session = new Session(d);
+        session.build(new Record(date, t1, RecordType.CHECKIN),
+                new Record(date, t2, RecordType.CHECKOUT));
+        day.addItem(session);
+
+        session = new Session(d);
+        session.build(new Record(date, t3, RecordType.CHECKIN),
+                new Record(date, t4, RecordType.CHECKOUT));
+        day.addItem(session);
+
         month.addItem(day);
       }
       year.addItem(month);

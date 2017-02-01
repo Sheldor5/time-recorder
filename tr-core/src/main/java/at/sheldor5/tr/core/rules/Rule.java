@@ -1,7 +1,7 @@
 package at.sheldor5.tr.core.rules;
 
-import at.sheldor5.tr.core.objects.Session;
-import at.sheldor5.tr.core.records.Day;
+import at.sheldor5.tr.api.objects.Session;
+import at.sheldor5.tr.api.objects.Day;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedList;

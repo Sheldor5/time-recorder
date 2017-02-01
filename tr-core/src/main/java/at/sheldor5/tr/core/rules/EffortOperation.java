@@ -1,6 +1,6 @@
 package at.sheldor5.tr.core.rules;
 
-import at.sheldor5.tr.core.records.Day;
+import at.sheldor5.tr.api.objects.Day;
 
 /**
  * Created by Michael Palata <a href="https://github.com/Sheldor5">@github.com/Sheldor5</a> on 23.01.2017.
