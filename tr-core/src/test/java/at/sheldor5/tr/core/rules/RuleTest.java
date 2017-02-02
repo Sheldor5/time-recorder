@@ -1,14 +1,9 @@
 package at.sheldor5.tr.core.rules;
 
-
-import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.Test;
 
-/**
- * Created by Michael Palata <a href="https://github.com/Sheldor5">@github.com/Sheldor5</a> on 23.01.2017.
- */
 public class RuleTest {
 
   private static final List<String> workingDays = new ArrayList<>();

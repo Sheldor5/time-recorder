@@ -2,7 +2,7 @@ package at.sheldor5.tr.api.objects;
 
 public class User {
 
-  private int id;
+  private int id = -1;
   private String username;
   private String forename;
   private String surname;
@@ -34,7 +34,7 @@ public class User {
   }
 
   public void setUsername(final String username) {
-    if (username == null || username.length() > 32) {
+    if (username == null || username.length() < 5 || username.length() > 32) {
       throw new IllegalArgumentException("Username was null or its length exceeded the limit of 32 characters");
     }
     this.username = username;

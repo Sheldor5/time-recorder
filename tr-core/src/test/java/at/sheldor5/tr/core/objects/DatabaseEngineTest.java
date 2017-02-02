@@ -1,22 +1,21 @@
 package at.sheldor5.tr.core.objects;
 
 import at.sheldor5.tr.api.RecordEngine;
+import at.sheldor5.tr.api.objects.GlobalConfiguration;
 import at.sheldor5.tr.api.objects.Record;
 import at.sheldor5.tr.api.objects.Day;
 import at.sheldor5.tr.api.objects.RecordType;
 import at.sheldor5.tr.api.objects.User;
 import at.sheldor5.tr.core.utils.GlobalProperties;
 import at.sheldor5.tr.api.utils.TimeUtils;
+import helper.TestUtils;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
-
-import helper.TestUtils;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Before;
@@ -95,7 +94,7 @@ public class DatabaseEngineTest {
     recordEngine.addUser(user, USER_PASS);
     Assert.assertTrue("User ID should be greater than 0", user.getId() > 0);
     final Record expected = new Record(0, TODAY, NOW, RecordType.CHECKIN);
-    expected.setTime(expected.getTime().truncatedTo(ChronoUnit.SECONDS));
+    expected.setTime(expected.getTime().truncatedTo(GlobalConfiguration.MEASURE_UNIT));
     //TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
     recordEngine.addRecord(user, expected);
     Assert.assertTrue("Record ID should be greater than 0", expected.getId() > 0);

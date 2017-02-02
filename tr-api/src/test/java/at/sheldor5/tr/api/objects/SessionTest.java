@@ -1,117 +1,93 @@
 package at.sheldor5.tr.api.objects;
 
-import at.sheldor5.tr.api.objects.Record;
-import at.sheldor5.tr.api.objects.RecordType;
-
+import at.sheldor5.tr.api.utils.TimeUtils;
 import java.time.LocalDate;
 import java.time.LocalTime;
-
-import at.sheldor5.tr.api.objects.Session;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * Created by Michael Palata <a href="https://github.com/Sheldor5">@github.com/Sheldor5</a> on 22.01.2017.
- */
 public class SessionTest {
+
+  private static final LocalDate date = LocalDate.of(2017, 1, 1);
 
   @Test(expected = NullPointerException.class)
   public void test_session_no_records() {
-    final Session session = new Session(1);
-
-    session.build(null, null);
+    final Session session = new Session(date, null, null);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void test_session_invalid_records() {
-    final Record begin = new Record();
+    final Record start = new Record();
     final Record end = new Record();
-    final Session session = new Session(1);
-
-    session.build(begin, end);
+    final Session session = new Session(date, start, end);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void test_session_negative_duration() {
-    final LocalDate date = LocalDate.of(2017, 1, 1);
-    final LocalTime beginTime = LocalTime.of(1, 0);
+    final LocalTime startTime = LocalTime.of(1, 0);
     final LocalTime endTime = LocalTime.of(0, 0);
-    final Record begin = new Record(0, date, beginTime, RecordType.CHECKIN);
+    final Record start = new Record(0, date, startTime, RecordType.CHECKIN);
     final Record end = new Record(0, date, endTime, RecordType.CHECKOUT);
-    final Session session = new Session(date.getDayOfMonth());
-
-    session.build(begin, end);
+    final Session session = new Session(date, start, end);
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void test_session_begin_checkout() {
-    final LocalDate date = LocalDate.of(2017, 1, 1);
-    final LocalTime beginTime = LocalTime.of(8, 0);
+  public void test_session_start_checkout() {
+    final LocalTime startTime = LocalTime.of(8, 0);
     final LocalTime endTime = LocalTime.of(12, 0);
-    final Record begin = new Record(0, date, beginTime, RecordType.CHECKOUT);
+    final Record start = new Record(0, date, startTime, RecordType.CHECKOUT);
     final Record end = new Record(0, date, endTime, RecordType.CHECKOUT);
-    final Session session = new Session(date.getDayOfMonth());
-
-    session.build(begin, end);
+    final Session session = new Session(date, start, end);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void test_session_end_checkin() {
-    final LocalDate date = LocalDate.of(2017, 1, 1);
-    final LocalTime beginTime = LocalTime.of(8, 0);
+    final LocalTime startTime = LocalTime.of(8, 0);
     final LocalTime endTime = LocalTime.of(12, 0);
-    final Record begin = new Record(0, date, beginTime, RecordType.CHECKIN);
+    final Record start = new Record(0, date, startTime, RecordType.CHECKIN);
     final Record end = new Record(0, date, endTime, RecordType.CHECKIN);
-    final Session session = new Session(date.getDayOfMonth());
-
-    session.build(begin, end);
+    final Session session = new Session(date, start, end);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void test_session_different_dates() {
-    final LocalDate beginDate = LocalDate.of(2017, 1, 1);
+    final LocalDate startDate = LocalDate.of(2017, 1, 1);
     final LocalDate endDate = LocalDate.of(2017, 1, 2);
-    final LocalTime beginTime = LocalTime.of(8, 0);
+    final LocalTime startTime = LocalTime.of(8, 0);
     final LocalTime endTime = LocalTime.of(12, 0);
-    final Record begin = new Record(0, beginDate, beginTime, RecordType.CHECKIN);
+    final Record start = new Record(0, startDate, startTime, RecordType.CHECKIN);
     final Record end = new Record(0, endDate, endTime, RecordType.CHECKOUT);
-    final Session session = new Session(beginDate.getDayOfMonth());
-
-    session.build(begin, end);
+    final Session session = new Session(date, start, end);
   }
 
   @Test
   public void test_session_duration() {
-    final LocalDate date = LocalDate.of(2017, 1, 1);
-
     Session session;
-    Record begin;
+    Record start;
     Record end;
 
     // 1 second
-    begin = new Record(0, date, LocalTime.of(8, 0), RecordType.CHECKIN);
+    start = new Record(0, date, LocalTime.of(8, 0), RecordType.CHECKIN);
     end = new Record(0, date, LocalTime.of(8, 0, 1), RecordType.CHECKOUT);
-    session = new Session(date.getDayOfMonth());
-    session.build(begin, end);
+    session = new Session(date, start, end);
     Assert.assertEquals(1, session.getSummary());
 
     // 4 hours
-    begin = new Record(0, date, LocalTime.of(8, 0), RecordType.CHECKIN);
+    start = new Record(0, date, LocalTime.of(8, 0), RecordType.CHECKIN);
     end = new Record(0, date, LocalTime.of(12, 0), RecordType.CHECKOUT);
-    session = new Session(date.getDayOfMonth());
-    session.build(begin, end);
+    session = new Session(date, start, end);
     Assert.assertEquals(4 * 60 * 60, session.getSummary());
   }
 
   @Test
   public void test_session_contains() {
-    final LocalDate date = LocalDate.now();
-    final LocalTime beginTime = LocalTime.of(8, 0);
+    final LocalTime startTime = LocalTime.of(8, 0);
     final LocalTime endTime = LocalTime.of(12, 0);
-    final Record begin = new Record(0, date, beginTime, RecordType.CHECKIN);
+    final Record start = new Record(0, date, startTime, RecordType.CHECKIN);
     final Record end = new Record(0, date, endTime, RecordType.CHECKOUT);
-    final Session session = new Session(date.getDayOfMonth());
-    session.build(begin, end);
+    final Session session = new Session(date, start, end);
 
     LocalTime time;
 
@@ -148,17 +124,61 @@ public class SessionTest {
 
   @Test
   public void test_session_split() {
-    final LocalDate date = LocalDate.of(2017, 1, 1);
-    final LocalTime beginTime = LocalTime.of(8, 0);
+    final LocalTime startTime = LocalTime.of(8, 0);
     final LocalTime endTime = LocalTime.of(12, 0);
-    final Record begin = new Record(0, date, beginTime, RecordType.CHECKIN);
+    final Record start = new Record(0, date, startTime, RecordType.CHECKIN);
     final Record end = new Record(0, date, endTime, RecordType.CHECKOUT);
-    final Session session = new Session(date.getDayOfMonth());
-    session.build(begin, end);
+    final Session session = new Session(date, start, end);
     final LocalTime time = LocalTime.of(10, 0);
 
     final Session actual = session.split(time);
-    Assert.assertEquals("Duration should be updated to 2 hours", 2 * 60 * 60, session.getSummary());
-    Assert.assertEquals("Duration should be 2 hours", 2 * 60 * 60, actual.getSummary());
+    Assert.assertEquals("Duration should be updated to 7200 seconds (2 hours)", 7200L, session.getSummary());
+    Assert.assertEquals("Duration should be 2 hours", 7200L, actual.getSummary());
+  }
+
+  @Test
+  public void test_session_builder_same_day() {
+    final List<Record> list = new ArrayList<>();
+    list.add(new Record(date, LocalTime.of(8, 0, 0), RecordType.CHECKIN));
+    list.add(new Record(date, LocalTime.of(12, 0, 0), RecordType.CHECKOUT));
+    list.add(new Record(date, LocalTime.of(12, 30, 0), RecordType.CHECKIN));
+    list.add(new Record(date, LocalTime.of(16, 30, 0), RecordType.CHECKOUT));
+
+    final List<Session> sessions = Session.buildSessions(list);
+
+    Assert.assertEquals("List should contain 4 sessions", 2, sessions.size());
+
+    Assert.assertEquals("Duration should be 14400 seconds (4 hours)", 14400L, sessions.get(0).getSummary());
+    Assert.assertEquals("Duration should be 14400 seconds (4 hours)", 14400L, sessions.get(1).getSummary());
+  }
+
+  @Test
+  public void test_session_builder_multiple_days() {
+    final List<Record> list = new ArrayList<>();
+    list.add(new Record(date, LocalTime.of(8, 0, 0), RecordType.CHECKIN));
+    list.add(new Record(date, LocalTime.of(12, 0, 0), RecordType.CHECKOUT));
+    list.add(new Record(date, LocalTime.of(12, 30, 0), RecordType.CHECKIN));
+    list.add(new Record(date, LocalTime.of(16, 30, 0), RecordType.CHECKOUT));
+    list.add(new Record(date.plusDays(1), LocalTime.of(8, 0, 0), RecordType.CHECKIN));
+    list.add(new Record(date.plusDays(1), LocalTime.of(12, 0, 0), RecordType.CHECKOUT));
+    list.add(new Record(date.plusDays(1), LocalTime.of(12, 30, 0), RecordType.CHECKIN));
+    list.add(new Record(date.plusDays(1), LocalTime.of(16, 30, 0), RecordType.CHECKOUT));
+    list.add(new Record(date.plusDays(2), LocalTime.of(8, 0, 0), RecordType.CHECKIN));
+    list.add(new Record(date.plusDays(2), LocalTime.of(12, 0, 0), RecordType.CHECKOUT));
+    list.add(new Record(date.plusDays(2), LocalTime.of(12, 30, 0), RecordType.CHECKIN));
+    list.add(new Record(date.plusDays(2), LocalTime.of(16, 30, 0), RecordType.CHECKOUT));
+
+    final List<Session> sessions = Session.buildSessions(list);
+
+    Assert.assertEquals("List should contain 6 sessions", 6, sessions.size());
+
+    Assert.assertEquals("Duration should be 14400 seconds (4 hours)", 14400L, sessions.get(0).getSummary());
+    Assert.assertEquals("Duration should be 14400 seconds (4 hours)", 14400L, sessions.get(1).getSummary());
+
+    Assert.assertEquals("Duration should be 14400 seconds (4 hours)", 14400L, sessions.get(2).getSummary());
+    Assert.assertEquals("Duration should be 14400 seconds (4 hours)", 14400L, sessions.get(3).getSummary());
+
+    Assert.assertEquals("Duration should be 14400 seconds (4 hours)", 14400L, sessions.get(4).getSummary());
+    Assert.assertEquals("Duration should be 14400 seconds (4 hours)", 14400L, sessions.get(5).getSummary());
   }
 }

@@ -1,6 +1,7 @@
 package at.sheldor5.tr.sdk.engines;
 
 import at.sheldor5.tr.api.RecordEngine;
+import at.sheldor5.tr.api.objects.GlobalConfiguration;
 import at.sheldor5.tr.api.objects.Record;
 import at.sheldor5.tr.api.objects.User;
 import at.sheldor5.tr.api.objects.Day;
@@ -10,6 +11,7 @@ import helper.TestUtils;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.chrono.IsoChronology;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import org.junit.Assert;
@@ -73,7 +75,7 @@ public class DummyEngineTest {
     engine.addUser(user, USER_PASS);
     Assert.assertTrue("User ID should be greater than 0", user.getId() > 0);
     final Record expected = new Record(0, TODAY, NOW, RecordType.CHECKIN);
-    expected.setTime(expected.getTime().truncatedTo(ChronoUnit.SECONDS));
+    expected.setTime(expected.getTime().truncatedTo(GlobalConfiguration.MEASURE_UNIT));
     engine.addRecord(user, expected);
     Assert.assertTrue("Record ID should be greater than 0", expected.getId() > 0);
 

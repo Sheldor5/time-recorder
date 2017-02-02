@@ -1,0 +1,6 @@
+unit test coding conventions
+
+test class name:    {NamoOfClassToTest}Test   e.g. testing class Person > PersonTest
+
+test method name:   test_(invalid_)_{functionality}   e.g. testing Person#equals(other) > test_equality,  testing Person#setId(-1) > test_invalid_id
+

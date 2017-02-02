@@ -3,19 +3,14 @@ package at.sheldor5.tr.core.rules;
 import at.sheldor5.tr.api.objects.Record;
 import at.sheldor5.tr.api.objects.Session;
 import at.sheldor5.tr.api.objects.RecordType;
-import at.sheldor5.tr.api.utils.TimeUtils;
-import org.junit.Assert;
-import org.junit.Test;
-
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.Assert;
+import org.junit.Test;
 
-/**
- * Created by Michael Palata <a href="https://github.com/Sheldor5">@github.com/Sheldor5</a> on 23.01.2017.
- */
 public class BeforeTest {
 
   private static final List<String> workingDays = new ArrayList<>();
@@ -32,20 +27,13 @@ public class BeforeTest {
   }
 
   @Test
-  public void test() {
-    Time time = new Time(1000 * 60); // 1 minute
-    System.out.println(time.getTime());
-  }
-
-  @Test
   public void test_before() {
-    final LocalDate date = LocalDate.now();
+    final LocalDate date = LocalDate.of(2017, 1, 1);
     final LocalTime beginTime = LocalTime.of(4, 0);
     final LocalTime endTime = LocalTime.of(23, 0);
     final Record begin = new Record(0, date, beginTime, RecordType.CHECKIN);
     final Record end = new Record(0, date, endTime, RecordType.CHECKOUT);
-    final Session session = new Session(date.getDayOfMonth());
-    session.build(begin, end);
+    final Session session = new Session(date, begin, end);
 
     final LocalTime time = LocalTime.of(5, 0);
     final Before before = new Before(time, 1.5D, workingDays);

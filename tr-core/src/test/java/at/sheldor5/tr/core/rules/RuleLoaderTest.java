@@ -1,17 +1,13 @@
 package at.sheldor5.tr.core.rules;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
-/**
- * Created by Michael Palata on 22.01.2017.
- */
 public class RuleLoaderTest {
 
   private static File FILE_XSD;

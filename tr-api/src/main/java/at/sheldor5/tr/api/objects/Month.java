@@ -1,9 +1,16 @@
 package at.sheldor5.tr.api.objects;
 
+import java.time.LocalDate;
+
 public class Month extends Container<Day> {
 
-  public Month(int value) {
-    super(value);
+  public Month(final LocalDate date) {
+    super(date);
+  }
+
+  @Override
+  protected boolean validateItem(final Day item) {
+    return this.date.getYear() == item.date.getYear() && this.date.getMonth() == item.date.getMonth();
   }
 
   @Override

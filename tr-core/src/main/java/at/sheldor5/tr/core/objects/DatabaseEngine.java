@@ -20,6 +20,7 @@ import java.sql.Time;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -315,18 +316,13 @@ class DatabaseEngine implements RecordEngine {
   @Override
   public List<Record> getMonthRecords(final User user, int month, int year) {
     final List<Record> list = new ArrayList<>();
-    final String startMonth = String.format("%d-%02d-01", year, month);
-    final String endMonth =
-            String.format("%d-%02d-%02d",
-                    year,
-                    month,
-                    TimeUtils.getLastDayOfMonth(year, month));
-    final Date startDate;
-    final Date endDate;
+    final LocalDate tmp = LocalDate.of(year, month, 1);
+    Date startDate;
+    Date endDate;
     try {
-      startDate = new Date(DATE_FORMAT.parse(startMonth).getTime());
-      endDate = new Date(DATE_FORMAT.parse(endMonth).getTime());
-    } catch (final ParseException pe) {
+      startDate = Date.valueOf(tmp);
+      endDate = Date.valueOf(LocalDate.of(year, month, tmp.lengthOfMonth()));
+    } catch (final DateTimeException pe) {
       LOGGER.error(pe.getMessage());
       return list;
     }

@@ -1,22 +1,11 @@
 package at.sheldor5.tr.api.utils;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.LocalTime;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.TimeZone;
+import java.time.chrono.IsoChronology;
 
-/**
- * Created by Michael Palata <a href="https://github.com/Sheldor5">@github.com/Sheldor5</a> on 21.01.2017.
- */
 public class TimeUtils {
 
   private static final String TIME_FORMAT_STRING = "%02d:%02d:%02d";
   private static final String SUMMARY_FORMAT_STRING = "%d:%02d:%02d";
-
-  private static final GregorianCalendar CALENDAR = new GregorianCalendar();
-
 
   public static final long SECOND_IN_MILLIS = 1000L;
   public static final long MINUTE_IN_MILLIS = SECOND_IN_MILLIS * 60L;
@@ -27,13 +16,6 @@ public class TimeUtils {
     long m = (seconds / 60L) % 60L;
     long h = seconds / 3600L;
     return String.format(SUMMARY_FORMAT_STRING, h, m, s);
-  }
-
-  public static String getHumanReadableTime(long millis) {
-    long seconds = (millis / SECOND_IN_MILLIS) % 60L;
-    long minutes = (millis / MINUTE_IN_MILLIS) % 60L;
-    long hours = millis / HOUR_IN_MILLIS;
-    return String.format(TIME_FORMAT_STRING, hours, minutes, seconds);
   }
 
   public static long getMillis(final String string) {
@@ -61,34 +43,17 @@ public class TimeUtils {
     return millis;
   }
 
-  public static long secondsToHours(long seconds) {
-    return seconds / 3600;
-  }
-
-  public static long hoursToSeconds(long hours) {
-    return hours * 3600;
-  }
-
   public static int getLastDayOfMonth(int year, int month) {
-    if (month == 1
-            || month == 3
-            || month == 5
-            || month == 7
-            || month == 8
-            || month == 10
-            || month == 12) {
-      return 31;
-    } else if (month == 4
-            || month == 6
-            || month == 9
-            || month == 11) {
-      return 30;
-    } else if (month == 2) {
-      if (CALENDAR.isLeapYear(year)) {
-        return 29;
-      }
-      return 28;
+    switch (month) {
+      case 2:
+        return (IsoChronology.INSTANCE.isLeapYear(year) ? 29 : 28);
+      case 4:
+      case 6:
+      case 9:
+      case 11:
+        return 30;
+      default:
+        return 31;
     }
-    return -1;
   }
 }

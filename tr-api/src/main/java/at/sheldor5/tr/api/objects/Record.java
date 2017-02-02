@@ -11,21 +11,21 @@ public class Record implements Comparable<Record> {
   private int id = -1;
   protected LocalDate date;
   protected LocalTime time;
-  RecordType type;
+  protected RecordType type;
 
   public Record() {
 
   }
 
   public Record(final LocalDate date, final LocalTime time, final RecordType type) {
-    this.date = date;
-    this.time = time;
-    this.type = type;
+    setDate(date);
+    setTime(time);
+    setType(type);
   }
 
   public Record(int id, final LocalDate date, final LocalTime time, final RecordType type) {
     this(date, time, type);
-    this.id = id;
+    setId(id);
   }
 
   public int getId() {
@@ -33,6 +33,9 @@ public class Record implements Comparable<Record> {
   }
 
   public void setId(int id) {
+    if (id < 0) {
+      throw new IllegalArgumentException("ID is negative");
+    }
     this.id = id;
   }
 
@@ -41,6 +44,9 @@ public class Record implements Comparable<Record> {
   }
 
   public void setDate(final LocalDate date) {
+    if (date == null) {
+      throw new IllegalArgumentException("Date is null");
+    }
     this.date = date;
   }
 
@@ -49,6 +55,9 @@ public class Record implements Comparable<Record> {
   }
 
   public void setTime(final LocalTime time) {
+    if (time == null) {
+      throw new IllegalArgumentException("Time is null");
+    }
     this.time = time;
   }
 
@@ -57,6 +66,9 @@ public class Record implements Comparable<Record> {
   }
 
   public void setType(final RecordType type) {
+    if (type == null) {
+      throw new IllegalArgumentException("Type is null");
+    }
     this.type = type;
   }
 
@@ -74,11 +86,11 @@ public class Record implements Comparable<Record> {
    */
   @Override
   public int compareTo(final Record other) {
-    int diff = date.compareTo(other.date);
-    if (diff == 0) {
+    int result = date.compareTo(other.date);
+    if (result == 0) {
       return time.compareTo(other.time);
     }
-    return diff;
+    return result;
   }
 
   @Override
@@ -87,7 +99,7 @@ public class Record implements Comparable<Record> {
       return false;
     }
     final Record record = (Record) other;
-    return date.equals(record.date) && time.equals(record.time);
+    return date.equals(record.date) && time.equals(record.time) && type.equals(record.type);
   }
 
 }

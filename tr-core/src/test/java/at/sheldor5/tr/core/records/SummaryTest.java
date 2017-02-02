@@ -3,9 +3,6 @@ package at.sheldor5.tr.core.records;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * Created by Michael Palata <a href="https://github.com/Sheldor5">@github.com/Sheldor5</a> on 22.01.2017.
- */
 public class SummaryTest {
 
   @Test

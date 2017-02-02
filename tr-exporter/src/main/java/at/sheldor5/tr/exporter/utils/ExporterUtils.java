@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDate;
 
 /**
  * Created by Michael Palata <a href="https://github.com/Sheldor5">@github.com/Sheldor5</a> on 13.01.2017.
@@ -34,9 +35,9 @@ public class ExporterUtils {
 
   public static void fillYear(final Year year) {
     for (int m = 1; m < 13; m++) {
-      Month month = new Month(m);
+      Month month = new Month(LocalDate.of(2017, m, 1));
       for (int d = 1; d < 32; d++) {
-        Day day = new Day(d);
+        Day day = new Day(LocalDate.of(2017, m, d));
         month.addItem(day);
       }
       year.addItem(month);

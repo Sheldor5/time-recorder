@@ -1,5 +1,7 @@
 package at.sheldor5.tr.api.objects;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -10,25 +12,32 @@ import java.util.List;
 public abstract class Container<T extends Comparable<? super T>> implements Comparable<Container> {
 
   protected final List<T> items = new ArrayList<T>();
-  protected final int value;
+  protected final LocalDate date;
   protected boolean sorted = false;
 
-  public Container(final int value) {
-    this.value = value;
+  public Container(final LocalDate date) {
+    if (date == null) {
+      throw new IllegalArgumentException("Date is null");
+    }
+    this.date = date;
   }
 
-  public final int getValue() {
-    return value;
+  public final LocalDate getDate() {
+    return date;
   }
 
-  public final void addItem(final T item) {
+  public void addItem(final T item) {
     synchronized (items) {
-      items.add(item);
-      sorted = false;
+      if (validateItem(item)) {
+        items.add(item);
+        sorted = false;
+      } else {
+        throw new IllegalArgumentException("Invalid item");
+      }
     }
   }
 
-  public final List<T> getItems() {
+  public List<T> getItems() {
     synchronized (items) {
       if (!sorted) {
         Collections.sort(items);
@@ -38,12 +47,14 @@ public abstract class Container<T extends Comparable<? super T>> implements Comp
     return new ArrayList<T>(items);
   }
 
+  protected abstract boolean validateItem(final T item);
+
   public abstract long getSummary();
 
   public abstract long getValuedSummary();
 
   @Override
-  public final int compareTo(Container other) {
-    return this.value - other.value;
+  public int compareTo(final Container other) {
+    return (int) this.date.until(other.date, ChronoUnit.DAYS);
   }
 }

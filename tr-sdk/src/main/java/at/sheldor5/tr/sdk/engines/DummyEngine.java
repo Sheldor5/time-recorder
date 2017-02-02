@@ -3,13 +3,11 @@ package at.sheldor5.tr.sdk.engines;
 import at.sheldor5.tr.api.RecordEngine;
 import at.sheldor5.tr.api.objects.Record;
 import at.sheldor5.tr.api.objects.Session;
-import at.sheldor5.tr.api.objects.SessionBuilder;
 import at.sheldor5.tr.api.objects.User;
 import at.sheldor5.tr.api.objects.Day;
 import at.sheldor5.tr.api.objects.Month;
 import at.sheldor5.tr.api.objects.Year;
 import at.sheldor5.tr.sdk.utils.StringUtils;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -103,8 +101,8 @@ public class DummyEngine implements RecordEngine {
       return null;
     }
 
-    final List<Session> sessions = SessionBuilder.buildSessions(records);
-    final Day result = new Day(day);
+    final List<Session> sessions = Session.buildSessions(records);
+    final Day result = new Day(LocalDate.of(year, month, day));
     for (final Session session : sessions) {
       result.addItem(session);
     }

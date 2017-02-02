@@ -46,12 +46,12 @@ public class PlainTextExporter implements ExporterPlugin {
   public InputStream export(final Year year) {
     final StringBuilder sb = new StringBuilder();
 
-    sb.append("Report for ").append(year.getValue()).append("\n\n");
+    sb.append("Report for ").append(year.getDate().getYear()).append("\n\n");
 
     long millis, sum = 0;
     for (final Month month : year.getItems()) {
       millis = month.getSummary();
-      sb.append(String.format("%-12s%s\n", getMonthString(month.getValue()), String.format("%25s", TimeUtils.getHumanReadableSummary(millis))));
+      sb.append(String.format("%-12s%s\n", getMonthString(month.getDate().getMonthValue()), String.format("%25s", TimeUtils.getHumanReadableSummary(millis))));
       sum += millis;
     }
     sb.append(String.format("%37s\n", "").replace(' ', '_'));
