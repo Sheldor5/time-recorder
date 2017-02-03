@@ -1,6 +1,5 @@
 package at.sheldor5.tr.api.objects;
 
-import at.sheldor5.tr.api.utils.TimeUtils;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -131,5 +130,11 @@ public class DayTest {
     sessions.add(session);
 
     Day.buildDay(sessions);
+  }
+
+  @Test
+  public void test_build_invalid_day_2() {
+    Assert.assertNull("No day should be built", Day.buildDay(null));
+    Assert.assertNull("No day should be built", Day.buildDay(new ArrayList<>()));
   }
 }

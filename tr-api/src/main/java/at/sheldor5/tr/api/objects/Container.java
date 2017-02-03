@@ -55,6 +55,6 @@ public abstract class Container<T extends Comparable<? super T>> implements Comp
 
   @Override
   public int compareTo(final Container other) {
-    return (int) this.date.until(other.date, ChronoUnit.DAYS);
+    return this.date.compareTo(other.date);
   }
 }

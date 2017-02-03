@@ -17,7 +17,7 @@ import java.time.LocalTime;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class PlainTextExporterTest extends ExporterUtils {
+public class PlainTextExporterTest {
 
   private static final File OUTPUT = new File("target/export.txt");
 

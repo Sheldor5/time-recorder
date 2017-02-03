@@ -1,5 +1,7 @@
 package at.sheldor5.tr.api.objects;
 
+import at.sheldor5.tr.api.utils.TimeUtils;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -8,18 +10,13 @@ import java.util.List;
 
 public class Session extends Container<Record> {
 
-  private LocalTime start;
-  private LocalTime end;
+  protected LocalTime start;
+  protected LocalTime end;
   protected double multiplier;
-  private long duration;
+  protected long duration;
 
   protected Session(final LocalDate date) {
     super(date);
-  }
-
-  @Override
-  protected boolean validateItem(final Record item) {
-    return true;
   }
 
   public Session(final Record start, final Record end) throws IllegalArgumentException {
@@ -100,13 +97,24 @@ public class Session extends Container<Record> {
   }
 
   @Override
+  protected boolean validateItem(final Record item) {
+    return true;
+  }
+
+  @Override
   public final List<Record> getItems() {
     return Arrays.asList(new Record(date, start, RecordType.CHECKIN), new Record(date, end, RecordType.CHECKOUT));
   }
 
   @Override
   public String toString() {
-    return date + ": " + start + " - " + end;
+    return String.format("%s: %s - %s = %s (%d%% = %s)",
+            date,
+            start,
+            end,
+            TimeUtils.getHumanReadableSummary(getSummary()),
+            (int) (multiplier * 100),
+            TimeUtils.getHumanReadableSummary(getValuedSummary()));
   }
 
   @Override

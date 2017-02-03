@@ -18,6 +18,10 @@ public class TimeUtils {
     return String.format(SUMMARY_FORMAT_STRING, h, m, s);
   }
 
+  public static long getSeconds(int hours, int minutes, int seconds) {
+    return seconds + minutes * 60L + hours * 3600L;
+  }
+
   public static long getMillis(final String string) {
     int h = string.indexOf(':');
     int m = string.indexOf(':', h + 1);

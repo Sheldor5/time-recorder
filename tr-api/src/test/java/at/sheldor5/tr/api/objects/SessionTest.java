@@ -1,6 +1,5 @@
 package at.sheldor5.tr.api.objects;
 
-import at.sheldor5.tr.api.utils.TimeUtils;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;

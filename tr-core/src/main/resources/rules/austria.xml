@@ -34,7 +34,7 @@
     </rule>
     <rule>
         <!-- working on sunday is worth 200% -->
-        <name>50% &#220;S</name>
+        <name>100% &#220;S</name>
         <key-date>1900-01-01</key-date>
         <description>Arbeiten am Sonntag wird mit 100% Zuschlag verg&#252;tet</description>
         <after>

@@ -1,32 +1,45 @@
 package at.sheldor5.tr.core.rules;
 
+import at.sheldor5.tr.api.objects.Day;
 import at.sheldor5.tr.api.objects.Session;
-
+import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
 
-/**
- * Created by Michael Palata <a href="https://github.com/Sheldor5">@github.com/Sheldor5</a> on 23.01.2017.
- */
 public abstract class TimeOperation {
 
   protected final LocalTime time;
   protected final double multiplier;
-  protected final List<String> days = new ArrayList<>();
+  protected final boolean days[] = new boolean[7];
 
-  public TimeOperation(final LocalTime time, double multiplier, final List<String> days) {
+  public TimeOperation(final LocalTime time, double multiplier, final Integer... days) {
     if (time == null) {
       throw new NullPointerException("Time is null");
     }
     this.time = time;
     this.multiplier = multiplier;
-    this.days.addAll(days);
+    for (int i = 0; i < 7 && i < days.length; i++) {
+      if (days[i] < 1 || days[i] > 7) {
+        throw new IllegalArgumentException("Invalid day of month: " + days[i]);
+      }
+      this.days[days[i]-1] = true;
+    }
   }
 
-  public boolean applies(final Session session) {
-    return session.contains(time);
+  public boolean applies(final Day day) {
+    return applies(day.getDate());
   }
+
+  public boolean applies(final LocalDate date) {
+    return days[date.getDayOfWeek().getValue() - 1];
+  }
+
+  public void update(final Session session) {
+    session.setMultiplier(multiplier);
+  }
+
+  public abstract boolean applies(final LocalTime time);
+
+  public abstract boolean applies(final Session session);
 
   public abstract Session split(final Session session);
 

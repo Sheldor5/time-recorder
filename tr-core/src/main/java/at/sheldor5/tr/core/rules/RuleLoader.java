@@ -1,14 +1,16 @@
 package at.sheldor5.tr.core.rules;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Date;
-import java.sql.Time;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -17,6 +19,7 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
@@ -25,14 +28,20 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-/**
- * Created by Michael Palata <a href="https://github.com/Sheldor5">@github.com/Sheldor5</a> on 21.01.2017.
- */
 public class RuleLoader {
 
   private static final Logger LOGGER = LogManager.getLogger(RuleLoader.class);
+  private static final Map<String, Integer> DAY_VALUE_MAP = new HashMap<>();
 
-  private static File XSD;
+  static {
+    DAY_VALUE_MAP.put("monday", 1);
+    DAY_VALUE_MAP.put("tuesday", 2);
+    DAY_VALUE_MAP.put("wednesday", 3);
+    DAY_VALUE_MAP.put("thursday", 4);
+    DAY_VALUE_MAP.put("friday", 5);
+    DAY_VALUE_MAP.put("saturday", 6);
+    DAY_VALUE_MAP.put("sunday", 7);
+  }
 
   private final File xsd;
 
@@ -49,6 +58,14 @@ public class RuleLoader {
     this.xsd = file;
   }
 
+  public RuleLoader(final File xsdFile) throws IOException {
+    if (!xsdFile.exists() || xsdFile.isDirectory()) {
+      LOGGER.error("XSD file does not exist or is no file");
+      throw new FileNotFoundException("XSD file does not exist or is no file");
+    }
+    this.xsd = xsdFile;
+  }
+
   public List<Rule> getRules(final String xmlPath) throws IOException {
     final List<Rule> list = new ArrayList<>();
 
@@ -56,8 +73,12 @@ public class RuleLoader {
       LOGGER.error("XML path is null or empty");
       throw new FileNotFoundException("XML path is null or empty");
     }
-    final File file = new File(xmlPath);
-    if (!file.exists()) {
+    return getRules(new File(xmlPath));
+  }
+
+  public List<Rule> getRules(final File xmlFile) throws IOException {
+    final List<Rule> list = new ArrayList<>();
+    if (!xmlFile.exists()) {
       LOGGER.error("XML file does not exist or is no file");
       throw new FileNotFoundException("XML file does not exist or is no file");
     }
@@ -65,22 +86,16 @@ public class RuleLoader {
     Element root;
 
     try {
-    final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+      final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
       final DocumentBuilder builder = factory.newDocumentBuilder();
-      final Document document = builder.parse(file);
+      final Document document = builder.parse(xmlFile);
       root = document.getDocumentElement();
     } catch (final ParserConfigurationException | SAXException pce) {
       LOGGER.error(pce.getMessage());
       return list;
     }
 
-    final NodeList rules = root.getChildNodes();
-    for (int r = 0; r < rules.getLength(); r++) {
-      final Rule rule = new Rule();
-      final Node node = rules.item(r);
-    }
-
-    return list;
+    return getRules(root);
   }
 
   private List<Rule> getRules(final Element root) {
@@ -93,34 +108,126 @@ public class RuleLoader {
     final NodeList rules = root.getChildNodes();
     for (int r = 0; r < rules.getLength(); r++) {
       final Node node = rules.item(r);
-      final Rule rule = new Rule();
 
       if (node.getNodeType() == Node.ELEMENT_NODE) {
         final Element element = (Element) node;
-        rule.name = element.getElementsByTagName("name").item(0).getTextContent();
-        rule.keyDate = LocalDate.parse(element.getElementsByTagName("key-date").item(0).getTextContent());
-        // before|after
-        //rule.time = Time.valueOf(element.getElementsByTagName("time").item(0).getTextContent());
-        /*
-        rule.multiplier = Double.valueOf();
-        rule.name = element.getElementsByTagName("name").item(0).getTextContent();
-        rule.name = element.getElementsByTagName("name").item(0).getTextContent();
-        */
+        list.add(getRule(element));
       }
     }
 
     return list;
   }
 
-  public static void setXSD(final File file) throws IOException {
-    if (file == null || !file.exists()) {
-      throw new FileNotFoundException();
+  private Rule getRule(final Element element) {
+    final Rule rule = new Rule();
+    final NodeList nodeList = element.getChildNodes();
+    for (int i = 0; i < nodeList.getLength(); i++) {
+      final Node node = nodeList.item(i);
+      if (node.getNodeType() == Node.ELEMENT_NODE) {
+        switch (node.getNodeName()) {
+          case "name":
+            rule.name = node.getTextContent();
+            break;
+          case "key-date":
+            rule.keyDate = LocalDate.parse(node.getTextContent());
+            break;
+          case "description":
+            rule.description = node.getTextContent();
+            break;
+          case "before":
+            rule.timeOperations.add(getTimeOperation((Element) node));
+            break;
+          case "after":
+            rule.timeOperations.add(getTimeOperation((Element) node));
+            break;
+          default:
+            System.out.println("uncovered: " + node.getNodeName());
+            break;
+        }
+      }
     }
-    XSD = file;
+
+    return rule;
   }
 
-  public static List<Rule> getRules() {
+  private TimeOperation getTimeOperation(final Element element) {
+    String type = element.getTagName();
+    LocalTime time = LocalTime.MIN.plusNanos(1);
+    double multiplier = 1.0D;
+    Integer days[] = new Integer[0];
+
+    final NodeList nodeList = element.getChildNodes();
+    for (int i = 0; i < nodeList.getLength(); i++) {
+      final Node node = nodeList.item(i);
+      if (node.getNodeType() == Node.ELEMENT_NODE) {
+        switch (node.getNodeName()) {
+          case "time":
+            time = LocalTime.parse(node.getTextContent());
+            break;
+          case "multiplier":
+            multiplier = Double.parseDouble(node.getTextContent());
+            break;
+          case "days":
+            days = getDays((Element) node);
+            break;
+          default:
+            System.out.println("uncovered: " + node.getNodeName());
+            break;
+        }
+      }
+    }
+    switch (type) {
+      case "before":
+        return new Before(time, multiplier, days);
+      case "after":
+        return new After(time, multiplier, days);
+      default:
+        // TODO
+        break;
+    }
     return null;
+  }
+
+  private Integer[] getDays(final Element element) {
+    final List<Integer> days = new ArrayList<>();
+    final NodeList nodeList = element.getChildNodes();
+    int from = 0;
+    int to = 0;
+    for (int i = 0; i < nodeList.getLength(); i++) {
+      final Node node = nodeList.item(i);
+      if (node.getNodeType() == Node.ELEMENT_NODE) {
+        final String name = node.getNodeName();
+        if ("day".equals(name)) {
+          days.add(DAY_VALUE_MAP.get(node.getTextContent()));
+        } else if ("from".equals(name)) {
+          from = DAY_VALUE_MAP.get(node.getTextContent());
+        } else if ("to".equals(name)) {
+          to = DAY_VALUE_MAP.get(node.getTextContent());
+        } else {
+          System.out.println("uncovered: " + name);
+        }
+      }
+    }
+    if (from > 0) {
+      for (int i = from; i <= to; i++) {
+        days.add(i);
+      }
+    }
+    return days.toArray(new Integer[days.size()]);
+  }
+
+  public boolean validateXML(final File xml) {
+    try (final FileInputStream xmlfis = new FileInputStream(xml);
+         final FileInputStream xsdfis = new FileInputStream(xsd)) {
+      final SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+      final Schema schema = factory.newSchema(new StreamSource(xsdfis));
+      Validator validator = schema.newValidator();
+      validator.validate(new StreamSource(xmlfis));
+      return true;
+    } catch (final Exception generalException) {
+      LOGGER.warn(generalException.getMessage());
+      return false;
+    }
   }
 
   static boolean validateAgainstXSD(final InputStream xml, final InputStream xsd) {
@@ -132,7 +239,7 @@ public class RuleLoader {
       xml.close();
       xsd.close();
       return true;
-    } catch(final Exception generalException) {
+    } catch (final Exception generalException) {
       LOGGER.warn(generalException.getMessage());
       return false;
     }

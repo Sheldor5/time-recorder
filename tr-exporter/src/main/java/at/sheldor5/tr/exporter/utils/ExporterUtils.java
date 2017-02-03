@@ -5,15 +5,11 @@ import at.sheldor5.tr.api.objects.Month;
 import at.sheldor5.tr.api.objects.Year;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
 
-/**
- * Created by Michael Palata <a href="https://github.com/Sheldor5">@github.com/Sheldor5</a> on 13.01.2017.
- */
 public class ExporterUtils {
 
   private static final int BUF_LEN = 4096;
