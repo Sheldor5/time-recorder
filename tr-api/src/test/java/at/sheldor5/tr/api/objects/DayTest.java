@@ -15,8 +15,8 @@ public class DayTest {
   public void test_day_empty() {
     final Day day = new Day(date);
 
-    Assert.assertEquals("Summary should be 0 seconds", 0L, day.getSummary());
-    Assert.assertEquals("Valued summary should be 0 seconds", 0L, day.getValuedSummary());
+    Assert.assertEquals(0L, day.getSummary());
+    Assert.assertEquals(0L, day.getValuedSummary());
   }
 
   @Test
@@ -30,14 +30,14 @@ public class DayTest {
     session = new Session(date, start, end);
     day = new Day(date);
     day.addItem(session);
-    Assert.assertEquals("Summary should be 14400 seconds (4 hours)", 14400L, day.getSummary());
-    Assert.assertEquals("Valued summary should be 14400 seconds (4 hours)", 14400L, day.getValuedSummary());
+    Assert.assertEquals(14400L, day.getSummary());
+    Assert.assertEquals(14400L, day.getValuedSummary());
 
     session = new Session(date, start, end, 1.5D);
     day = new Day(date);
     day.addItem(session);
-    Assert.assertEquals("Summary should be 14400 seconds (4 hours)", 14400L, day.getSummary());
-    Assert.assertEquals("Valued summary should be 21600 seconds (6 hours)", 21600L, day.getValuedSummary());
+    Assert.assertEquals(14400L, day.getSummary());
+    Assert.assertEquals(21600L, day.getValuedSummary());
   }
 
   @Test
@@ -57,8 +57,8 @@ public class DayTest {
     day.addItem(session2);
     day.addItem(session3);
 
-    Assert.assertEquals("Summary should be 57600 seconds (16 hours)", 57600L, day.getSummary());
-    Assert.assertEquals("Valued summary should be 90000 seconds (25 hours)", 90000L, day.getValuedSummary());
+    Assert.assertEquals("57600 seconds (16 hours)", 57600L, day.getSummary());
+    Assert.assertEquals("90000 seconds (25 hours)", 90000L, day.getValuedSummary());
   }
 
   @Test
@@ -79,9 +79,10 @@ public class DayTest {
     day.addItem(session1);
     final List<Session> sessions = day.getItems();
 
-    Assert.assertEquals("Sessions should be sorted", session1, sessions.get(0));
-    Assert.assertEquals("Sessions should be sorted", session2, sessions.get(1));
-    Assert.assertEquals("Sessions should be sorted", session3, sessions.get(2));
+    // test if sorted
+    Assert.assertEquals(session1, sessions.get(0));
+    Assert.assertEquals(session2, sessions.get(1));
+    Assert.assertEquals(session3, sessions.get(2));
   }
 
   @Test
@@ -95,7 +96,7 @@ public class DayTest {
 
     final Day day = Day.buildDay(sessions);
 
-    Assert.assertEquals("Summary should be 28800 seconds (8 hours)", 28800L, day.getSummary());
+    Assert.assertEquals("28800 seconds (8 hours)", 28800L, day.getSummary());
   }
 
   @Test
@@ -109,7 +110,7 @@ public class DayTest {
     final List<Session> sessions = Session.buildSessions(list);
 
     final Day day = Day.buildDay(sessions);
-    Assert.assertEquals("Summary should be 55799 seconds", 55799, day.getSummary());
+    Assert.assertEquals("55799 seconds", 55799, day.getSummary());
   }
 
   @Test(expected = IllegalStateException.class)
@@ -134,7 +135,7 @@ public class DayTest {
 
   @Test
   public void test_build_invalid_day_2() {
-    Assert.assertNull("No day should be built", Day.buildDay(null));
-    Assert.assertNull("No day should be built", Day.buildDay(new ArrayList<>()));
+    Assert.assertNull(Day.buildDay(null));
+    Assert.assertNull(Day.buildDay(new ArrayList<>()));
   }
 }

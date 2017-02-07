@@ -3,12 +3,18 @@ package at.sheldor5.tr.api.objects;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.UUID;
+
 public class UserTest {
+
+  private static final String USERNAME = "testuser";
+  private static final String FORENAME = "Test";
+  private static final String SURNAME = "User";
 
   @Test(expected = IllegalArgumentException.class)
   public void test_invalid_id() {
     final User user = new User();
-    user.setId(-1);
+    user.setUUID(null);
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -37,49 +43,68 @@ public class UserTest {
 
   @Test
   public void test_initialization() {
-    final User user = new User(1, "testuser", "Sheldor", "5");
+    final UUID uuid = UUID.randomUUID();
+    final User user = new User(uuid, USERNAME, FORENAME, SURNAME);
 
-    Assert.assertEquals("User initialization failed", 1, user.getId());
-    Assert.assertEquals("User initialization failed", "testuser", user.getUsername());
-    Assert.assertEquals("User initialization failed", "Sheldor", user.getForename());
-    Assert.assertEquals("User initialization failed", "5", user.getSurname());
+    Assert.assertEquals(uuid, user.getUUID());
+    Assert.assertEquals(USERNAME, user.getUsername());
+    Assert.assertEquals(FORENAME, user.getForename());
+    Assert.assertEquals(SURNAME, user.getSurname());
   }
 
   @Test
   public void test_getter_setter() {
+    final UUID uuid = UUID.randomUUID();
     final User user = new User();
-    user.setId(1);
-    user.setUsername("testuser");
-    user.setForename("Sheldor");
-    user.setSurname("5");
+    user.setUUID(uuid);
+    user.setUsername(USERNAME);
+    user.setForename(FORENAME);
+    user.setSurname(SURNAME);
 
-    Assert.assertEquals("User getter/setter failed", 1, user.getId());
-    Assert.assertEquals("User getter/setter failed", "testuser", user.getUsername());
-    Assert.assertEquals("User getter/setter failed", "Sheldor", user.getForename());
-    Assert.assertEquals("User getter/setter failed", "5", user.getSurname());
+    Assert.assertEquals(uuid, user.getUUID());
+    Assert.assertEquals(USERNAME, user.getUsername());
+    Assert.assertEquals(FORENAME, user.getForename());
+    Assert.assertEquals(SURNAME, user.getSurname());
   }
 
   @Test
   public void test_equality() {
-    final User user = new User(1, "testuser", "Sheldor", "5");
-    final User ok = new User(1, "testuser", "Sheldor", "5");
+    final UUID uuid = UUID.randomUUID();
+    final User user = new User(uuid, USERNAME, FORENAME, SURNAME);
+    final User ok = new User(uuid, USERNAME, FORENAME, SURNAME);
 
-    Assert.assertEquals("Users should be equal", user, ok);
+    Assert.assertEquals(user, ok);
   }
 
   @Test
   public void test_inequality() {
-    final User user = new User(1, "testuser", "Sheldor", "5");
-    final User diff1 = new User(2, "testuser", "Sheldor", "5");
-    final User diff2 = new User(1, "testuser1", "Sheldor", "5");
-    final User diff3 = new User(1, "testuser", "Sheldor1", "5");
-    final User diff4 = new User(1, "testuser", "Sheldor", "6");
+    final UUID uuid1 = UUID.randomUUID();
+    final UUID uuid2 = UUID.randomUUID();
+    final User user = new User(uuid1, USERNAME, FORENAME, SURNAME);
+    final User diff1 = new User(uuid2, USERNAME, FORENAME, SURNAME);
+    final User diff2 = new User(uuid1, "testuser1", FORENAME, SURNAME);
+    final User diff3 = new User(uuid1, USERNAME, "Sheldor1", SURNAME);
+    final User diff4 = new User(uuid1, USERNAME, FORENAME, "6");
 
-    Assert.assertNotEquals("Users should not be equal", user, diff1);
-    Assert.assertNotEquals("Users should not be equal", user, diff2);
-    Assert.assertNotEquals("Users should not be equal", user, diff3);
-    Assert.assertNotEquals("Users should not be equal", user, diff4);
-    Assert.assertNotEquals("Users should not be equal", user, null);
-    Assert.assertNotEquals("Users should not be equal", user, new Object());
+    Assert.assertNotEquals(user, diff1);
+    Assert.assertNotEquals(user, diff2);
+    Assert.assertNotEquals(user, diff3);
+    Assert.assertNotEquals(user, diff4);
+    Assert.assertNotEquals(user, null);
+    Assert.assertNotEquals(user, new Object());
+  }
+
+  @Test
+  public void test_uuid_bytes() {
+    String uuid_s = "2d5f12e9-e916-4b6f-8340-a4bd2ba84dbc";
+    long mostSigBits = 3269352650341501807L;
+    long leastSigBits = -8989003723843285572L;
+    final UUID uuid = new UUID(mostSigBits, leastSigBits);
+    final User expected = new User(uuid, USERNAME, FORENAME, SURNAME);
+
+    final User actual = new User(USERNAME, FORENAME, SURNAME);
+    actual.setUUIDBytes(expected.getUUIDBytes());
+
+    Assert.assertEquals(expected, actual);
   }
 }

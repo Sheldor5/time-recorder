@@ -1,16 +1,14 @@
-package at.sheldor5.tr.core.utils;
+package at.sheldor5.tr.api.utils;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-/**
- * Created by Michael Palata on 18.01.2017.
- */
 public class GlobalProperties {
 
   /**
@@ -26,21 +24,31 @@ public class GlobalProperties {
   /**
    * Default Constructor to ensure Singleton.
    */
-  private GlobalProperties() {
+  protected GlobalProperties() {
     // defeat instantiation
   }
 
   /**
-   * Load a ".properties" file.
+   * Load properties from file.
+   *
    * @param file The file to load.
    */
   public static void load(final File file) throws IOException {
+    InputStream is;
     if (!file.exists()) {
-      throw new FileNotFoundException("File not found: " + file.getName());
+      is = GlobalProperties.class.getResourceAsStream( "/" + file.getName());
+    } else {
+      is = new FileInputStream(file);
     }
-    final FileInputStream inputStream = new FileInputStream(file);
-    properties.load(inputStream);
-    inputStream.close();
+    if (is == null) {
+      final String executionPath = new File("").getAbsolutePath();
+      final String errorMsg = "File \"" + file.getName() + "\" does not exist in: "+ executionPath;
+      LOGGER.error(errorMsg);
+      throw new IOException(errorMsg);
+    }
+    properties.load(is);
+    is.close();
+    LOGGER.debug("Loaded file: " + file.getName());
   }
 
   /**

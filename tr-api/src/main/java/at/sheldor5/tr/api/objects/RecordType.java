@@ -4,39 +4,53 @@ public enum RecordType {
   CHECKIN(1, true, "CHECKIN"),
   CHECKOUT(0, false, "CHECKOUT");
 
-  private final int i;
-  private final boolean b;
-  private final String s;
+  private final int intValue;
+  private final boolean boolValue;
+  private final String stringValue;
 
-  RecordType(int i, boolean b, final String s) {
-    this.i = i;
-    this.b = b;
-    this.s = s;
+  RecordType(int intValue, boolean boolValue, final String stringValue) {
+    this.intValue = intValue;
+    this.boolValue = boolValue;
+    this.stringValue = stringValue;
   }
 
   public boolean getBoolean() {
-    return b;
+    return boolValue;
   }
 
   public int getInteger() {
-    return i;
+    return intValue;
   }
 
   @Override
   public String toString() {
-    return s;
+    return stringValue;
   }
 
-  public static RecordType getType(boolean b) {
-    return b ? CHECKIN : CHECKOUT;
+  /**
+   * Record type factory for boolean values.
+   *
+   * @param boolValue The boolean value of the type.
+   * @return The type for this boolean value.
+   */
+  public static RecordType getType(boolean boolValue) {
+    return boolValue ? CHECKIN : CHECKOUT;
   }
 
-  public static RecordType getType(int i) {
-    if (i == 1) {
+
+  /**
+   * Record type factory for int values.
+   *
+   * @param intValue The int value of the type.
+   * @return The type for this int value.
+   */
+  public static RecordType getType(int intValue) {
+    if (intValue == 1) {
       return CHECKIN;
-    } else if (i == 0) {
+    } else if (intValue == 0) {
       return CHECKOUT;
     }
     return null;
   }
+
 }

@@ -1,5 +1,6 @@
 package at.sheldor5.tr.sdk.engines;
 
+import at.sheldor5.tr.api.AuthenticationPlugin;
 import at.sheldor5.tr.api.RecordEngine;
 import at.sheldor5.tr.api.objects.GlobalConfiguration;
 import at.sheldor5.tr.api.objects.Record;
@@ -7,13 +8,13 @@ import at.sheldor5.tr.api.objects.User;
 import at.sheldor5.tr.api.objects.Day;
 import at.sheldor5.tr.api.objects.RecordType;
 import at.sheldor5.tr.api.utils.TimeUtils;
+import at.sheldor5.tr.sdk.auth.DummyAuthentication;
 import helper.TestUtils;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.chrono.IsoChronology;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.UUID;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -27,68 +28,42 @@ public class DummyEngineTest {
   private static final LocalTime NOW = LocalTime.now();
 
   private final RecordEngine engine = new DummyEngine();
-
-  @Test
-  public void test_add_user() {
-    final User user = new User(0, USER_NAME_PREFIX + TestUtils.getRandomLong(), USER_FORE, USER_SUR);
-
-    engine.addUser(user, USER_PASS);
-    Assert.assertTrue("User ID should be greater than 0", user.getId() > 0);
-  }
-
-  @Test
-  public void test_user_uniqueness() throws SQLException {
-    final User user = new User(0, USER_NAME_PREFIX + TestUtils.getRandomLong(), USER_FORE, USER_SUR);
-
-    engine.addUser(user, USER_PASS);
-    Assert.assertTrue("User ID should be greater than 0", user.getId() > 0);
-
-    int expected = user.getId();
-    engine.addUser(user, USER_PASS);
-    Assert.assertEquals("User ID must not change", expected, user.getId());
-  }
-
-  @Test
-  public void test_get_user() {
-    final User expected = new User(0, USER_NAME_PREFIX + TestUtils.getRandomLong(), USER_FORE, USER_SUR);
-    engine.addUser(expected, USER_PASS);
-    Assert.assertTrue("User ID should be greater than 0", expected.getId() > 0);
-
-    final User actual = engine.getUser(expected.getUsername(), USER_PASS);
-    Assert.assertEquals("Java <User> Object and Engine [User] Object should be equal", expected, actual);
-  }
+  private final AuthenticationPlugin auth = new DummyAuthentication();
 
   @Test
   public void test_add_record() throws SQLException {
-    final User user = new User(0, USER_NAME_PREFIX + TestUtils.getRandomLong(), USER_FORE, USER_SUR);
-    engine.addUser(user, USER_PASS);
-    Assert.assertTrue("User ID should be greater than 0", user.getId() > 0);
+    final UUID uuid = UUID.randomUUID();
+    final User user = new User(uuid, USER_NAME_PREFIX + TestUtils.getRandomLong(), USER_FORE, USER_SUR);
+    auth.addUser(user, USER_PASS);
+    Assert.assertNotNull(user.getUUID());
 
     final Record record = new Record(0, TODAY, NOW, RecordType.CHECKIN);
     engine.addRecord(user, record);
-    Assert.assertTrue("Record ID should be greater than 0", record.getId() > 0);
+    Assert.assertTrue(record.getId() > 0);
   }
 
   @Test
   public void test_get_record() throws SQLException {
-    final User user = new User(0, USER_NAME_PREFIX + TestUtils.getRandomLong(), USER_FORE, USER_SUR);
-    engine.addUser(user, USER_PASS);
-    Assert.assertTrue("User ID should be greater than 0", user.getId() > 0);
+    final UUID uuid = UUID.randomUUID();
+    final User user = new User(uuid, USER_NAME_PREFIX + TestUtils.getRandomLong(), USER_FORE, USER_SUR);
+    auth.addUser(user, USER_PASS);
+    Assert.assertNotNull(user.getUUID());
     final Record expected = new Record(0, TODAY, NOW, RecordType.CHECKIN);
     expected.setTime(expected.getTime().truncatedTo(GlobalConfiguration.MEASURE_UNIT));
     engine.addRecord(user, expected);
-    Assert.assertTrue("Record ID should be greater than 0", expected.getId() > 0);
+    Assert.assertTrue(expected.getId() > 0);
 
     final Record actual = engine.getRecord(user, expected.getId());
-    Assert.assertTrue("Record ID should be greater than 0", actual.getId() > 0);
-    Assert.assertEquals("Java <Record> Object and Database [Record] Object should be equal", expected, actual);
+    Assert.assertTrue(actual.getId() > 0);
+    Assert.assertEquals(expected, actual);
   }
 
   @Test
   public void test_get_records_of_day() throws SQLException {
-    final User user = new User(0, USER_NAME_PREFIX + TestUtils.getRandomLong(), USER_FORE, USER_SUR);
-    engine.addUser(user, USER_PASS);
-    Assert.assertTrue("User ID should be greater than 0", user.getId() > 0);
+    final UUID uuid = UUID.randomUUID();
+    final User user = new User(uuid, USER_NAME_PREFIX + TestUtils.getRandomLong(), USER_FORE, USER_SUR);
+    auth.addUser(user, USER_PASS);
+    Assert.assertNotNull(user.getUUID());
 
     int yyyy = 2017;
 
@@ -110,17 +85,18 @@ public class DummyEngineTest {
       int lastDayOfMonth = TimeUtils.getLastDayOfMonth(yyyy, mm);
       for (int dd = 1; dd <= lastDayOfMonth; dd++) {
         final List<Record> records = engine.getDayRecords(user, yyyy, mm , dd);
-        Assert.assertNotNull("Engine should return list", records);
-        Assert.assertEquals("Day should have 4 records", 4, records.size());
+        Assert.assertNotNull(records);
+        Assert.assertEquals(4, records.size());
       }
     }
   }
 
   @Test
   public void test_get_day_object() throws SQLException {
-    final User user = new User(0, USER_NAME_PREFIX + TestUtils.getRandomLong(), USER_FORE, USER_SUR);
-    engine.addUser(user, USER_PASS);
-    Assert.assertTrue("User ID should be greater than 0", user.getId() > 0);
+    final UUID uuid = UUID.randomUUID();
+    final User user = new User(uuid, USER_NAME_PREFIX + TestUtils.getRandomLong(), USER_FORE, USER_SUR);
+    auth.addUser(user, USER_PASS);
+    Assert.assertNotNull(user.getUUID());
 
     int yyyy = 2017;
     int mm = 1;
@@ -137,9 +113,9 @@ public class DummyEngineTest {
 
     final Day day = engine.getDay(user, yyyy, mm, dd);
 
-    Assert.assertNotNull("Engine should return day", day);
-    Assert.assertEquals("Day should have 2 sessions", 2, day.getItems().size());
-    Assert.assertEquals("Day should count 28800 seconds (8 hours) of work", 8 * 3600L, day.getSummary() );
+    Assert.assertNotNull(day);
+    Assert.assertEquals(2, day.getItems().size());
+    Assert.assertEquals(8 * 3600L, day.getSummary() );
 
   }
 }

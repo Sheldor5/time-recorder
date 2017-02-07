@@ -70,8 +70,8 @@ public class ContainerTest {
     container.addItem(new TestItem(2, 1.5));
     container.addItem(new TestItem(3, 2.0));
 
-    Assert.assertEquals("Summary should be 6", 6, container.getSummary());
-    Assert.assertEquals("Valued summary should be 10", 10, container.getValuedSummary());
+    Assert.assertEquals(6, container.getSummary());
+    Assert.assertEquals(10, container.getValuedSummary());
   }
 
   @Test
@@ -83,7 +83,7 @@ public class ContainerTest {
 
     final List<TestItem> items = container.getItems();
 
-    Assert.assertEquals("Container should contain 3 items", 3, items.size());
+    Assert.assertEquals(3, items.size());
   }
 
   @Test
@@ -91,8 +91,8 @@ public class ContainerTest {
     final Container<TestItem> a = new TestContainer(date);
     final Container<TestItem> b = new TestContainer(date.plusDays(1));
 
-    Assert.assertEquals("Containers failed to compare properly", -1, a.compareTo(b));
-    Assert.assertEquals("Containers failed to compare properly", 1, b.compareTo(a));
+    Assert.assertEquals(-1, a.compareTo(b));
+    Assert.assertEquals(1, b.compareTo(a));
   }
 
   @Test(expected = IllegalArgumentException.class)

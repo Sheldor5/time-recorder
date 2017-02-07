@@ -1,14 +1,11 @@
 package at.sheldor5.tr.core.utils;
 
+import at.sheldor5.tr.api.utils.GlobalProperties;
+import java.io.File;
+import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.IOException;
-
-/**
- * Created by Michael Palata <a href="https://github.com/Sheldor5">@github.com/Sheldor5</a> on 20.01.2017.
- */
 public class RuntimeUtilsTest {
 
   @Before

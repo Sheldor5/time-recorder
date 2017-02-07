@@ -42,6 +42,12 @@ public class Day extends Container<Session> {
     return sum;
   }
 
+  /**
+   * Build day from {@link Session}s.
+   *
+   * @param sessions List of sessions of this day.
+   * @return The day with the sessions.
+   */
   public static Day buildDay(final List<Session> sessions) {
     if (sessions == null || sessions.size() == 0) {
       return null;
@@ -58,4 +64,5 @@ public class Day extends Container<Session> {
     }
     return day;
   }
+
 }

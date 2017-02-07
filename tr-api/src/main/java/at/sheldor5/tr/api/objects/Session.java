@@ -23,11 +23,13 @@ public class Session extends Container<Record> {
     this(start.getDate(), start, end, 1.0D);
   }
 
-  public Session(final LocalDate date, final Record start, final Record end) throws IllegalArgumentException {
+  public Session(final LocalDate date, final Record start, final Record end)
+          throws IllegalArgumentException {
     this(date, start, end, 1.0D);
   }
 
-  public Session(final LocalDate date, final Record start, final Record end, double multiplier) throws IllegalArgumentException {
+  public Session(final LocalDate date, final Record start, final Record end, double multiplier)
+          throws IllegalArgumentException {
     super(date);
     if (start == null || end == null) {
       throw new NullPointerException("Session has no start or end: null");

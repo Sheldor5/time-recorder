@@ -7,50 +7,36 @@ import at.sheldor5.tr.api.objects.User;
 import at.sheldor5.tr.api.objects.Day;
 import at.sheldor5.tr.api.objects.Month;
 import at.sheldor5.tr.api.objects.Year;
-import at.sheldor5.tr.sdk.utils.StringUtils;
+import at.sheldor5.tr.api.utils.StringUtils;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class DummyEngine implements RecordEngine {
 
-  private final Map<String, User> users = new HashMap<>();
   private final Map<User, List<Record>> records = new HashMap<>();
 
   @Override
-  public void addUser(final User user, final String plainTextPassword) {
-    final String hash = StringUtils.getMD5(user.getUsername() + plainTextPassword);
-    if (!users.containsKey(hash)) {
-      users.put(hash, user);
-      user.setId(users.size());
-      records.put(user, new ArrayList<>());
+  public void addRecord(final User user, final Record record) {
+    List<Record> list = records.get(user);
+    if (list == null) {
+      list = new ArrayList<>();
+      records.put(user, list);
+    }
+    list.add(record);
+    if (list.size() == 0) {
+      record.setId(1);
+    } else {
+      record.setId(list.get(list.size() - 1).getId() + 1);
     }
   }
 
   @Override
-  public User getUser(String username, String plainTextPassword) {
-    final String hash = StringUtils.getMD5(username + plainTextPassword);
-    return users.get(hash);
-  }
-
-  @Override
-  public void addRecord(User user, Record record) {
-    final List<Record> list = records.get(user);
-    if (list != null) {
-      list.add(record);
-      if (list.size() == 0) {
-        record.setId(1);
-      } else {
-        record.setId(list.get(list.size() - 1).getId() + 1);
-      }
-    }
-  }
-
-  @Override
-  public void updateRecord(User user, int oldId, Record newValues) {
+  public void updateRecord(final User user, int oldId, final Record newValues) {
     final List<Record> list = records.get(user);
     if (list != null) {
       for (final Record record : list) {
@@ -154,7 +140,6 @@ public class DummyEngine implements RecordEngine {
       entry.getValue().clear();
     }
     records.clear();
-    users.clear();
   }
 
   public void generateTestData() {
@@ -164,7 +149,7 @@ public class DummyEngine implements RecordEngine {
       final User user = new User();
       user.setUsername(username);
       final String hash = StringUtils.getMD5(username + username);
-      users.put(hash, user);
+      // TODO
     }
   }
 }

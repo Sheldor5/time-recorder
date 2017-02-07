@@ -30,17 +30,16 @@ public class TimeUtils {
     int minutes;
     int seconds;
 
-    long millis =  0;
       try {
         hours = Integer.valueOf(string.substring(0, h));
         minutes = Integer.valueOf(string.substring(h + 1, m));
         seconds = Integer.valueOf(string.substring(m + 1));
-    } catch (final NumberFormatException nfe) {
-      nfe.printStackTrace();
+    } catch (final Exception e) {
+      e.printStackTrace();
       return -1;
     }
 
-    millis += seconds * SECOND_IN_MILLIS;
+    long millis = seconds * SECOND_IN_MILLIS;
     millis +=  minutes * MINUTE_IN_MILLIS;
     millis +=  hours * HOUR_IN_MILLIS;
 

@@ -1,4 +1,4 @@
-package at.sheldor5.tr.core.objects;
+package at.sheldor5.tr.core.persistence;
 
 import at.sheldor5.tr.api.RecordEngine;
 import at.sheldor5.tr.api.objects.Day;
@@ -7,9 +7,6 @@ import at.sheldor5.tr.api.objects.Record;
 import at.sheldor5.tr.api.objects.RecordType;
 import at.sheldor5.tr.api.objects.User;
 import at.sheldor5.tr.api.objects.Year;
-import at.sheldor5.tr.sdk.utils.StringUtils;
-import at.sheldor5.tr.api.utils.TimeUtils;
-import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -18,7 +15,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Time;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.DateTimeException;
 import java.time.LocalDate;
@@ -27,22 +23,16 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-/**
- * Created by Michael Palata <a href="https://github.com/Sheldor5">@github.com/Sheldor5</a> on 13.01.2017.
- */
 class DatabaseEngine implements RecordEngine {
 
   private static final Logger LOGGER = LogManager.getLogger(DatabaseEngine.class);
 
-  private static final String INSERT_USER = "INSERT INTO [users] ([username], [password], [forename], [surname]) VALUES (?, ?, ?, ?)";
-  private static final String SELECT_USER = "SELECT [pk_user_id], [username], [forename], [surname] FROM [users] WHERE [username] = ? AND [password] = ?";
+  private static final String INSERT_RECORD = "INSERT INTO [records] ([user_id], [date], [time], [type]) VALUES (?, ?, ?, ?)";
+  private static final String SELECT_RECORD = "SELECT * FROM [records] WHERE [pk_record_id] = ? AND [user_id] = ?";
 
-  private static final String INSERT_RECORD = "INSERT INTO [records] ([fk_user_id], [date], [time], [type]) VALUES (?, ?, ?, ?)";
-  private static final String SELECT_RECORD = "SELECT * FROM [records] WHERE [pk_record_id] = ? AND [fk_user_id] = ?";
-
-  private static final String SELECT_RECORDS_OF_DAY = "SELECT * FROM [records] WHERE [fk_user_id] = ? AND [date] = ?";
-  private static final String SELECT_RECORDS_OF_MONTH = "SELECT * FROM [records] WHERE [fk_user_id] = ? AND [date] >= ? AND [date] <= ?";
-  private static final String SELECT_RECORDS_OF_YEAR = "SELECT * FROM [records] WHERE [fk_user_id] = ? AND [date] >= ? AND [date] <= ?";
+  private static final String SELECT_RECORDS_OF_DAY = "SELECT * FROM [records] WHERE [user_id] = ? AND [date] = ?";
+  private static final String SELECT_RECORDS_OF_MONTH = "SELECT * FROM [records] WHERE [user_id] = ? AND [date] >= ? AND [date] <= ?";
+  private static final String SELECT_RECORDS_OF_YEAR = "SELECT * FROM [records] WHERE [user_id] = ? AND [date] >= ? AND [date] <= ?";
 
   private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -50,109 +40,6 @@ class DatabaseEngine implements RecordEngine {
 
   public DatabaseEngine(final Connection connection) {
     this.connection = connection;
-  }
-
-  /**
-   *
-   * @param user
-   * @param plainTextPassword
-   * @return Primary key (a.k.a. User ID, column [pk_user_id]) of the inserted user.
-   * @throws SQLException
-   * @throws NoSuchAlgorithmException
-   */
-  @Override
-  public void addUser(final User user, final String plainTextPassword) {
-    final PreparedStatement statement;
-    try {
-      statement = connection.prepareStatement(
-              INSERT_USER,
-              Statement.RETURN_GENERATED_KEYS);
-
-      statement.setString(1, user.getUsername());
-      statement.setString(2, StringUtils.getMD5(plainTextPassword));
-      statement.setString(3, user.getForename());
-      statement.setString(4, user.getSurname());
-
-      if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Adding user \"{}\" ({} {}) with password \"{}\"",
-                user.getUsername(),
-                user.getForename(),
-                user.getSurname(),
-                plainTextPassword);
-      }
-
-      if (statement.executeUpdate() == 0) {
-        connection.rollback();
-        throw new SQLException("Could not create user, insertion failed");
-      }
-
-      int userId;
-      try (final ResultSet generatedKeys = statement.getGeneratedKeys()) {
-        if (generatedKeys.next()) {
-          userId = generatedKeys.getInt(1);
-          LOGGER.debug("Successfully created user with ID {}", userId);
-        }
-        else {
-          connection.rollback();
-          throw new SQLException("Creating user failed, no ID obtained");
-        }
-      }
-
-      connection.commit();
-      user.setId(userId);
-    } catch (final SQLException sqle) {
-      LOGGER.error(sqle.getMessage());
-    }
-  }
-
-  @Override
-  public User getUser(final String username, final String plainTextPassword) {
-    final PreparedStatement statement;
-    try {
-      statement = connection.prepareStatement(
-              SELECT_USER,
-              Statement.RETURN_GENERATED_KEYS);
-
-      statement.setString(1, username);
-      statement.setString(2, StringUtils.getMD5(plainTextPassword));
-
-      if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Searching for user \"{}\" with password \"{}\"", username, plainTextPassword);
-      }
-
-      final ResultSet result = statement.executeQuery();
-
-      final User user = new User();
-
-      if (result.next()) {
-        user.setId(result.getInt("pk_user_id"));
-        user.setUsername(result.getString("username"));
-        user.setForename(result.getString("forename"));
-        user.setSurname(result.getString("surname"));
-        if (LOGGER.isDebugEnabled()) {
-          LOGGER.debug("Found user {} ({} {}) with ID {}",
-                  user.getUsername(),
-                  user.getForename(),
-                  user.getSurname(),
-                  user.getId());
-        }
-      } else {
-        if (LOGGER.isDebugEnabled()) {
-          LOGGER.debug("User \"{}\" with password \"{}\" was not found", username, plainTextPassword);
-        }
-        return null;
-      }
-
-      if (result.next()) {
-        // user not unique
-        throw new SQLException("Multiple users found!");
-      }
-
-      return user;
-    } catch (final SQLException sqle) {
-      LOGGER.error(sqle.getMessage());
-    }
-    return null;
   }
 
   @Override
@@ -163,7 +50,7 @@ class DatabaseEngine implements RecordEngine {
               INSERT_RECORD,
               Statement.RETURN_GENERATED_KEYS);
 
-      statement.setInt(1, user.getId());
+      statement.setBytes(1, user.getUUIDBytes());
       statement.setDate(2, Date.valueOf(record.getDate()));
       statement.setTime(3, Time.valueOf(record.getTime()));
       statement.setBoolean(4, record.getType().getBoolean());
@@ -173,7 +60,7 @@ class DatabaseEngine implements RecordEngine {
                 record.getDate(),
                 record.getTime(),
                 record.getType(),
-                user.getId());
+                user.getUUID());
       }
 
       if (statement.executeUpdate() != 1) {
@@ -217,7 +104,7 @@ class DatabaseEngine implements RecordEngine {
 
       statement.setInt(1, id);
 
-      statement.setInt(2, user.getId());
+      statement.setBytes(2, user.getUUIDBytes());
 
       LOGGER.debug("Searching for record with id {}", id);
 
@@ -262,7 +149,7 @@ class DatabaseEngine implements RecordEngine {
     try {
       statement = connection.prepareStatement(SELECT_RECORDS_OF_DAY);
 
-      statement.setInt(1, user.getId());
+      statement.setBytes(1, user.getUUIDBytes());
       statement.setDate(2, Date.valueOf(LocalDate.of(yyyy, mm, dd)));
 
       if (LOGGER.isDebugEnabled()) {
@@ -331,7 +218,7 @@ class DatabaseEngine implements RecordEngine {
     try {
       statement = connection.prepareStatement(SELECT_RECORDS_OF_MONTH);
 
-      statement.setInt(1, user.getId());
+      statement.setBytes(1, user.getUUIDBytes());
       statement.setDate(2, startDate);
       statement.setDate(3, endDate);
 

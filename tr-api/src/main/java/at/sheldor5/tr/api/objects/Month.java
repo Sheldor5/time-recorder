@@ -10,7 +10,8 @@ public class Month extends Container<Day> {
 
   @Override
   protected boolean validateItem(final Day item) {
-    return this.date.getYear() == item.date.getYear() && this.date.getMonth() == item.date.getMonth();
+    return this.date.getYear() == item.date.getYear()
+            && this.date.getMonth() == item.date.getMonth();
   }
 
   @Override

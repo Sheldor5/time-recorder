@@ -1,14 +1,9 @@
 package at.sheldor5.tr.api.utils;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class TimeUtilsTest {
-
-  private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
-  private static final DateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm:ss");
 
   @Test
   public void test_millis_to_summary() {

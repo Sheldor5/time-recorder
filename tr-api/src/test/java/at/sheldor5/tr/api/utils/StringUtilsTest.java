@@ -1,12 +1,8 @@
-package at.sheldor5.tr.sdk.utils;
+package at.sheldor5.tr.api.utils;
 
-import at.sheldor5.tr.sdk.utils.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * Created by Michael Palata <a href="https://github.com/Sheldor5">@github.com/Sheldor5</a> on 01.02.2017.
- */
 public class StringUtilsTest {
 
   @Test

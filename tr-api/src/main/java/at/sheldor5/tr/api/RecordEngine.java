@@ -10,10 +10,6 @@ import java.util.List;
 
 public interface RecordEngine {
 
-  void addUser(User user, String plainTextPassword);
-
-  User getUser(String username, String plainTextPassword);
-
   void addRecord(User user, Record record);
 
   void updateRecord(User user, int oldId, Record newValues);

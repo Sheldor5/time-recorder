@@ -37,6 +37,7 @@
         <module>tr-core</module>
         <module>tr-exporter</module>
         <module>tr-web</module>
+        <module>tr-auth</module>
     </modules>
 
     <properties>
@@ -60,7 +61,8 @@
             </plugin>
         </plugins>
     </build>
-    <reporting></reporting>
+    <reporting>
+    </reporting>
 
     <!-- More Project Information
     <name></name>

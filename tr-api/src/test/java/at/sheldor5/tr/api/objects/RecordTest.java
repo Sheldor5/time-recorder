@@ -38,38 +38,38 @@ public class RecordTest {
   public void test_initialization() {
     final Record record1 = new Record(42, date, time, RecordType.CHECKIN);
 
-    Assert.assertEquals("User initialization failed", 42, record1.getId());
-    Assert.assertEquals("User initialization failed", date, record1.getDate());
-    Assert.assertEquals("User initialization failed", time, record1.getTime());
-    Assert.assertEquals("User initialization failed", RecordType.CHECKIN, record1.getType());
+    Assert.assertEquals(42, record1.getId());
+    Assert.assertEquals(date, record1.getDate());
+    Assert.assertEquals(time, record1.getTime());
+    Assert.assertEquals(RecordType.CHECKIN, record1.getType());
 
     final LocalDate date2 = LocalDate.of(2016, 12, 31);
     final LocalTime time2 = LocalTime.of(23, 24, 25);
     final Record record2 = new Record(date2, time2, RecordType.CHECKOUT);
 
-    Assert.assertEquals("ID should be unset (-1)",-1, record2.getId());
-    Assert.assertEquals("User initialization failed", date2, record2.getDate());
-    Assert.assertEquals("User initialization failed", time2, record2.getTime());
-    Assert.assertEquals("User initialization failed", RecordType.CHECKOUT, record2.getType());
+    Assert.assertEquals(-1, record2.getId());
+    Assert.assertEquals(date2, record2.getDate());
+    Assert.assertEquals(time2, record2.getTime());
+    Assert.assertEquals(RecordType.CHECKOUT, record2.getType());
   }
 
   @Test
   public void test_record_validity() {
     final Record record = new Record();
 
-    Assert.assertFalse("Record should be invalid", record.isValid());
+    Assert.assertFalse(record.isValid());
 
     record.setDate(date);
 
-    Assert.assertFalse("Record should be invalid", record.isValid());
+    Assert.assertFalse(record.isValid());
 
     record.setTime(time);
 
-    Assert.assertFalse("Record should be invalid", record.isValid());
+    Assert.assertFalse(record.isValid());
 
     record.setType(RecordType.CHECKIN);
 
-    Assert.assertTrue("Record should be valid", record.isValid());
+    Assert.assertTrue(record.isValid());
   }
 
   @Test
@@ -81,10 +81,10 @@ public class RecordTest {
     record.setTime(time);
     record.setType(RecordType.CHECKIN);
 
-    Assert.assertEquals("Record getter/setter failed", 42, record.getId());
-    Assert.assertEquals("Record getter/setter failed", date, record.getDate());
-    Assert.assertEquals("Record getter/setter failed", time, record.getTime());
-    Assert.assertEquals("Record getter/setter failed", RecordType.CHECKIN, record.getType());
+    Assert.assertEquals(42, record.getId());
+    Assert.assertEquals(date, record.getDate());
+    Assert.assertEquals(time, record.getTime());
+    Assert.assertEquals(RecordType.CHECKIN, record.getType());
   }
 
   @Test
@@ -93,12 +93,12 @@ public class RecordTest {
     Record checkout;
 
     checkout = new Record(date, time.plusHours(1), RecordType.CHECKOUT);
-    Assert.assertEquals("Checkin should be before checkout", -1, checkin.compareTo(checkout));
-    Assert.assertEquals("Checkout should be after checkin", 1, checkout.compareTo(checkin));
+    Assert.assertEquals(-1, checkin.compareTo(checkout));
+    Assert.assertEquals(1, checkout.compareTo(checkin));
 
     checkout = new Record(date.plusDays(1), time, RecordType.CHECKOUT);
-    Assert.assertEquals("Checkin should be before checkout", -1, checkin.compareTo(checkout));
-    Assert.assertEquals("Checkout should be after checkin", 1, checkout.compareTo(checkin));
+    Assert.assertEquals(-1, checkin.compareTo(checkout));
+    Assert.assertEquals(1, checkout.compareTo(checkin));
   }
 
   @Test
@@ -106,8 +106,8 @@ public class RecordTest {
     final Record r1 = new Record(date, time, RecordType.CHECKIN);
     final Record r2 = new Record(date, time, RecordType.CHECKIN);
 
-    Assert.assertTrue("Records should be equal", r1.equals(r2));
-    Assert.assertTrue("Records should be equal", r2.equals(r1));
+    Assert.assertTrue(r1.equals(r2));
+    Assert.assertTrue(r2.equals(r1));
   }
 
   @Test
@@ -117,37 +117,37 @@ public class RecordTest {
 
     // different type
     diff = new Record(date, time, RecordType.CHECKOUT);
-    Assert.assertFalse("Records should not be equal", record.equals(diff));
+    Assert.assertFalse(record.equals(diff));
 
     // different year
     diff = new Record(date.plusYears(1), time, RecordType.CHECKIN);
-    Assert.assertFalse("Records should not be equal", record.equals(diff));
+    Assert.assertFalse(record.equals(diff));
 
     // different month
     diff = new Record(date.plusMonths(1), time, RecordType.CHECKIN);
-    Assert.assertFalse("Records should not be equal", record.equals(diff));
+    Assert.assertFalse(record.equals(diff));
 
     // different day
     diff = new Record(date.plusDays(1), time, RecordType.CHECKIN);
-    Assert.assertFalse("Records should not be equal", record.equals(diff));
+    Assert.assertFalse(record.equals(diff));
 
     // different hour
     diff = new Record(date, time.plusHours(1), RecordType.CHECKIN);
-    Assert.assertFalse("Records should not be equal", record.equals(diff));
+    Assert.assertFalse(record.equals(diff));
 
     // different minute
     diff = new Record(date, time.plusMinutes(1), RecordType.CHECKIN);
-    Assert.assertFalse("Records should not be equal", record.equals(diff));
+    Assert.assertFalse(record.equals(diff));
 
     // different seconds
     diff = new Record(date, time.plusSeconds(1), RecordType.CHECKIN);
-    Assert.assertFalse("Records should not be equal", record.equals(diff));
+    Assert.assertFalse(record.equals(diff));
 
     // different nanosecond
     diff = new Record(date, time.plusNanos(1), RecordType.CHECKIN);
-    Assert.assertFalse("Records should not be equal", record.equals(diff));
+    Assert.assertFalse(record.equals(diff));
 
-    Assert.assertFalse("Records should not be equal", record.equals(null));
-    Assert.assertFalse("Records should not be equal", record.equals(new Object()));
+    Assert.assertFalse(record.equals(null));
+    Assert.assertFalse(record.equals(new Object()));
   }
 }

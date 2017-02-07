@@ -1,8 +1,12 @@
 package at.sheldor5.tr.api.objects;
 
+import java.nio.ByteBuffer;
+import java.util.Arrays;
+import java.util.UUID;
+
 public class User {
 
-  private int id = -1;
+  private byte[] uuid;
   private String username;
   private String forename;
   private String surname;
@@ -11,22 +15,46 @@ public class User {
 
   }
 
-  public User(int id, final String username, final String forename, final String surname) {
-    setId(id);
+  public User(final String username, final String forename, final String surname) {
     setUsername(username);
     setForename(forename);
     setSurname(surname);
   }
 
-  public int getId() {
-    return id;
+  public User(final UUID uuid, final String username, final String forename, final String surname) {
+    this(username, forename, surname);
+    setUUID(uuid);
   }
 
-  public void setId(int id) {
-    if (id < 0) {
-      throw new IllegalArgumentException("UserID was negative");
+  public UUID getUUID() {
+    if (uuid == null) {
+      return null;
     }
-    this.id = id;
+    final ByteBuffer bb = ByteBuffer.wrap(uuid);
+    long mostSigBits = bb.getLong();
+    long leastSigBits = bb.getLong();
+    return new UUID(mostSigBits, leastSigBits);
+  }
+
+  public byte[] getUUIDBytes() {
+    return uuid;
+  }
+
+  public void setUUID(final UUID uuid) {
+    if (uuid == null) {
+      throw new IllegalArgumentException("User UUID was null");
+    }
+    final ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
+    bb.putLong(uuid.getMostSignificantBits());
+    bb.putLong(uuid.getLeastSignificantBits());
+    this.uuid = bb.array();
+  }
+
+  public void setUUIDBytes(final byte[] uuid) {
+    if (uuid == null || uuid.length != 16) {
+      throw new IllegalArgumentException("Invalid User UUID");
+    }
+    this.uuid = uuid;
   }
 
   public String getUsername() {
@@ -68,6 +96,6 @@ public class User {
       return false;
     }
     final User user = (User) other;
-    return username.equals(user.username) && forename.equals(user.forename) && surname.equals(user.surname) && id == user.id;
+    return username.equals(user.username) && forename.equals(user.forename) && surname.equals(user.surname) && Arrays.equals(uuid, user.uuid);
   }
 }
