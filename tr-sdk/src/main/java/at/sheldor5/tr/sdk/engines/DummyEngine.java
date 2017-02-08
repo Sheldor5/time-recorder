@@ -36,11 +36,11 @@ public class DummyEngine implements RecordEngine {
   }
 
   @Override
-  public void updateRecord(final User user, int oldId, final Record newValues) {
+  public void updateRecord(final User user, int id, final Record newValues) {
     final List<Record> list = records.get(user);
     if (list != null) {
       for (final Record record : list) {
-        if (record.getId() == oldId) {
+        if (record.getId() == id) {
           record.setDate(newValues.getDate());
           record.setTime(newValues.getTime());
           record.setType(newValues.getType());

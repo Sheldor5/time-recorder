@@ -12,6 +12,8 @@ import at.sheldor5.tr.api.utils.GlobalProperties;
 import at.sheldor5.tr.api.utils.TimeUtils;
 import at.sheldor5.tr.auth.db.DatabaseAuthentication;
 import helper.TestUtils;
+
+import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -24,6 +26,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class DatabaseEngineTest {
+
+  private static final File PROPERTIES = new File("test.properties");
 
   private static final String USER_NAME_PREFIX = "testuser_";
   private static final String USER_PASS = "testpass";
@@ -38,10 +42,10 @@ public class DatabaseEngineTest {
 
   @Before
   public void init() throws IOException, SQLException {
-    GlobalProperties.setProperty("db.jdbc.class", "com.microsoft.sqlserver.jdbc.SQLServerDriver");
-    GlobalProperties.setProperty("db.jdbc.url", "jdbc:sqlserver://127.0.0.1;database=TimeRecorder;user=user;password=pass;CharacterSet=UTF-8");
+    GlobalProperties.load(PROPERTIES);
     connection = DatabaseConnection.getInstance();
     Assume.assumeNotNull(connection);
+
     recordEngine = new DatabaseEngine(connection.getConnection());
     auth = new DatabaseAuthentication(connection);
   }

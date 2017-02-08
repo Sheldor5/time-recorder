@@ -29,7 +29,7 @@ public class DatabaseAuthentication implements AuthenticationPlugin {
   private DatabaseConnection databaseConnection;
   private Connection connection;
 
-  public DatabaseAuthentication(final DatabaseConnection databaseConnection) throws SQLException {
+  public DatabaseAuthentication(final DatabaseConnection databaseConnection) {
     this.databaseConnection = databaseConnection;
     this.connection = databaseConnection.getConnection();
 

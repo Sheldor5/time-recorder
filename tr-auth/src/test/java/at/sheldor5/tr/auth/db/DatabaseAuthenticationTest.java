@@ -16,6 +16,8 @@ import org.junit.Test;
 
 public class DatabaseAuthenticationTest {
 
+  private static final File PROPERTIES = new File("db.properties");
+
   private static final Random RANDOM = new Random();
   private static final String USER_PREFIX = "testuser_";
   private static final String FORENAME = "Test";
@@ -27,7 +29,7 @@ public class DatabaseAuthenticationTest {
 
   @Before
   public void init() throws IOException, SQLException {
-    GlobalProperties.load(new File("global.properties"));
+    GlobalProperties.load(PROPERTIES);
 
     db = DatabaseConnection.getInstance();
     auth = new DatabaseAuthentication(db);

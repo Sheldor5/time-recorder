@@ -12,7 +12,7 @@ public interface RecordEngine {
 
   void addRecord(User user, Record record);
 
-  void updateRecord(User user, int oldId, Record newValues);
+  void updateRecord(User user, int id, Record newValues);
 
   Record getRecord(User user, int id);
 

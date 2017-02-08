@@ -173,4 +173,9 @@ public class Record implements Comparable<Record> {
     return date.equals(record.date) && time.equals(record.time) && type.equals(record.type);
   }
 
+  @Override
+  public String toString() {
+    return String.format("%s %s %s", date, time, type);
+  }
+
 }

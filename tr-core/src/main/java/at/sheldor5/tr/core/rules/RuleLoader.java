@@ -141,7 +141,7 @@ public class RuleLoader {
             rule.timeOperations.add(getTimeOperation((Element) node));
             break;
           default:
-            System.out.println("uncovered: " + node.getNodeName());
+            LOGGER.info("Rule type \"{}\" is not implemented yet!", node.getNodeName());
             break;
         }
       }
@@ -171,7 +171,7 @@ public class RuleLoader {
             days = getDays((Element) node);
             break;
           default:
-            System.out.println("uncovered: " + node.getNodeName());
+            LOGGER.error("Unknown element \"{}\"", node.getNodeName());
             break;
         }
       }
@@ -204,7 +204,7 @@ public class RuleLoader {
         } else if ("to".equals(name)) {
           to = DAY_VALUE_MAP.get(node.getTextContent());
         } else {
-          System.out.println("uncovered: " + name);
+          LOGGER.error("Unknown element \"{}\"", name);
         }
       }
     }

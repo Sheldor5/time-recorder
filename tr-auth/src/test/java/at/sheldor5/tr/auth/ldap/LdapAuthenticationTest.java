@@ -13,6 +13,8 @@ import org.junit.Test;
 
 public class LdapAuthenticationTest {
 
+  private static final File PROPERTIES = new File("ldap.properties");
+
   private static final UUID USER_UUID = UUID.fromString("22823c12-80f6-1036-99a6-bb4e2dfc20ee");
   private static final String USERNAME = "testuser";
   private static final String FORENAME = "Test";
@@ -22,7 +24,7 @@ public class LdapAuthenticationTest {
 
   @Before
   public void init() throws IOException {
-    GlobalProperties.load(new File("global.properties"));
+    GlobalProperties.load(PROPERTIES);
   }
 
   @Test

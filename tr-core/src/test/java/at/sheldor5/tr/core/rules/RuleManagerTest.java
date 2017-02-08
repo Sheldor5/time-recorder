@@ -1,86 +1,31 @@
 package at.sheldor5.tr.core.rules;
 
+import java.io.File;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
+
 import at.sheldor5.tr.api.objects.Day;
 import at.sheldor5.tr.api.objects.Record;
 import at.sheldor5.tr.api.objects.RecordType;
 import at.sheldor5.tr.api.objects.Session;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class RuleLoaderTest {
+public class RuleManagerTest {
 
-  private static File FILE_XSD;
-  private static File FILE_XML;
-  private static File FILE_INVALID_XML_1;
-  private static File FILE_INVALID_XML_2;
-  private static File FILE_INVALID_XML_3;
-  private static File FILE_INVALID_XML_4;
-  private static File FILE_INVALID_XML_5;
+  private static final File rules = new File("src/main/resources/rules");
+  private static RuleManager manager;
 
   @Before
-  public void init() throws URISyntaxException {
-    FILE_XSD = new File(this.getClass().getResource("/rules/rules.xsd").toURI());
-    FILE_XML = new File(this.getClass().getResource("/rules/austria.xml").toURI());
-    FILE_INVALID_XML_1 = new File(this.getClass().getResource("/rules/invalid_1.xml").toURI());
-    FILE_INVALID_XML_2 = new File(this.getClass().getResource("/rules/invalid_2.xml").toURI());
-    FILE_INVALID_XML_3 = new File(this.getClass().getResource("/rules/invalid_3.xml").toURI());
-    FILE_INVALID_XML_4 = new File(this.getClass().getResource("/rules/invalid_4.xml").toURI());
-    FILE_INVALID_XML_5 = new File(this.getClass().getResource("/rules/invalid_5.xml").toURI());
+  public void test() {
+    manager = RuleManager.getInstance();
+    manager.load(rules);
   }
 
   @Test
-  public void test_valid_xml() throws IOException {
-    final FileInputStream xsd = new FileInputStream(FILE_XSD);
-    final FileInputStream xml = new FileInputStream(FILE_XML);
-    Assert.assertTrue("XML should successfully be validated", RuleLoader.validateAgainstXSD(xml, xsd));
-  }
-
-  @Test
-  public void test_invalid_xmls() throws IOException {
-    FileInputStream xsd;
-    FileInputStream xml;
-
-    xsd = new FileInputStream(FILE_XSD);
-    xml = new FileInputStream(FILE_INVALID_XML_1);
-    Assert.assertFalse("XML should be invalid", RuleLoader.validateAgainstXSD(xml, xsd));
-
-    xsd = new FileInputStream(FILE_XSD);
-    xml = new FileInputStream(FILE_INVALID_XML_2);
-    Assert.assertFalse("XML should be invalid", RuleLoader.validateAgainstXSD(xml, xsd));
-
-    xsd = new FileInputStream(FILE_XSD);
-    xml = new FileInputStream(FILE_INVALID_XML_3);
-    Assert.assertFalse("XML should be invalid", RuleLoader.validateAgainstXSD(xml, xsd));
-
-    xsd = new FileInputStream(FILE_XSD);
-    xml = new FileInputStream(FILE_INVALID_XML_4);
-    Assert.assertFalse("XML should be invalid", RuleLoader.validateAgainstXSD(xml, xsd));
-
-    xsd = new FileInputStream(FILE_XSD);
-    xml = new FileInputStream(FILE_INVALID_XML_5);
-    Assert.assertFalse("XML should be invalid", RuleLoader.validateAgainstXSD(xml, xsd));
-  }
-
-  @Test
-  public void test_load_rules() throws IOException {
-    final RuleLoader loader = new RuleLoader(FILE_XSD);
-    final List<Rule> rules = loader.getRules(FILE_XML);
-
-    // TODO
-  }
-
-  @Test
-  public void test_apply_day() throws IOException {
-    final RuleLoader loader = new RuleLoader(FILE_XSD);
-    final List<Rule> rules = loader.getRules(FILE_XML);
+  public void test_apply_on_day() {
     final LocalDate monday = LocalDate.of(2017, 1, 2);
     final Day day = new Day(monday);
     Record begin;
@@ -112,12 +57,9 @@ public class RuleLoaderTest {
     session = new Session(monday, begin, end);
     day.addItem(session);
 
+    Assert.assertTrue("Rule should apply", manager.applies(day));
 
-    for (final Rule rule : rules) {
-      Assert.assertTrue("Rule should apply", rule.applies(day));
-      rule.apply(day);
-    }
-
+    manager.apply(day);
     final List<Session> sessions = day.getItems();
 
     Assert.assertEquals("Rule should split session into 7 sessions", 7, sessions.size());
@@ -145,5 +87,7 @@ public class RuleLoaderTest {
 
     Assert.assertEquals("Day summary should be 58500L seconds (16 hours, 15 minutes)", 58500L, day.getSummary());
     Assert.assertEquals("Day valued summary should be 3960 seconds (18 hours, 22 minutes, 30 seconds)", 66150L, day.getValuedSummary());
+
+    System.out.println(day);
   }
 }

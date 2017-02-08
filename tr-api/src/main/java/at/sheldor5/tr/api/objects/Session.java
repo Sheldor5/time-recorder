@@ -132,7 +132,7 @@ public class Session extends Container<Record> {
   @Override
   public final int compareTo(final Container other) {
     if (other == null) {
-      return Integer.MAX_VALUE;
+      return -1;
     }
     if (other instanceof Session) {
       return this.start.compareTo(((Session) other).start);

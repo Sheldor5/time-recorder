@@ -116,17 +116,4 @@ public class RuntimeUtils {
     }
     return classes;
   }
-
-  public static String executionPath(final Class clazz) {
-    if (executionPath == null) {
-      try {
-        executionPath = new File(clazz.getProtectionDomain().getCodeSource()
-                .getLocation().toURI().getPath()).getAbsolutePath();
-      } catch (final URISyntaxException use) {
-        use.printStackTrace();
-        executionPath = null;
-      }
-    }
-    return executionPath;
-  }
 }

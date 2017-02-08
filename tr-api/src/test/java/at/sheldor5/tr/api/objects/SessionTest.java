@@ -20,7 +20,7 @@ public class SessionTest {
   public void test_session_invalid_records() {
     final Record start = new Record();
     final Record end = new Record();
-    final Session session = new Session(date, start, end);
+    new Session(date, start, end);
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -29,7 +29,7 @@ public class SessionTest {
     final LocalTime endTime = LocalTime.of(0, 0);
     final Record start = new Record(0, date, startTime, RecordType.CHECKIN);
     final Record end = new Record(0, date, endTime, RecordType.CHECKOUT);
-    final Session session = new Session(date, start, end);
+    new Session(date, start, end);
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -38,7 +38,7 @@ public class SessionTest {
     final LocalTime endTime = LocalTime.of(12, 0);
     final Record start = new Record(0, date, startTime, RecordType.CHECKOUT);
     final Record end = new Record(0, date, endTime, RecordType.CHECKOUT);
-    final Session session = new Session(date, start, end);
+    new Session(date, start, end);
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -47,7 +47,7 @@ public class SessionTest {
     final LocalTime endTime = LocalTime.of(12, 0);
     final Record start = new Record(0, date, startTime, RecordType.CHECKIN);
     final Record end = new Record(0, date, endTime, RecordType.CHECKIN);
-    final Session session = new Session(date, start, end);
+    new Session(date, start, end);
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -58,7 +58,7 @@ public class SessionTest {
     final LocalTime endTime = LocalTime.of(12, 0);
     final Record start = new Record(0, startDate, startTime, RecordType.CHECKIN);
     final Record end = new Record(0, endDate, endTime, RecordType.CHECKOUT);
-    final Session session = new Session(date, start, end);
+    new Session(date, start, end);
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -69,7 +69,37 @@ public class SessionTest {
     final LocalTime endTime = LocalTime.of(8, 0);
     final Record start = new Record(0, startDate, startTime, RecordType.CHECKIN);
     final Record end = new Record(0, endDate, endTime, RecordType.CHECKOUT);
+    new Session(date, start, end);
+  }
+
+  @Test(expected = UnsupportedOperationException.class)
+  public void test_add_item() {
+    final LocalTime startTime = LocalTime.of(8, 0);
+    final LocalTime endTime = LocalTime.of(12, 0);
+    final Record start = new Record(0, date, startTime, RecordType.CHECKIN);
+    final Record end = new Record(0, date, endTime, RecordType.CHECKOUT);
     final Session session = new Session(date, start, end);
+    session.addItem(new Record());
+  }
+
+  @Test
+  public void test_session_initialization() {
+    final LocalTime startTime = LocalTime.of(8, 0);
+    final LocalTime endTime = LocalTime.of(12, 0);
+    final Record start = new Record(0, date, startTime, RecordType.CHECKIN);
+    final Record end = new Record(0, date, endTime, RecordType.CHECKOUT);
+    Session session;
+
+    session = new Session(date);
+    Assert.assertNull(session.getStart());
+    Assert.assertNull(session.getEnd());
+    Assert.assertEquals(0.0D, session.getMultiplier(), 0.0D);
+
+    session = new Session(start, end);
+    Assert.assertEquals(date, session.getDate());
+    Assert.assertEquals(startTime, session.getStart());
+    Assert.assertEquals(endTime, session.getEnd());
+    Assert.assertEquals(1.0D, session.getMultiplier(), 0.0D);
   }
 
   @Test
@@ -80,12 +110,50 @@ public class SessionTest {
     final Record start = new Record(0, date, startTime, RecordType.CHECKIN);
     final Record end = new Record(0, date, endTime, RecordType.CHECKOUT);
     final double multiplier = 2.0D;
-    final Session session = new Session(date, start, end, multiplier);
+    final Session session = new Session(date, start, end);
+    session.setMultiplier(multiplier);
 
     Assert.assertEquals( date, session.getDate());
     Assert.assertEquals(startTime, session.getStart());
     Assert.assertEquals(endTime, session.getEnd());
     Assert.assertEquals(multiplier, session.getMultiplier(), 0.0D);
+
+    final List<Record> records = session.getItems();
+
+    Assert.assertNotNull(records);
+    Assert.assertEquals(2, records.size());
+    Assert.assertEquals(start, records.get(0));
+    Assert.assertEquals(end, records.get(1));
+  }
+
+  @Test
+  public void test_compare() {
+    final LocalTime startTime1 = LocalTime.of(8, 0);
+    final LocalTime startTime2 = LocalTime.of(8, 0, 1);
+    final LocalTime endTime = LocalTime.of(12, 0);
+    final Record start1 = new Record(0, date, startTime1, RecordType.CHECKIN);
+    final Record start2 = new Record(0, date, startTime2, RecordType.CHECKIN);
+    final Record end = new Record(0, date, endTime, RecordType.CHECKOUT);
+    final Session a = new Session(date, start1, end);
+    final Session b = new Session(date, start2, end);
+
+    Assert.assertEquals(-1, a.compareTo(b));
+    Assert.assertEquals(1, b.compareTo(a));
+
+    Assert.assertEquals(-1, a.compareTo(null));
+
+    Assert.assertEquals(-1, a.compareTo(new Day(LocalDate.of(2017, 1, 2))));
+    Assert.assertEquals(1, a.compareTo(new Day(LocalDate.of(2016, 12, 31))));
+  }
+
+  @Test
+  public void test_item_validation() {
+    final LocalTime startTime = LocalTime.of(8, 0);
+    final LocalTime endTime = LocalTime.of(12, 0);
+    final Record start = new Record(0, date, startTime, RecordType.CHECKIN);
+    final Record end = new Record(0, date, endTime, RecordType.CHECKOUT);
+    final Session session = new Session(date, start, end);
+    Assert.assertTrue(session.validateItem(null));
   }
 
   @Test
@@ -160,7 +228,7 @@ public class SessionTest {
 
     actual = session.split(LocalTime.of(10, 0));
     Assert.assertEquals("7200 seconds (2 hours)", 7200L, session.getSummary());
-    Assert.assertEquals("2 hours", 7200L, actual.getSummary());
+    Assert.assertEquals("7200 seconds (2 hours)", 7200L, actual.getSummary());
 
     actual = session.split(LocalTime.MIN);
     Assert.assertNull(actual);

@@ -94,24 +94,22 @@ public class DatabaseConnection {
     return connection;
   }
 
-  public boolean tableExists(final String tableName) throws SQLException {
-    boolean result = true;
-
-    final DatabaseMetaData meta  = connection.getMetaData();
-
-    final ResultSet set = meta.getTables(null, null, tableName, new String[] {"TABLE"});
-
-    if (!set.next()) {
-      result = false;
+  public boolean tableExists(final String tableName) {
+    boolean result = false;
+    try {
+      final DatabaseMetaData meta = connection.getMetaData();
+      final ResultSet set = meta.getTables(null, null, tableName, new String[]{"TABLE"});
+      result = set.next();
+      set.close();
+    } catch (final SQLException sqle) {
+      LOGGER.error(sqle.getMessage());
     }
-
-    set.close();
-
     return result;
   }
 
   /**
    * /sql/sqlserver/create_tables.sql
+   *
    * @param script
    */
   public void executeScript(final String script) {

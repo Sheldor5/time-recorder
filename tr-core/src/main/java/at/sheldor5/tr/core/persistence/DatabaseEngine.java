@@ -5,6 +5,7 @@ import at.sheldor5.tr.api.objects.Day;
 import at.sheldor5.tr.api.objects.Month;
 import at.sheldor5.tr.api.objects.Record;
 import at.sheldor5.tr.api.objects.RecordType;
+import at.sheldor5.tr.api.objects.Session;
 import at.sheldor5.tr.api.objects.User;
 import at.sheldor5.tr.api.objects.Year;
 import java.sql.Connection;
@@ -87,7 +88,7 @@ class DatabaseEngine implements RecordEngine {
   }
 
   @Override
-  public void updateRecord(User user, int oldId, Record newValues) {
+  public void updateRecord(User user, int id, Record newValues) {
 
   }
 
@@ -188,11 +189,9 @@ class DatabaseEngine implements RecordEngine {
 
   @Override
   public Day getDay(final User user, int day, int month, int year) {
-    /*final Day result = new Day(day);
-    for (final Record record : getRecordsOfDay(user, day, month, year)) {
-      result.addItem(record);
-    }*/
-    return null;
+    final List<Record> records = getDayRecords(user, day, month, year);
+    final List<Session> sessions = Session.buildSessions(records);
+    return Day.buildDay(sessions);
   }
 
   @Override

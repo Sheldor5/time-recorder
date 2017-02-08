@@ -11,11 +11,12 @@ import org.junit.Test;
 
 public class DatabaseConnectionTest {
 
+  private static final File PROPERTIES = new File("test.properties");
   private static DatabaseConnection connection;
 
   @Before
   public void init() throws IOException, SQLException {
-    GlobalProperties.load(new File("global.properties"));
+    GlobalProperties.load(PROPERTIES);
 
     connection = DatabaseConnection.getInstance();
     Assume.assumeNotNull(connection);

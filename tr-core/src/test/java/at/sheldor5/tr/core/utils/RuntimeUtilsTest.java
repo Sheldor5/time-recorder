@@ -10,7 +10,7 @@ public class RuntimeUtilsTest {
 
   @Before
   public void init() throws IOException {
-    GlobalProperties.load(new File("global.properties"));
+    GlobalProperties.load(new File("test.properties"));
   }
 
   @Test(expected = IOException.class)

@@ -58,9 +58,23 @@ public class LdapAuthentication implements AuthenticationPlugin {
       final NamingEnumeration<SearchResult> answer = context.search(name, filter, CONTROLS);
       if (answer.hasMore()) {
         Attributes attrs = answer.next().getAttributes();
+
         final UUID uuid = UUID.fromString((String) attrs.get("entryUUID").get());
-        final String forename = attrs.get("givenname").get().toString();
-        final String surname = attrs.get("sn").get().toString();
+
+        String forename;
+        try {
+          forename = attrs.get("givenname").get().toString();
+        } catch (final NullPointerException npe) {
+          forename = "";
+        }
+
+        String surname;
+        try {
+          surname = attrs.get("sn").get().toString();
+        } catch (final NullPointerException npe) {
+          surname = "";
+        }
+
         if (!answer.hasMore()) {
           LOGGER.debug("Got user \"" + forename + " " + surname + "\" with ID " + uuid);
           return new User(uuid, username, forename, surname);

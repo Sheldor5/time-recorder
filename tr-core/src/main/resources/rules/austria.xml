@@ -21,8 +21,8 @@
             </days>
         </before>
         <after>
-            <!-- working between 10 PM and midnight ... -->
-            <time>22:00:00</time>
+            <!-- working between 7 PM and midnight ... -->
+            <time>19:00:00</time>
             <!-- ... is worth 150% -->
             <multiplier>1.5</multiplier>
             <!-- from monday to saturday -->
