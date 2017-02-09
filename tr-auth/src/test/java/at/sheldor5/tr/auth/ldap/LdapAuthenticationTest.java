@@ -20,11 +20,12 @@ public class LdapAuthenticationTest {
   private static final String FORENAME = "Test";
   private static final String SURNAME = "User";
   private static final String PASSWORD = "test";
-  final AuthenticationPlugin LDAP = new LdapAuthentication();
+  private static final AuthenticationPlugin LDAP = new LdapAuthentication();
 
   @Before
   public void init() throws IOException {
     GlobalProperties.load(PROPERTIES);
+    LDAP.initialize();
   }
 
   @Test

@@ -33,6 +33,11 @@ public class DummyAuthentication implements AuthenticationPlugin {
   private final List<Credentials> users = new ArrayList<>();
 
   @Override
+  public void initialize() throws IllegalStateException {
+
+  }
+
+  @Override
   public void addUser(final User user, final String plainTextPassword) {
     final Credentials credentials = new Credentials(user, plainTextPassword);
     if (users.contains(credentials)) {

@@ -1,16 +1,16 @@
 package at.sheldor5.tr.core.rules;
 
 import at.sheldor5.tr.api.objects.Day;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class RuleManager {
 
-  private static final Logger LOGGER = LogManager.getLogger(RuleManager.class);
+  private static final Logger LOGGER = Logger.getLogger(RuleManager.class.getName());
 
   private static RuleManager instance;
 
@@ -27,35 +27,34 @@ public class RuleManager {
 
   }
 
-  public void load(final File rulePath) {
+  public void load(final File rulePath) throws Exception {
     if (rulePath == null) {
-      LOGGER.error("Path is null");
-      return;
+      LOGGER.severe("Path is null");
+      throw new FileNotFoundException("null");
     }
     if (!rulePath.exists()) {
       final File executionPath = new File("");
-      LOGGER.error("Path \"{}\" does not exist in: {}", rulePath.getName(), executionPath.getAbsoluteFile());
-      return;
+      LOGGER.severe("Path \"" + rulePath.getName() + "\" does not exist in: " + executionPath.getAbsoluteFile());
+      throw new FileNotFoundException(rulePath.getName());
     }
-    try {
-      final File xsd = new File(this.getClass().getResource("/rules/rules.xsd").toURI());
-      if (!xsd.exists()) {
-        LOGGER.fatal("Rule XSD file not found in: {}");
-      }
-      final RuleLoader loader = new RuleLoader(xsd);
-      for (final File xml : rulePath.listFiles()) {
-        if (xml.getName().endsWith(".xml")) {
-          LOGGER.debug("Validating rule file: {}", xml.getName());
-          if (loader.validateXML(xml)) {
-            LOGGER.debug("Loading rules from: {}", xml.getName());
-            rules.addAll(loader.getRules(xml));
-          } else {
-            LOGGER.warn("Rule file is not valid: {}", xml.getName());
-          }
+
+    final File xsd = new File(this.getClass().getResource("/rules/rules.xsd").toURI());
+    if (!xsd.exists()) {
+      LOGGER.severe("Rule XSD file not found");
+      throw new FileNotFoundException("/rules/rules.xsd");
+    }
+
+    final RuleLoader loader = new RuleLoader(xsd);
+    for (final File xml : rulePath.listFiles()) {
+      if (xml.getName().endsWith(".xml")) {
+        LOGGER.fine("Validating rule file: " + xml.getName());
+        if (loader.validateXML(xml)) {
+          LOGGER.fine("Loading rules from: " + xml.getName());
+          rules.addAll(loader.getRules(xml));
+        } else {
+          LOGGER.warning("Rule file is not valid: " + xml.getName());
         }
       }
-    } catch (final Exception e) {
-      LOGGER.fatal(e.getMessage());
     }
   }
 

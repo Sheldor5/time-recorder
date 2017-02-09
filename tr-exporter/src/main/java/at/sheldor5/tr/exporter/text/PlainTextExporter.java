@@ -1,5 +1,6 @@
 package at.sheldor5.tr.exporter.text;
 
+import at.sheldor5.tr.api.Exporter;
 import at.sheldor5.tr.api.ExporterPlugin;
 import at.sheldor5.tr.api.objects.Day;
 import at.sheldor5.tr.api.objects.Month;
@@ -10,9 +11,7 @@ import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
 import java.io.*;
 
-/**
- * Created by Michael Palata <a href="https://github.com/Sheldor5">@github.com/Sheldor5</a> on 13.01.2017.
- */
+@Exporter(name = "defaultPlainText", displayNamePropertyIdentifier = "time-recorder Text")
 public class PlainTextExporter implements ExporterPlugin {
 
   private static final String MONTH_SUMMARY_FORMAT = "%02dh %02dm %02ds";

@@ -12,42 +12,44 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.UUID;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import java.util.logging.Logger;
 
 public class DatabaseAuthentication implements AuthenticationPlugin {
 
   /**
    * Class Logger.
    */
-  private static final Logger LOGGER = LogManager.getLogger(DatabaseConnection.class);
+  private static final Logger LOGGER = Logger.getLogger(DatabaseConnection.class.getName());
 
   private static final String INSERT_USER = "INSERT INTO [users] ([pk_user_id], [username], [password], [forename], [surname]) VALUES (?, ?, ?, ?, ?)";
   private static final String SELECT_USER = "SELECT [pk_user_id], [username], [forename], [surname] FROM [users] WHERE [username] = ? AND [password] = ?";
 
-  private DatabaseConnection databaseConnection;
-  private Connection connection;
+  private static byte[] getRandomUUIDBytes() {
+    final UUID uuid = UUID.randomUUID();
+    final ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
+    bb.putLong(uuid.getMostSignificantBits());
+    bb.putLong(uuid.getLeastSignificantBits());
+    return bb.array();
+  }
 
-  public DatabaseAuthentication(final DatabaseConnection databaseConnection) {
-    this.databaseConnection = databaseConnection;
-    this.connection = databaseConnection.getConnection();
+  @Override
+  public void initialize() throws IllegalStateException {
+    Connection connection;
+    try {
+      connection = DatabaseConnection.getConnection();
+    } catch (final SQLException sqle) {
+      throw new IllegalStateException(sqle);
+    }
+
+    final DatabaseConnection databaseConnection = new DatabaseConnection(connection);
 
     if (!databaseConnection.tableExists("users")) {
       databaseConnection.executeScript("/sql/sqlserver/create_user_table.sql");
     }
 
     if (!databaseConnection.tableExists("users")) {
-      throw new RuntimeException("Unable to create user table");
+      throw new IllegalStateException("Unable to create user table");
     }
-  }
-
-  private static byte[] getRandomUUID() {
-    final UUID uuid = UUID.randomUUID();
-    final ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
-    bb.putLong(uuid.getMostSignificantBits());
-    bb.putLong(uuid.getLeastSignificantBits());
-    return bb.array();
   }
 
   /**
@@ -58,11 +60,26 @@ public class DatabaseAuthentication implements AuthenticationPlugin {
    */
   @Override
   public void addUser(final User user, final String plainTextPassword) {
-    final byte uuid_bytes[] = (user.getUUID() == null ? getRandomUUID() : user.getUUIDBytes());
+    if (user == null || plainTextPassword == null) {
+      LOGGER.warning("Password is too short");
+      throw new IllegalArgumentException("Password too short");
+    }
+    if (plainTextPassword.length() < 5) {
+      throw new IllegalArgumentException("");
+    }
+
+    final byte uuid_bytes[] = (user.getUUID() == null ? getRandomUUIDBytes() : user.getUUIDBytes());
+
+    final Connection connection;
+    try {
+      connection = DatabaseConnection.getConnection();
+    } catch (final SQLException sqle) {
+      LOGGER.severe("Failed to establish database connection: " + sqle.getMessage());
+      return;
+    }
     final PreparedStatement statement;
     try {
-      statement = connection.prepareStatement(
-              INSERT_USER);
+      statement = connection.prepareStatement(INSERT_USER);
 
       statement.setBytes(1, uuid_bytes);
       statement.setString(2, user.getUsername());
@@ -70,29 +87,34 @@ public class DatabaseAuthentication implements AuthenticationPlugin {
       statement.setString(4, user.getForename());
       statement.setString(5, user.getSurname());
 
-      if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Adding user \"{}\" ({} {}) with password \"{}\"",
-                user.getUsername(),
-                user.getForename(),
-                user.getSurname(),
-                plainTextPassword);
-      }
-
       if (statement.executeUpdate() == 0) {
+        statement.close();
         connection.rollback();
+        connection.close();
         throw new SQLException("Could not create user, insertion failed");
       }
 
-      connection.commit();
+      statement.close();
+      if (!connection.getAutoCommit()) {
+        connection.commit();
+      }
+      connection.close();
       user.setUUIDBytes(uuid_bytes);
-      LOGGER.debug("Successfully created user with ID {}", user.getUUID());
+      LOGGER.fine("Successfully created user with ID " + user.getUUID());
     } catch (final SQLException sqle) {
-      LOGGER.error(sqle.getMessage());
+      LOGGER.severe(sqle.getMessage());
     }
   }
 
   @Override
   public User getUser(String username, String plainTextPassword) {
+    final Connection connection;
+    try {
+      connection = DatabaseConnection.getConnection();
+    } catch (final SQLException sqle) {
+      LOGGER.severe("Failed to establish database connection: " + sqle.getMessage());
+      return null;
+    }
     final PreparedStatement statement;
     try {
       statement = connection.prepareStatement(
@@ -101,10 +123,6 @@ public class DatabaseAuthentication implements AuthenticationPlugin {
 
       statement.setString(1, username);
       statement.setString(2, StringUtils.getMD5(plainTextPassword));
-
-      if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Searching for user \"{}\" with password \"{}\"", username, plainTextPassword);
-      }
 
       final ResultSet result = statement.executeQuery();
 
@@ -115,28 +133,33 @@ public class DatabaseAuthentication implements AuthenticationPlugin {
         user.setUsername(result.getString("username"));
         user.setForename(result.getString("forename"));
         user.setSurname(result.getString("surname"));
-        if (LOGGER.isDebugEnabled()) {
-          LOGGER.debug("Found user {} ({} {}) with ID {}",
-                  user.getUsername(),
-                  user.getForename(),
-                  user.getSurname(),
-                  user.getUUID());
-        }
+        LOGGER.fine(String.format("Found user %s (%s %s) with ID %s",
+                user.getUsername(),
+                user.getForename(),
+                user.getSurname(),
+                user.getUUID()));
       } else {
-        if (LOGGER.isDebugEnabled()) {
-          LOGGER.debug("User \"{}\" with password \"{}\" was not found", username, plainTextPassword);
-        }
+        LOGGER.fine("User \"" + username + "\" not found");
+        result.close();
+        statement.close();
+        connection.close();
         return null;
       }
 
       if (result.next()) {
         // user not unique
+        result.close();
+        statement.close();
+        connection.close();
         throw new SQLException("Multiple users found!");
       }
 
+      result.close();
+      statement.close();
+      connection.close();
       return user;
     } catch (final SQLException sqle) {
-      LOGGER.error(sqle.getMessage());
+      LOGGER.severe(sqle.getMessage());
     }
     return null;
   }

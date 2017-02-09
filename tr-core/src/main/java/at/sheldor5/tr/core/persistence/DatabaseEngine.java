@@ -8,6 +8,7 @@ import at.sheldor5.tr.api.objects.RecordType;
 import at.sheldor5.tr.api.objects.Session;
 import at.sheldor5.tr.api.objects.User;
 import at.sheldor5.tr.api.objects.Year;
+
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -21,12 +22,12 @@ import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-class DatabaseEngine implements RecordEngine {
+public class DatabaseEngine implements RecordEngine {
 
-  private static final Logger LOGGER = LogManager.getLogger(DatabaseEngine.class);
+  private static final Logger LOGGER = Logger.getLogger(DatabaseEngine.class.getName());
 
   private static final String INSERT_RECORD = "INSERT INTO [records] ([user_id], [date], [time], [type]) VALUES (?, ?, ?, ?)";
   private static final String SELECT_RECORD = "SELECT * FROM [records] WHERE [pk_record_id] = ? AND [user_id] = ?";
@@ -56,15 +57,16 @@ class DatabaseEngine implements RecordEngine {
       statement.setTime(3, Time.valueOf(record.getTime()));
       statement.setBoolean(4, record.getType().getBoolean());
 
-      if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Adding record ({} {}, {}) for user ID {}",
+      if (LOGGER.isLoggable(Level.FINE)) {
+        LOGGER.fine(String.format("Adding record (%s %s, %s) for user ID %s",
                 record.getDate(),
                 record.getTime(),
                 record.getType(),
-                user.getUUID());
+                user.getUUID()));
       }
 
       if (statement.executeUpdate() != 1) {
+        statement.close();
         connection.rollback();
         throw new SQLException("Could not store record: " + statement.toString());
       }
@@ -73,17 +75,20 @@ class DatabaseEngine implements RecordEngine {
       try (final ResultSet generatedKeys = statement.getGeneratedKeys()) {
         if (generatedKeys.next()) {
           recordId = generatedKeys.getInt(1);
-        }
-        else {
+        } else {
+          statement.close();
           connection.rollback();
           throw new SQLException("Storing record failed, no ID obtained");
         }
       }
 
-      connection.commit();
+      if (!connection.getAutoCommit()) {
+        connection.commit();
+      }
+      statement.close();
       record.setId(recordId);
     } catch (final SQLException sqle) {
-      LOGGER.error(sqle.getMessage());
+      LOGGER.severe(sqle.getMessage());
     }
   }
 
@@ -107,7 +112,7 @@ class DatabaseEngine implements RecordEngine {
 
       statement.setBytes(2, user.getUUIDBytes());
 
-      LOGGER.debug("Searching for record with id {}", id);
+      LOGGER.fine("Searching for record with id " + id);
 
       final ResultSet result = statement.executeQuery();
 
@@ -118,27 +123,32 @@ class DatabaseEngine implements RecordEngine {
         record.setDate(result.getDate("date").toLocalDate());
         record.setTime(result.getTime("time").toLocalTime());
         record.setType(RecordType.getType(result.getBoolean("type")));
-        if (LOGGER.isDebugEnabled()) {
-          LOGGER.debug("Found record ({} {}, {}) with ID {}",
+
+        if (LOGGER.isLoggable(Level.FINE)) {
+          LOGGER.fine(String.format("Found record (%s %s, %s) with ID %s",
                   record.getDate(),
                   record.getTime(),
                   record.getType(),
-                  record.getId());
+                  record.getId()));
         }
       } else {
-        if (LOGGER.isDebugEnabled()) {
-          LOGGER.debug("Record with id {} was not found", id);
-        }
+        LOGGER.fine("Record with id " + id + " was not found");
+        result.close();
+        statement.close();
         return null;
       }
 
       if (result.next()) {
         // record not unique
+        result.close();
+        statement.close();
         throw new SQLException("Multiple records found!");
       }
+      result.close();
+      statement.close();
       return record;
     } catch (final SQLException sqle) {
-      LOGGER.error(sqle.getMessage());
+      LOGGER.severe(sqle.getMessage());
     }
     return null;
   }
@@ -153,9 +163,7 @@ class DatabaseEngine implements RecordEngine {
       statement.setBytes(1, user.getUUIDBytes());
       statement.setDate(2, Date.valueOf(LocalDate.of(yyyy, mm, dd)));
 
-      if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Searching for records from {}", date);
-      }
+      LOGGER.fine("Searching for records from " + date);
 
       final ResultSet result = statement.executeQuery();
       final List<Record> list = new ArrayList<>();
@@ -168,21 +176,23 @@ class DatabaseEngine implements RecordEngine {
           record.setTime(result.getTime("time").toLocalTime());
           record.setType(RecordType.getType(result.getBoolean("type")));
           list.add(record);
-          if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Found record ({} {}, {}) with ID {}",
+
+          if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.fine(String.format("Found record (%s %s, %s) with ID %s",
                     record.getDate(),
                     record.getTime(),
                     record.getType(),
-                    record.getId());
+                    record.getId()));
           }
         } while (result.next());
       } else {
-        LOGGER.debug("No records found from {}", date);
+        LOGGER.fine("No records found from " + date);
       }
-
+      result.close();
+      statement.close();
       return list;
     } catch (final SQLException sqle) {
-      LOGGER.error(sqle.getMessage());
+      LOGGER.severe(sqle.getMessage());
     }
     return null;
   }
@@ -209,7 +219,7 @@ class DatabaseEngine implements RecordEngine {
       startDate = Date.valueOf(tmp);
       endDate = Date.valueOf(LocalDate.of(year, month, tmp.lengthOfMonth()));
     } catch (final DateTimeException pe) {
-      LOGGER.error(pe.getMessage());
+      LOGGER.severe(pe.getMessage());
       return list;
     }
 
@@ -221,8 +231,8 @@ class DatabaseEngine implements RecordEngine {
       statement.setDate(2, startDate);
       statement.setDate(3, endDate);
 
-      if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Searching for records between {} and {}", startDate, endDate);
+      if (LOGGER.isLoggable(Level.FINE)) {
+        LOGGER.fine("Searching for records between " + startDate + " and " + endDate);
       }
 
       final ResultSet result = statement.executeQuery();
@@ -235,21 +245,27 @@ class DatabaseEngine implements RecordEngine {
           record.setTime(result.getTime("time").toLocalTime());
           record.setType(RecordType.getType(result.getBoolean("type")));
           list.add(record);
-          if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Found record ({} {}, {}) with ID {}",
+
+          if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.fine(String.format("Found record (%s %s, %s) with ID %s",
                     record.getDate(),
                     record.getTime(),
                     record.getType(),
-                    record.getId());
+                    record.getId()));
           }
+
         } while (result.next());
       } else {
-        LOGGER.debug("No records found between {} and {}", startDate, endDate);
+        if (LOGGER.isLoggable(Level.FINE)) {
+          LOGGER.fine("No records found between " + startDate + " and " + endDate);
+        }
       }
 
+      result.close();
+      statement.close();
       return list;
     } catch (final SQLException sqle) {
-      LOGGER.error(sqle.getMessage());
+      LOGGER.severe(sqle.getMessage());
     }
     return null;
   }
@@ -264,4 +280,11 @@ class DatabaseEngine implements RecordEngine {
     return null;
   }
 
+  public void close() {
+    try {
+      connection.close();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+  }
 }

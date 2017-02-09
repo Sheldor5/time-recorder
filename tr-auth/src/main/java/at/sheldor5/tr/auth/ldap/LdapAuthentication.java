@@ -5,6 +5,7 @@ import at.sheldor5.tr.api.objects.User;
 import at.sheldor5.tr.api.utils.GlobalProperties;
 import java.util.Hashtable;
 import java.util.UUID;
+import java.util.logging.Logger;
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -13,15 +14,16 @@ import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 import javax.naming.ldap.InitialLdapContext;
 import javax.naming.ldap.LdapContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * LDAP Authentication Service Implementation.
  */
 public class LdapAuthentication implements AuthenticationPlugin {
 
-  private static final Logger LOGGER = LogManager.getLogger(LdapAuthentication.class);
+  private static final Logger LOGGER = Logger.getLogger(LdapAuthentication.class.getName());
+
+  private static String PROVIDER_URL;
+  private static String SEARCH_BASE;
 
   /**
    * Result attributes for LDAP queries.
@@ -34,6 +36,20 @@ public class LdapAuthentication implements AuthenticationPlugin {
     CONTROLS.setReturningAttributes(attrIDs);
   }
 
+  /**
+   * @see AuthenticationPlugin#initialize().
+   */
+  @Override
+  public void initialize() throws IllegalStateException {
+    PROVIDER_URL = "ldap://" + GlobalProperties.getProperty("ldap.host") + ":" + GlobalProperties.getProperty("ldap.port");
+    SEARCH_BASE = "uid=%s," + GlobalProperties.getProperty("ldap.search.base");
+    LOGGER.fine("Using Url: " + PROVIDER_URL);
+    LOGGER.fine("Using Search Base: " + SEARCH_BASE);
+  }
+
+  /**
+   * @see AuthenticationPlugin#addUser(User, String).
+   */
   @Override
   public void addUser(final User user, final String plainTextPassword) {
     throw new UnsupportedOperationException("Currently not supported");
@@ -42,9 +58,10 @@ public class LdapAuthentication implements AuthenticationPlugin {
   /**
    * @see AuthenticationPlugin#getUser(String, String).
    */
+  @Override
   public User getUser(final String username, final String password) {
 
-    LOGGER.debug("Trying to authenticate user \"" + username + "\"");
+    LOGGER.fine("Trying to authenticate user \"" + username + "\"");
 
     final LdapContext context = getUserLdapContext(username, password);
 
@@ -76,13 +93,13 @@ public class LdapAuthentication implements AuthenticationPlugin {
         }
 
         if (!answer.hasMore()) {
-          LOGGER.debug("Got user \"" + forename + " " + surname + "\" with ID " + uuid);
+          LOGGER.fine("Got user \"" + forename + " " + surname + "\" with ID " + uuid);
           return new User(uuid, username, forename, surname);
         }
-        LOGGER.error("Found multiple LDAP entries");
+        LOGGER.warning("Found multiple LDAP entries");
       }
     } catch (final Exception generalException) {
-      LOGGER.error(generalException.getMessage());
+      LOGGER.severe(generalException.getMessage());
       return null;
     }
     return null;
@@ -91,11 +108,13 @@ public class LdapAuthentication implements AuthenticationPlugin {
   protected static LdapContext getUserLdapContext(final String username, final String password) {
     LdapContext ctx = null;
 
-    final String user = "uid=" + username + "," + GlobalProperties.getProperty("ldap.search.base");
+    final String user = String.format(SEARCH_BASE, username);
+
+    LOGGER.fine("Authenticating user: " + user);
 
     try {
       final Hashtable<String, String> env = new Hashtable<>();
-      env.put(Context.PROVIDER_URL, "ldap://" + GlobalProperties.getProperty("ldap.host") + ":" + GlobalProperties.getProperty("ldap.port"));
+      env.put(Context.PROVIDER_URL, PROVIDER_URL);
       env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
       env.put(Context.SECURITY_AUTHENTICATION, "simple");
       env.put(Context.SECURITY_PRINCIPAL, user);
@@ -104,14 +123,13 @@ public class LdapAuthentication implements AuthenticationPlugin {
 
       ctx = new InitialLdapContext(env, null);
 
-      LOGGER.debug("Successfully authenticated user: " + user);
+      LOGGER.fine("Successfully authenticated user: " + user);
     } catch (final NamingException ne) {
       final String msg = ne.getMessage();
       if (!msg.contains("error code 49")) {
-        LOGGER.error(ne.getMessage());
+        LOGGER.warning(ne.getMessage());
       }
-
-      LOGGER.debug("Authentication failed for user: " + user);
+      LOGGER.fine("Authentication failed for user: " + user);
     }
 
     return ctx;

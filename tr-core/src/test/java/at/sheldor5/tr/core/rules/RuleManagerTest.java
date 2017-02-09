@@ -15,11 +15,11 @@ import org.junit.Test;
 
 public class RuleManagerTest {
 
-  private static final File rules = new File("src/main/resources/rules");
+  private static final File rules = new File("src/test/resources/rules");
   private static RuleManager manager;
 
   @Before
-  public void test() {
+  public void test() throws Exception {
     manager = RuleManager.getInstance();
     manager.load(rules);
   }

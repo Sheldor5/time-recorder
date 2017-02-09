@@ -10,8 +10,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import java.util.logging.Logger;
 
 /**
  * RuntimeUtils Class for Java Reflection Operations.
@@ -23,7 +22,7 @@ public class RuntimeUtils {
   /**
    * Class Logger.
    */
-  private static final Logger LOGGER = LogManager.getLogger(RuntimeUtils.class);
+  private static final Logger LOGGER = Logger.getLogger(RuntimeUtils.class.getName());
 
   private static String executionPath = null;
 
@@ -42,7 +41,7 @@ public class RuntimeUtils {
       throws IOException, IllegalArgumentException {
     // check arguments
     if (directory == null) {
-      LOGGER.error("Directory is null!");
+      LOGGER.severe("Directory is null!");
       throw new IllegalArgumentException("null");
     }
 
@@ -65,7 +64,7 @@ public class RuntimeUtils {
 
     final List<Class<T>> classes = new ArrayList<>();
 
-    LOGGER.debug("Searching for classes implementing <"
+    LOGGER.fine("Searching for classes implementing <"
         + interfaceClazz.getName() + "> in "
         + folder.getAbsolutePath());
 
@@ -81,7 +80,7 @@ public class RuntimeUtils {
       if (file.getName().endsWith(".jar") || file.getName().endsWith(".zip")) {
         // open as JAR
         final JarFile jarFile = new JarFile(file.getAbsolutePath());
-        LOGGER.debug("Scanning \"" + file.getName() + "\"");
+        LOGGER.fine("Scanning \"" + file.getName() + "\"");
         final Enumeration<JarEntry> entries = jarFile.entries();
         final URL[] urls = { new URL("jar:file:" + file.getAbsolutePath() + "!/") };
         final URLClassLoader urlClassLoader = URLClassLoader.newInstance(urls);
@@ -102,14 +101,14 @@ public class RuntimeUtils {
           try {
             // load class into JVM
             final Class loadedClass = urlClassLoader.loadClass(className);
-            LOGGER.debug("Testing class <" + className + ">");
+            LOGGER.fine("Testing class <" + className + ">");
             if (interfaceClazz.isAssignableFrom(loadedClass) && !loadedClass.isInterface()) {
               // only add classes to the returning list which implement the given class
               classes.add((Class<T>) loadedClass);
-              LOGGER.debug("Found Match: <" + loadedClass.getName() + ">");
+              LOGGER.fine("Found Match: <" + loadedClass.getName() + ">");
             }
           } catch (final ClassNotFoundException | NoClassDefFoundError ce) {
-            LOGGER.error("Could not load class <" + jarEntry.getName() + ">: " + ce.getMessage());
+            LOGGER.severe("Could not load class <" + jarEntry.getName() + ">: " + ce.getMessage());
           }
         }
       }

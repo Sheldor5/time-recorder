@@ -6,23 +6,26 @@ import at.sheldor5.tr.api.persistence.DatabaseConnection;
 import at.sheldor5.tr.api.utils.GlobalProperties;
 import at.sheldor5.tr.auth.db.DatabaseAuthentication;
 import at.sheldor5.tr.auth.ldap.LdapAuthentication;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 
 public class AuthenticationManagerTest {
 
   private static final File PROPERTIES = new File("test.properties");
 
-  private static final String FORENAME = "Test";
-  private static final String SURNAME = "User";
+  private static final String FORENAME = "Time";
+  private static final String SURNAME = "Recorder";
 
-  private static final String LDAP_USER = "testuser";
-  private static final String LDAP_PASS = "test";
+  private static final String LDAP_USER = "time-recorder";
+  private static final String LDAP_PASS = "password";
 
   private static final String DB_USER = "db_test";
   private static final String DB_PASS = "db_pass";
@@ -31,22 +34,21 @@ public class AuthenticationManagerTest {
 
   private static AuthenticationManager manager;
 
-  private static AuthenticationPlugin db;
-  private static AuthenticationPlugin ldap;
+  private static DatabaseAuthentication db;
+  private static LdapAuthentication ldap;
 
-  @Before
-  public void init() throws IOException {
+  @BeforeClass
+  public static void init() throws IOException, SQLException {
     GlobalProperties.load(PROPERTIES);
 
     manager = AuthenticationManager.getInstance();
     Assume.assumeNotNull(manager);
 
-    db = new DatabaseAuthentication(DatabaseConnection.getInstance());
-    Assume.assumeNotNull(db);
+    db = new DatabaseAuthentication();
+    db.initialize();
 
     ldap = new LdapAuthentication();
-    Assume.assumeNotNull(ldap);
-    Assume.assumeNotNull(ldap.getUser("time-recorder", "password"));
+    ldap.initialize();
 
     final User user = db.getUser(DB_USER, DB_PASS);
     if (user == null) {

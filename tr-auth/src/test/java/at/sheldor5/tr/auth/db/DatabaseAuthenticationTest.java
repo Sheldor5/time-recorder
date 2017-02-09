@@ -7,11 +7,14 @@ import java.io.File;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Random;
 import java.util.UUID;
+
+import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class DatabaseAuthenticationTest {
@@ -22,17 +25,20 @@ public class DatabaseAuthenticationTest {
   private static final String USER_PREFIX = "testuser_";
   private static final String FORENAME = "Test";
   private static final String SURNAME = "User";
-  private static final String PASSWORD = "test";
+  private static final String PASSWORD = "password";
 
-  private static DatabaseConnection db;
+  private static Connection connection;
+  private static DatabaseConnection databaseConnection;
   private static DatabaseAuthentication auth;
 
-  @Before
-  public void init() throws IOException, SQLException {
+  @BeforeClass
+  public static void init() throws IOException, SQLException {
     GlobalProperties.load(PROPERTIES);
-
-    db = DatabaseConnection.getInstance();
-    auth = new DatabaseAuthentication(db);
+    connection = DatabaseConnection.getConnection();
+    databaseConnection = new DatabaseConnection(connection);
+    databaseConnection.initialize();
+    auth = new DatabaseAuthentication();
+    auth.initialize();
   }
 
   @Test
@@ -54,6 +60,11 @@ public class DatabaseAuthenticationTest {
     Assert.assertNotNull(actual.getUUID());
     Assert.assertEquals(uuid, actual.getUUID());
     Assert.assertEquals(username, actual.getUsername());
+  }
+
+  @AfterClass
+  public static void cleanup() throws SQLException {
+    connection.close();
   }
 
   private static String getSecureRandomUser() {

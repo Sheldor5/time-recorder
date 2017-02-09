@@ -1,8 +1,6 @@
 package at.sheldor5.tr.api.persistence;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.sql.Connection;
@@ -11,10 +9,9 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Logger;
 
 import at.sheldor5.tr.api.utils.GlobalProperties;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * Simple Database Connection Wrapper class.
@@ -24,31 +21,15 @@ public class DatabaseConnection {
   /**
    * Class Logger.
    */
-  private static final Logger LOGGER = LogManager.getLogger(DatabaseConnection.class);
-
-
-  /**
-   * Singleton Instance.
-   */
-  private static DatabaseConnection instance;
+  private static final Logger LOGGER = Logger.getLogger(DatabaseConnection.class.getName());
 
   private Connection connection;
 
-  public static DatabaseConnection getInstance() {
-    if (instance == null) {
-      try {
-        instance = new DatabaseConnection();
-      } catch (final SQLException sqle) {
-        LOGGER.fatal(sqle);
-        return null;
-      }
-    }
-    return instance;
+  public DatabaseConnection(final Connection connection) {
+    this.connection = connection;
   }
 
-  private DatabaseConnection() throws SQLException {
-    connection = connect();
-
+  public void initialize() {
     if (!tableExists("time-recorder") || !tableExists("records")) {
       executeScript("/sql/sqlserver/create_system_tables.sql");
     }
@@ -63,36 +44,14 @@ public class DatabaseConnection {
    *
    * @return Global Singleton Instance of this {@link DatabaseConnection}.
    */
-  public Connection getConnection() {
-    return connection;
-  }
-
-  /**
-   * Establish a connection to the database.
-   *
-   * @throws Exception On connection errors.
-   */
-  private Connection connect() throws SQLException {
-    // load JDBC class
-    final String jdbcClass = GlobalProperties.getProperty("db.jdbc.class");
+  public void close() {
     try {
-      Class.forName(jdbcClass);
-    } catch (final ClassNotFoundException cnfe) {
-      throw new RuntimeException("JDBC class <" + jdbcClass + "> not found");
+      connection.close();
+    } catch (final SQLException sqle) {
+      LOGGER.warning("Failed to close database connection: " + sqle.getMessage());
     }
-
-    // get full JDBC URL
-    final String jdbc = getJDBCUrl();
-
-    LOGGER.info("Connecting to database using JDBC URL \"{}\"", jdbc);
-
-    // connect
-    final Connection connection = DriverManager.getConnection(jdbc);
-
-    LOGGER.info("Successfully connected to database");
-
-    return connection;
   }
+
 
   public boolean tableExists(final String tableName) {
     boolean result = false;
@@ -102,7 +61,7 @@ public class DatabaseConnection {
       result = set.next();
       set.close();
     } catch (final SQLException sqle) {
-      LOGGER.error(sqle.getMessage());
+      LOGGER.severe(sqle.getMessage());
     }
     return result;
   }
@@ -140,16 +99,45 @@ public class DatabaseConnection {
     } catch (final Exception generalException) {
       generalException.printStackTrace();
     }
-    LOGGER.info("Successfully created application database tables ...");
   }
 
   private void executeCommand(final String command) throws SQLException {
-    LOGGER.debug("Executing command:\n{}", command);
+    LOGGER.fine("Executing command:\n" + command);
     final Statement statement = connection.createStatement();
     statement.executeUpdate(command);
     if (!connection.getAutoCommit()) {
       connection.commit();
     }
+    statement.close();
+  }
+
+
+
+  /**
+   * Establish a connection to the database.
+   *
+   * @throws Exception On connection errors.
+   */
+  public static Connection getConnection() throws SQLException {
+    // load JDBC class
+    final String jdbcClass = GlobalProperties.getProperty("db.jdbc.class");
+    try {
+      Class.forName(jdbcClass);
+    } catch (final ClassNotFoundException cnfe) {
+      throw new RuntimeException("JDBC class <" + jdbcClass + "> not found");
+    }
+
+    // get full JDBC URL
+    final String jdbc = getJDBCUrl();
+
+    LOGGER.fine("Connecting to database using JDBC Url: " + jdbc);
+
+    // connect
+    final Connection connection = DriverManager.getConnection(jdbc);
+
+    LOGGER.fine("Successfully connected to database");
+
+    return connection;
   }
 
   public static String getJDBCUrl() {
@@ -157,6 +145,7 @@ public class DatabaseConnection {
 
     if (jdbc == null || jdbc.isEmpty()) {
       // build JDBC URL from single properties
+      final String vendor = GlobalProperties.getProperty("db.vendor");
       final String host = GlobalProperties.getProperty("db.host");
       final String instance = GlobalProperties.getProperty("db.instance");
       final String name = GlobalProperties.getProperty("db.name");
@@ -164,8 +153,8 @@ public class DatabaseConnection {
       final String pass = GlobalProperties.getProperty("db.pass");
       final String charset = GlobalProperties.getProperty("db.charset");
       jdbc = String.format(
-              "jdbc:sqlserver://%s%s;database=%s;user=%s;password=%s;CharacterSet=%s",
-              host, instance.isEmpty() ? "" : "\\" + instance, name, user, pass, charset);
+              "jdbc:%s://%s%s;database=%s;user=%s;password=%s;CharacterSet=%s",
+              vendor, host, instance.isEmpty() ? "" : "\\" + instance, name, user, pass, charset);
     }
 
     return jdbc;

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -19,9 +20,6 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -30,7 +28,7 @@ import org.xml.sax.SAXException;
 
 public class RuleLoader {
 
-  private static final Logger LOGGER = LogManager.getLogger(RuleLoader.class);
+  private static final Logger LOGGER = Logger.getLogger(RuleLoader.class.getName());
   private static final Map<String, Integer> DAY_VALUE_MAP = new HashMap<>();
 
   static {
@@ -47,12 +45,12 @@ public class RuleLoader {
 
   public RuleLoader(final String xsdPath) throws IOException {
     if (xsdPath == null || xsdPath.isEmpty()) {
-      LOGGER.error("XSD path is null or empty");
+      LOGGER.severe("XSD path is null or empty");
       throw new FileNotFoundException("XSD path is null or empty");
     }
     final File file = new File(xsdPath);
     if (!file.exists() || file.isDirectory()) {
-      LOGGER.error("XSD file does not exist or is no file");
+      LOGGER.severe("XSD file does not exist or is no file");
       throw new FileNotFoundException("XSD file does not exist or is no file");
     }
     this.xsd = file;
@@ -60,7 +58,7 @@ public class RuleLoader {
 
   public RuleLoader(final File xsdFile) throws IOException {
     if (!xsdFile.exists() || xsdFile.isDirectory()) {
-      LOGGER.error("XSD file does not exist or is no file");
+      LOGGER.severe("XSD file does not exist or is no file");
       throw new FileNotFoundException("XSD file does not exist or is no file");
     }
     this.xsd = xsdFile;
@@ -70,7 +68,7 @@ public class RuleLoader {
     final List<Rule> list = new ArrayList<>();
 
     if (xmlPath == null || xmlPath.isEmpty()) {
-      LOGGER.error("XML path is null or empty");
+      LOGGER.severe("XML path is null or empty");
       throw new FileNotFoundException("XML path is null or empty");
     }
     return getRules(new File(xmlPath));
@@ -79,7 +77,7 @@ public class RuleLoader {
   public List<Rule> getRules(final File xmlFile) throws IOException {
     final List<Rule> list = new ArrayList<>();
     if (!xmlFile.exists()) {
-      LOGGER.error("XML file does not exist or is no file");
+      LOGGER.severe("XML file does not exist or is no file");
       throw new FileNotFoundException("XML file does not exist or is no file");
     }
 
@@ -91,7 +89,7 @@ public class RuleLoader {
       final Document document = builder.parse(xmlFile);
       root = document.getDocumentElement();
     } catch (final ParserConfigurationException | SAXException pce) {
-      LOGGER.error(pce.getMessage());
+      LOGGER.severe(pce.getMessage());
       return list;
     }
 
@@ -141,7 +139,7 @@ public class RuleLoader {
             rule.timeOperations.add(getTimeOperation((Element) node));
             break;
           default:
-            LOGGER.info("Rule type \"{}\" is not implemented yet!", node.getNodeName());
+            LOGGER.info("Rule type \"" + node.getNodeName() + "\" is not implemented yet!");
             break;
         }
       }
@@ -171,7 +169,7 @@ public class RuleLoader {
             days = getDays((Element) node);
             break;
           default:
-            LOGGER.error("Unknown element \"{}\"", node.getNodeName());
+            LOGGER.severe("Unknown element: " + node.getNodeName());
             break;
         }
       }
@@ -204,7 +202,7 @@ public class RuleLoader {
         } else if ("to".equals(name)) {
           to = DAY_VALUE_MAP.get(node.getTextContent());
         } else {
-          LOGGER.error("Unknown element \"{}\"", name);
+          LOGGER.severe("Unknown element: " + name);
         }
       }
     }
@@ -225,7 +223,7 @@ public class RuleLoader {
       validator.validate(new StreamSource(xmlfis));
       return true;
     } catch (final Exception generalException) {
-      LOGGER.warn(generalException.getMessage());
+      LOGGER.warning(generalException.getMessage());
       return false;
     }
   }
@@ -240,7 +238,7 @@ public class RuleLoader {
       xsd.close();
       return true;
     } catch (final Exception generalException) {
-      LOGGER.warn(generalException.getMessage());
+      LOGGER.warning(generalException.getMessage());
       return false;
     }
   }

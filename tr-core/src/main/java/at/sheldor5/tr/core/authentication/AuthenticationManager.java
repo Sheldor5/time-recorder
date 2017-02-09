@@ -24,6 +24,11 @@ public class AuthenticationManager implements AuthenticationPlugin {
   }
 
   @Override
+  public void initialize() throws IllegalStateException {
+    
+  }
+
+  @Override
   public void addUser(final User user, final String plainTextPassword) {
     for (final AuthenticationPlugin plugin : plugins) {
       plugin.addUser(user, plainTextPassword);

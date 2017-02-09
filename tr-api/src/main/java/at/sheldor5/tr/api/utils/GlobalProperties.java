@@ -2,19 +2,17 @@ package at.sheldor5.tr.api.utils;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import java.util.logging.Logger;
 
 public class GlobalProperties {
 
   /**
    * Class Logger.
    */
-  private static final Logger LOGGER = LogManager.getLogger(GlobalProperties.class);
+  private static final Logger LOGGER = Logger.getLogger(GlobalProperties.class.getName());
 
   /**
    * Object fields.
@@ -43,12 +41,12 @@ public class GlobalProperties {
     if (is == null) {
       final String executionPath = new File("").getAbsolutePath();
       final String errorMsg = "File \"" + file.getName() + "\" does not exist in: "+ executionPath;
-      LOGGER.error(errorMsg);
+      LOGGER.severe(errorMsg);
       throw new IOException(errorMsg);
     }
     properties.load(is);
     is.close();
-    LOGGER.debug("Loaded file: " + file.getName());
+    LOGGER.fine("Loaded file: " + file.getName());
   }
 
   /**

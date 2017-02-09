@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules xmlns="https://github.com/Sheldor5/time-recorder">
+    <rule>
+        <!-- working between 10 PM and 5 AM is worth 150% -->
+        <name>50% &#220;S</name>
+        <key-date>1900-01-01</key-date>
+        <description>Arbeiten zwischen 22:00 und 05:00 wird mit 50% Zuschlag verg&#252;tet</description>
+        <before>
+            <!-- working between midnight and 5 AM ... -->
+            <time>05:00:00</time>
+            <!-- ... is worth 150% -->
+            <multiplier>1.5</multiplier>
+            <!-- on monday, tuesday, ..., and saturday -->
+            <days>
+                <day>monday</day>
+                <day>tuesday</day>
+                <day>wednesday</day>
+                <day>thursday</day>
+                <day>friday</day>
+                <day>saturday</day>
+            </days>
+        </before>
+        <after>
+            <!-- working between 7 PM and midnight ... -->
+            <time>19:00:00</time>
+            <!-- ... is worth 150% -->
+            <multiplier>1.5</multiplier>
+            <!-- from monday to saturday -->
+            <days>
+                <from>monday</from>
+                <to>saturday</to>
+            </days>
+        </after>
+    </rule>
+    <rule>
+        <!-- working on sunday is worth 200% -->
+        <name>100% &#220;S</name>
+        <key-date>1900-01-01</key-date>
+        <description>Arbeiten am Sonntag wird mit 100% Zuschlag verg&#252;tet</description>
+        <after>
+            <!-- working on the whole day ... -->
+            <time>00:00:00</time>
+            <!-- ... is worth 200% -->
+            <multiplier>2.0</multiplier>
+            <!-- only on sunday -->
+            <days>
+                <day>sunday</day>
+            </days>
+        </after>
+    </rule>
+    <rule>
+        <!-- long hours are worth 150% -->
+        <name>&#220;berstunden</name>
+        <key-date>1900-01-01</key-date>
+        <description>&#220;berstunden werden mit 50% Zuschlag verg&#252;tet</description>
+        <effort>
+            <!-- working more than 8 hours on the day ... -->
+            <limit>08:00:00</limit>
+            <!-- ... is worth 150% -->
+            <multiplier>1.5</multiplier>
+        </effort>
+    </rule>
+</rules>

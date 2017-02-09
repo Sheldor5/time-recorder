@@ -1,5 +1,6 @@
 package at.sheldor5.tr.exporter.pdf;
 
+import at.sheldor5.tr.api.Exporter;
 import at.sheldor5.tr.api.ExporterPlugin;
 import at.sheldor5.tr.api.objects.Day;
 import at.sheldor5.tr.api.objects.Month;
@@ -9,9 +10,7 @@ import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
 import java.io.InputStream;
 
-/**
- * Created by Michael Palata <a href="https://github.com/Sheldor5">@github.com/Sheldor5</a> on 13.01.2017.
- */
+@Exporter(name = "defaultPDF", displayNamePropertyIdentifier = "time-recorder PDF")
 public class PdfExporter implements ExporterPlugin {
 
   private static final MimeType MIMETYPE;
