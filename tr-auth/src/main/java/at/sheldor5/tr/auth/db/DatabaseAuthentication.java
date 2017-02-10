@@ -1,8 +1,9 @@
 package at.sheldor5.tr.auth.db;
 
-import at.sheldor5.tr.api.AuthenticationPlugin;
+import at.sheldor5.tr.api.plugins.AuthenticationPlugin;
 import at.sheldor5.tr.api.objects.User;
 import at.sheldor5.tr.api.persistence.DatabaseConnection;
+import at.sheldor5.tr.api.plugins.Plugin;
 import at.sheldor5.tr.api.utils.StringUtils;
 
 import java.nio.ByteBuffer;
@@ -20,6 +21,8 @@ public class DatabaseAuthentication implements AuthenticationPlugin {
    * Class Logger.
    */
   private static final Logger LOGGER = Logger.getLogger(DatabaseConnection.class.getName());
+
+  private static final String NAME = "tr-db";
 
   private static final String INSERT_USER = "INSERT INTO [users] ([pk_user_id], [username], [password], [forename], [surname]) VALUES (?, ?, ?, ?, ?)";
   private static final String SELECT_USER = "SELECT [pk_user_id], [username], [forename], [surname] FROM [users] WHERE [username] = ? AND [password] = ?";
@@ -162,5 +165,10 @@ public class DatabaseAuthentication implements AuthenticationPlugin {
       LOGGER.severe(sqle.getMessage());
     }
     return null;
+  }
+
+  @Override
+  public String getName() {
+    return NAME;
   }
 }

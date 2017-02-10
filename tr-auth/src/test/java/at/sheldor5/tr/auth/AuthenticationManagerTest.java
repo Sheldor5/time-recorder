@@ -1,15 +1,11 @@
-package at.sheldor5.tr.core.authentication;
+package at.sheldor5.tr.auth;
 
-import at.sheldor5.tr.api.AuthenticationPlugin;
 import at.sheldor5.tr.api.objects.User;
-import at.sheldor5.tr.api.persistence.DatabaseConnection;
 import at.sheldor5.tr.api.utils.GlobalProperties;
 import at.sheldor5.tr.auth.db.DatabaseAuthentication;
 import at.sheldor5.tr.auth.ldap.LdapAuthentication;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Assume;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -19,7 +15,8 @@ import java.sql.SQLException;
 
 public class AuthenticationManagerTest {
 
-  private static final File PROPERTIES = new File("test.properties");
+  private static final File PROPERTIES_DB = new File("db.properties");
+  private static final File PROPERTIES_LDAP = new File("ldap.properties");
 
   private static final String FORENAME = "Time";
   private static final String SURNAME = "Recorder";
@@ -39,7 +36,8 @@ public class AuthenticationManagerTest {
 
   @BeforeClass
   public static void init() throws IOException, SQLException {
-    GlobalProperties.load(PROPERTIES);
+    GlobalProperties.load(PROPERTIES_DB);
+    GlobalProperties.load(PROPERTIES_LDAP);
 
     manager = AuthenticationManager.getInstance();
     Assume.assumeNotNull(manager);
@@ -57,8 +55,8 @@ public class AuthenticationManagerTest {
 
     Assume.assumeNotNull(db.getUser(DB_USER, DB_PASS));
 
-    manager.addAuthenticationPlugin(db);
-    manager.addAuthenticationPlugin(ldap);
+    manager.addPlugin(db);
+    manager.addPlugin(ldap);
   }
 
   @Test

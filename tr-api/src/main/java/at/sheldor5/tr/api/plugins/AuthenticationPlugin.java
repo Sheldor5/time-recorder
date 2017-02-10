@@ -1,13 +1,11 @@
-package at.sheldor5.tr.api;
+package at.sheldor5.tr.api.plugins;
 
 import at.sheldor5.tr.api.objects.User;
-import at.sheldor5.tr.api.utils.Authentication;
 
 /**
  * Interface to serve username:password authentication.
  */
-@Authentication(name = "abstract")
-public interface AuthenticationPlugin {
+public interface AuthenticationPlugin extends Plugin {
 
   /**
    * Used for initialization.

@@ -16,7 +16,7 @@ public class Rules implements ServletContextListener {
     try {
       ruleManager.load(RULES_FOLDER);
     } catch (final Exception e) {
-      final File executionPath = new File("");
+      System.out.println(e.getMessage());
       //throw new RuntimeException("Failed to load rules from folder \"" + rules + "\" in: " + executionPath.getAbsolutePath());
     }
   }

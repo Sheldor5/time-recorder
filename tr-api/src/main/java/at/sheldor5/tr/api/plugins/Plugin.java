@@ -1,11 +1,11 @@
-package at.sheldor5.tr.api.utils;
+package at.sheldor5.tr.api.plugins;
 
-public @interface Authentication {
+public interface Plugin {
 
   /**
    * Short name of this Authentication.
    *
    * @return The name of this authentication.
    */
-  String name();
+  String getName();
 }

@@ -1,6 +1,6 @@
 package at.sheldor5.tr.sdk.auth;
 
-import at.sheldor5.tr.api.AuthenticationPlugin;
+import at.sheldor5.tr.api.plugins.AuthenticationPlugin;
 import at.sheldor5.tr.api.objects.User;
 import helper.TestUtils;
 import java.sql.SQLException;

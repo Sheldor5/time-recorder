@@ -1,15 +1,19 @@
 package at.sheldor5.tr.sdk.auth;
 
-import at.sheldor5.tr.api.AuthenticationPlugin;
-import at.sheldor5.tr.api.objects.Record;
+import at.sheldor5.tr.api.plugins.AuthenticationPlugin;
 import at.sheldor5.tr.api.objects.User;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class DummyAuthentication implements AuthenticationPlugin {
+
+  private static final String NAME = "dummy";
+
+  @Override
+  public String getName() {
+    return NAME;
+  }
 
   class Credentials {
     private final User user;

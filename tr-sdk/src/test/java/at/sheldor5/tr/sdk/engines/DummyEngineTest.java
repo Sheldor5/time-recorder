@@ -1,6 +1,6 @@
 package at.sheldor5.tr.sdk.engines;
 
-import at.sheldor5.tr.api.AuthenticationPlugin;
+import at.sheldor5.tr.api.plugins.AuthenticationPlugin;
 import at.sheldor5.tr.api.RecordEngine;
 import at.sheldor5.tr.api.objects.GlobalConfiguration;
 import at.sheldor5.tr.api.objects.Record;

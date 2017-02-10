@@ -25,13 +25,4 @@
         <listener-class>at.sheldor5.tr.web.init.Rules</listener-class>
     </listener>
 
-    <servlet>
-        <servlet-name>HelloServlet</servlet-name>
-        <servlet-class>at.sheldor5.tr.web.test.Test</servlet-class>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>HelloServlet</servlet-name>
-        <url-pattern>/hello</url-pattern>
-    </servlet-mapping>
 </web-app>

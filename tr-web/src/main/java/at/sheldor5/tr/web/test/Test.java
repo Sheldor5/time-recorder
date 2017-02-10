@@ -3,19 +3,20 @@ package at.sheldor5.tr.web.test;
 import at.sheldor5.tr.api.objects.Day;
 import at.sheldor5.tr.api.objects.Session;
 import at.sheldor5.tr.api.objects.User;
-import at.sheldor5.tr.core.authentication.AuthenticationManager;
+import at.sheldor5.tr.auth.AuthenticationManager;
 import at.sheldor5.tr.core.persistence.DatabaseEngine;
 import at.sheldor5.tr.web.init.ConnectionPool;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.util.List;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+@WebServlet(name = "Test", urlPatterns = "/test")
 public class Test extends HttpServlet {
   /**
    * Respond to a GET request for the content produced by
@@ -27,8 +28,7 @@ public class Test extends HttpServlet {
    * @exception IOException if an input/output error occurs
    * @exception ServletException if a servlet error occurs
    */
-  public void doGet(HttpServletRequest request,
-                    HttpServletResponse response)
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
           throws IOException, ServletException {
 
     response.setContentType("text/html");

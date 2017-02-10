@@ -1,4 +1,4 @@
-package at.sheldor5.tr.api;
+package at.sheldor5.tr.api.plugins;
 
 import at.sheldor5.tr.api.objects.Day;
 import at.sheldor5.tr.api.objects.Month;
@@ -6,8 +6,15 @@ import at.sheldor5.tr.api.objects.Year;
 import java.io.InputStream;
 import javax.activation.MimeType;
 
-@Exporter(name = "abstract", displayNamePropertyIdentifier = "abstract")
-public interface ExporterPlugin {
+public interface ExporterPlugin extends Plugin {
+
+  /**
+   * The property identifier for the
+   * displayed name, required for language packs.
+   *
+   * @return The identifier for property files.
+   */
+  String displayNamePropertyIdentifier();
 
   /**
    * Get this Exporter's MIME-Type.

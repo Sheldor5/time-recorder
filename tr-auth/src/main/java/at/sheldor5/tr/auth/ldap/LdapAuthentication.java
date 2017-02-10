@@ -1,7 +1,8 @@
 package at.sheldor5.tr.auth.ldap;
 
-import at.sheldor5.tr.api.AuthenticationPlugin;
+import at.sheldor5.tr.api.plugins.AuthenticationPlugin;
 import at.sheldor5.tr.api.objects.User;
+import at.sheldor5.tr.api.plugins.Plugin;
 import at.sheldor5.tr.api.utils.GlobalProperties;
 import java.util.Hashtable;
 import java.util.UUID;
@@ -21,6 +22,8 @@ import javax.naming.ldap.LdapContext;
 public class LdapAuthentication implements AuthenticationPlugin {
 
   private static final Logger LOGGER = Logger.getLogger(LdapAuthentication.class.getName());
+
+  private static final String NAME = "tr-ldap";
 
   private static String PROVIDER_URL;
   private static String SEARCH_BASE;
@@ -133,5 +136,10 @@ public class LdapAuthentication implements AuthenticationPlugin {
     }
 
     return ctx;
+  }
+
+  @Override
+  public String getName() {
+    return NAME;
   }
 }

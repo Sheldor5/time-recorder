@@ -1,18 +1,22 @@
 package at.sheldor5.tr.exporter.text;
 
-import at.sheldor5.tr.api.Exporter;
-import at.sheldor5.tr.api.ExporterPlugin;
+import at.sheldor5.tr.api.plugins.ExporterPlugin;
 import at.sheldor5.tr.api.objects.Day;
 import at.sheldor5.tr.api.objects.Month;
 import at.sheldor5.tr.api.objects.Year;
 import at.sheldor5.tr.api.utils.TimeUtils;
+import at.sheldor5.tr.exporter.pdf.PdfExporter;
 
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
 import java.io.*;
+import java.util.logging.Logger;
 
-@Exporter(name = "defaultPlainText", displayNamePropertyIdentifier = "time-recorder Text")
 public class PlainTextExporter implements ExporterPlugin {
+
+  private static final Logger LOGGER = Logger.getLogger(PdfExporter.class.getName());
+
+  private static final String NAME = "tr-text";
 
   private static final String MONTH_SUMMARY_FORMAT = "%02dh %02dm %02ds";
   private static final MimeType MIMETYPE;
@@ -24,6 +28,12 @@ public class PlainTextExporter implements ExporterPlugin {
       e.printStackTrace();
       throw new RuntimeException(PlainTextExporter.class.getName() + ": Unexpected Error!");
     }
+  }
+
+  @Override
+  public String displayNamePropertyIdentifier() {
+    // time-recorder Text
+    return  "tr.exporter.text";
   }
 
   @Override
@@ -99,5 +109,10 @@ public class PlainTextExporter implements ExporterPlugin {
       default:
         return "unknown";
     }
+  }
+
+  @Override
+  public String getName() {
+    return NAME;
   }
 }

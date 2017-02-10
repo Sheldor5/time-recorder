@@ -3,6 +3,8 @@ package at.sheldor5.tr.web.init;
 import at.sheldor5.tr.api.utils.GlobalProperties;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
@@ -12,6 +14,7 @@ public class Configuration implements ServletContextListener {
 
   @Override
   public void contextInitialized(ServletContextEvent servletContextEvent) {
+    Logger.getGlobal().setLevel(Level.FINE);
     // load configuration file
     try {
       GlobalProperties.load(PROPERTIES);

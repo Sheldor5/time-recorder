@@ -1,6 +1,6 @@
 package at.sheldor5.tr.exporter;
 
-import at.sheldor5.tr.api.ExporterPlugin;
+import at.sheldor5.tr.api.plugins.ExporterPlugin;
 import at.sheldor5.tr.api.objects.Day;
 import at.sheldor5.tr.api.objects.Month;
 import at.sheldor5.tr.api.objects.Record;

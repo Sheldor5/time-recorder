@@ -1,6 +1,6 @@
 package at.sheldor5.tr.auth.ldap;
 
-import at.sheldor5.tr.api.AuthenticationPlugin;
+import at.sheldor5.tr.api.plugins.AuthenticationPlugin;
 import at.sheldor5.tr.api.objects.User;
 import at.sheldor5.tr.api.utils.GlobalProperties;
 import java.io.File;
