@@ -9,7 +9,8 @@ IF OBJECT_ID(N'users', 'U') IS NOT NULL BEGIN
 END
 
 CREATE TABLE [users] (
-	[pk_user_id] BINARY(16) PRIMARY KEY,
+  [pk_user_id] INT IDENTITY (1, 1) PRIMARY KEY,
+  [uuid] BINARY(16) UNIQUE NOT NULL ,
 	[username] VARCHAR(32) UNIQUE NOT NULL,
 	[password] CHARACTER(32) NOT NULL, -- MD5
 	[forename] VARCHAR(64) NOT NULL,

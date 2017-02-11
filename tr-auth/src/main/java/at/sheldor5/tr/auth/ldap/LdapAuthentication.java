@@ -1,8 +1,7 @@
 package at.sheldor5.tr.auth.ldap;
 
 import at.sheldor5.tr.api.plugins.AuthenticationPlugin;
-import at.sheldor5.tr.api.objects.User;
-import at.sheldor5.tr.api.plugins.Plugin;
+import at.sheldor5.tr.api.user.User;
 import at.sheldor5.tr.api.utils.GlobalProperties;
 import java.util.Hashtable;
 import java.util.UUID;
@@ -96,8 +95,13 @@ public class LdapAuthentication implements AuthenticationPlugin {
         }
 
         if (!answer.hasMore()) {
+          final User user = new User();
+          user.setUuid(uuid);
+          user.setUsername(username);
+          user.setForename(forename);
+          user.setSurname(surname);
           LOGGER.fine("Got user \"" + forename + " " + surname + "\" with ID " + uuid);
-          return new User(uuid, username, forename, surname);
+          return user;
         }
         LOGGER.warning("Found multiple LDAP entries");
       }

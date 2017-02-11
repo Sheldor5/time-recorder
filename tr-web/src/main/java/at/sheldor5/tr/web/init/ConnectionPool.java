@@ -1,6 +1,7 @@
 package at.sheldor5.tr.web.init;
 
-import at.sheldor5.tr.api.persistence.DatabaseConnection;
+import at.sheldor5.tr.core.auth.AuthenticationManager;
+import at.sheldor5.tr.core.persistence.DatabaseConnection;
 import at.sheldor5.tr.api.utils.GlobalProperties;
 import java.sql.Connection;
 import java.sql.Driver;
@@ -12,6 +13,8 @@ import java.util.Enumeration;
 import java.util.logging.Logger;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+
+import at.sheldor5.tr.core.persistence.DatabaseEngine;
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
 
@@ -53,7 +56,8 @@ public class ConnectionPool implements ServletContextListener {
     // check system tables
     try {
       connection = datasource.getConnection();
-      new DatabaseConnection(connection);
+      final DatabaseConnection databaseConnection = new DatabaseConnection(connection);
+      databaseConnection.initialize();
     } catch (final SQLException sqle) {
       // TODO
       throw new RuntimeException("Application tables could not be determined: " + sqle.getMessage());
@@ -66,6 +70,9 @@ public class ConnectionPool implements ServletContextListener {
         }
       }
     }
+
+    DatabaseEngine.getInstance().setDataSource(datasource);
+    AuthenticationManager.getInstance().setDataSource(datasource);
   }
 
   public static Connection getConnection() {
@@ -75,6 +82,10 @@ public class ConnectionPool implements ServletContextListener {
       sqle.printStackTrace();
     }
     return null;
+  }
+
+  public static javax.sql.DataSource getDataSource() {
+    return datasource;
   }
 
   @Override

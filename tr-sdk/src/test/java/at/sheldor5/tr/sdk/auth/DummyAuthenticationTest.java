@@ -1,7 +1,7 @@
 package at.sheldor5.tr.sdk.auth;
 
 import at.sheldor5.tr.api.plugins.AuthenticationPlugin;
-import at.sheldor5.tr.api.objects.User;
+import at.sheldor5.tr.api.user.User;
 import helper.TestUtils;
 import java.sql.SQLException;
 import java.util.UUID;
@@ -20,28 +20,27 @@ public class DummyAuthenticationTest {
 
   @Test
   public void test_add_user() {
-    final UUID uuid = UUID.randomUUID();
-    final User user = new User(uuid, USER_NAME_PREFIX + TestUtils.getRandomLong(), USER_FORE, USER_SUR);
+    final User user = new User(User.getRandomUsername(USER_NAME_PREFIX), USER_FORE, USER_SUR);
 
     auth.addUser(user, USER_PASS);
-    Assert.assertNotNull(user.getUUID());
+    Assert.assertNotNull(user.getUuid());
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void test_user_uniqueness() throws SQLException {
-    final UUID uuid = UUID.randomUUID();
-    final User user = new User(uuid, USER_NAME_PREFIX + TestUtils.getRandomLong(), USER_FORE, USER_SUR);
+    final User user = new User(User.getRandomUsername(USER_NAME_PREFIX), USER_FORE, USER_SUR);
 
     auth.addUser(user, USER_PASS);
+    Assert.assertNotNull(user.getUuid());
+
     auth.addUser(user, USER_PASS);
   }
 
   @Test
   public void test_get_invalid_user() {
-    final UUID uuid = UUID.randomUUID();
-    final User expected = new User(uuid, USER_NAME_PREFIX + TestUtils.getRandomLong(), USER_FORE, USER_SUR);
+    final User expected = new User(User.getRandomUsername(USER_NAME_PREFIX), USER_FORE, USER_SUR);
     auth.addUser(expected, USER_PASS);
-    Assert.assertNotNull(expected.getUUID());
+    Assert.assertNotNull(expected.getUuid());
 
     final User actual = auth.getUser(expected.getUsername(), "invalid");
     Assert.assertNull(actual);
@@ -49,10 +48,9 @@ public class DummyAuthenticationTest {
 
   @Test
   public void test_get_valid_user() {
-    final UUID uuid = UUID.randomUUID();
-    final User expected = new User(uuid, USER_NAME_PREFIX + TestUtils.getRandomLong(), USER_FORE, USER_SUR);
+    final User expected = new User(User.getRandomUsername(USER_NAME_PREFIX), USER_FORE, USER_SUR);
     auth.addUser(expected, USER_PASS);
-    Assert.assertNotNull(expected.getUUID());
+    Assert.assertNotNull(expected.getUuid());
 
     final User actual = auth.getUser(expected.getUsername(), USER_PASS);
     Assert.assertEquals(expected, actual);

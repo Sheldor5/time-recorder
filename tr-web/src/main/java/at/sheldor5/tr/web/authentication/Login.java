@@ -1,7 +1,7 @@
 package at.sheldor5.tr.web.authentication;
 
-import at.sheldor5.tr.api.objects.User;
-import at.sheldor5.tr.auth.AuthenticationManager;
+import at.sheldor5.tr.api.user.User;
+import at.sheldor5.tr.core.auth.AuthenticationManager;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -14,7 +14,7 @@ import javax.servlet.http.HttpSession;
 @WebServlet(name = "login", urlPatterns = "/login")
 public class Login extends HttpServlet {
 
-  private static final String HTML_LOGIN = "/index.html";
+  public static final String HTML_LOGIN = "/index.html";
   private static final String HTML_HOME = "/home.jsp";
 
   @Override
@@ -30,8 +30,8 @@ public class Login extends HttpServlet {
         response.sendRedirect(response.encodeRedirectURL(HTML_LOGIN));
         return;
       }
+      session.setAttribute("user", user);
     }
-
     response.sendRedirect(response.encodeRedirectURL(HTML_HOME));
   }
 }

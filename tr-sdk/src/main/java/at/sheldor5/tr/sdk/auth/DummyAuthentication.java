@@ -1,7 +1,8 @@
 package at.sheldor5.tr.sdk.auth;
 
 import at.sheldor5.tr.api.plugins.AuthenticationPlugin;
-import at.sheldor5.tr.api.objects.User;
+import at.sheldor5.tr.api.user.User;
+import at.sheldor5.tr.api.utils.UuidUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +48,7 @@ public class DummyAuthentication implements AuthenticationPlugin {
     if (users.contains(credentials)) {
       throw new IllegalArgumentException("Username already in use");
     }
+    user.setUuidBytes(UuidUtils.getRandomUuidBytes());
     users.add(credentials);
   }
 

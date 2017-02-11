@@ -1,12 +1,12 @@
 package at.sheldor5.tr.sdk.engines;
 
-import at.sheldor5.tr.api.RecordEngine;
-import at.sheldor5.tr.api.objects.Record;
-import at.sheldor5.tr.api.objects.Session;
-import at.sheldor5.tr.api.objects.User;
-import at.sheldor5.tr.api.objects.Day;
-import at.sheldor5.tr.api.objects.Month;
-import at.sheldor5.tr.api.objects.Year;
+import at.sheldor5.tr.api.PersistenceEngine;
+import at.sheldor5.tr.api.time.Record;
+import at.sheldor5.tr.api.time.Session;
+import at.sheldor5.tr.api.user.User;
+import at.sheldor5.tr.api.time.Day;
+import at.sheldor5.tr.api.time.Month;
+import at.sheldor5.tr.api.time.Year;
 import at.sheldor5.tr.api.utils.StringUtils;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class DummyEngine implements RecordEngine {
+public class DummyEngine implements PersistenceEngine {
 
   private final Map<User, List<Record>> records = new HashMap<>();
 
@@ -133,13 +133,6 @@ public class DummyEngine implements RecordEngine {
   @Override
   public List<Record> getYearRecords(User user, int year) {
     return null;
-  }
-
-  public void reset() {
-    for (final Map.Entry<User, List<Record>> entry : records.entrySet()) {
-      entry.getValue().clear();
-    }
-    records.clear();
   }
 
   public void generateTestData() {

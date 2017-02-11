@@ -1,12 +1,14 @@
 package at.sheldor5.tr.web.init;
 
 import at.sheldor5.tr.core.rules.RuleManager;
-
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import java.io.File;
+import java.util.logging.Logger;
 
 public class Rules implements ServletContextListener {
+
+  private static final Logger LOGGER = Logger.getLogger(Rules.class.getName());
 
   private static final File RULES_FOLDER = new File("rules");
 
@@ -16,7 +18,7 @@ public class Rules implements ServletContextListener {
     try {
       ruleManager.load(RULES_FOLDER);
     } catch (final Exception e) {
-      System.out.println(e.getMessage());
+      LOGGER.severe(e.getMessage());
       //throw new RuntimeException("Failed to load rules from folder \"" + rules + "\" in: " + executionPath.getAbsolutePath());
     }
   }

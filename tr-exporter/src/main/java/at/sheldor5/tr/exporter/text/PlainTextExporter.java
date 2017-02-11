@@ -1,9 +1,9 @@
 package at.sheldor5.tr.exporter.text;
 
 import at.sheldor5.tr.api.plugins.ExporterPlugin;
-import at.sheldor5.tr.api.objects.Day;
-import at.sheldor5.tr.api.objects.Month;
-import at.sheldor5.tr.api.objects.Year;
+import at.sheldor5.tr.api.time.Day;
+import at.sheldor5.tr.api.time.Month;
+import at.sheldor5.tr.api.time.Year;
 import at.sheldor5.tr.api.utils.TimeUtils;
 import at.sheldor5.tr.exporter.pdf.PdfExporter;
 

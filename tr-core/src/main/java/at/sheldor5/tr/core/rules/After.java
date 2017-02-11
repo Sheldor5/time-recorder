@@ -1,6 +1,6 @@
 package at.sheldor5.tr.core.rules;
 
-import at.sheldor5.tr.api.objects.Session;
+import at.sheldor5.tr.api.time.Session;
 import java.time.LocalTime;
 
 public class After extends TimeOperation {

@@ -1,14 +1,13 @@
 package at.sheldor5.tr.core.rules;
 
-import at.sheldor5.tr.api.objects.Day;
-import at.sheldor5.tr.api.objects.Record;
-import at.sheldor5.tr.api.objects.RecordType;
-import at.sheldor5.tr.api.objects.Session;
+import at.sheldor5.tr.api.time.Day;
+import at.sheldor5.tr.api.time.Record;
+import at.sheldor5.tr.api.time.RecordType;
+import at.sheldor5.tr.api.time.Session;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
-import at.sheldor5.tr.api.utils.TimeUtils;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -1,14 +1,17 @@
 package at.sheldor5.tr.core.persistence;
 
-import at.sheldor5.tr.api.RecordEngine;
-import at.sheldor5.tr.api.objects.Day;
-import at.sheldor5.tr.api.objects.Month;
-import at.sheldor5.tr.api.objects.Record;
-import at.sheldor5.tr.api.objects.RecordType;
-import at.sheldor5.tr.api.objects.Session;
-import at.sheldor5.tr.api.objects.User;
-import at.sheldor5.tr.api.objects.Year;
+import at.sheldor5.tr.api.PersistenceEngine;
+import at.sheldor5.tr.api.time.Day;
+import at.sheldor5.tr.api.time.Month;
+import at.sheldor5.tr.api.time.Record;
+import at.sheldor5.tr.api.time.RecordType;
+import at.sheldor5.tr.api.time.Session;
+import at.sheldor5.tr.api.user.User;
+import at.sheldor5.tr.api.time.Year;
+import at.sheldor5.tr.api.utils.UuidUtils;
 
+import javax.sql.DataSource;
+import java.nio.ByteBuffer;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -21,74 +24,121 @@ import java.text.SimpleDateFormat;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class DatabaseEngine implements RecordEngine {
+public class DatabaseEngine implements PersistenceEngine {
 
   private static final Logger LOGGER = Logger.getLogger(DatabaseEngine.class.getName());
 
-  private static final String INSERT_RECORD = "INSERT INTO [records] ([user_id], [date], [time], [type]) VALUES (?, ?, ?, ?)";
-  private static final String SELECT_RECORD = "SELECT * FROM [records] WHERE [pk_record_id] = ? AND [user_id] = ?";
+  private static final String INSERT_RECORD = "INSERT INTO [records] ([fk_user_id], [date], [time], [type]) VALUES (?, ?, ?, ?)";
+  private static final String SELECT_RECORD = "SELECT * FROM [records] WHERE [pk_record_id] = ? AND [fk_user_id] = ?";
 
-  private static final String SELECT_RECORDS_OF_DAY = "SELECT * FROM [records] WHERE [user_id] = ? AND [date] = ?";
-  private static final String SELECT_RECORDS_OF_MONTH = "SELECT * FROM [records] WHERE [user_id] = ? AND [date] >= ? AND [date] <= ?";
-  private static final String SELECT_RECORDS_OF_YEAR = "SELECT * FROM [records] WHERE [user_id] = ? AND [date] >= ? AND [date] <= ?";
+  private static final String SELECT_RECORDS_OF_DAY = "SELECT * FROM [records] WHERE [fk_user_id] = ? AND [date] = ?";
+  private static final String SELECT_RECORDS_OF_MONTH = "SELECT * FROM [records] WHERE [fk_user_id] = ? AND [date] >= ? AND [date] <= ?";
+  private static final String SELECT_RECORDS_OF_YEAR = "SELECT * FROM [records] WHERE [fk_user_id] = ? AND [date] >= ? AND [date] <= ?";
 
   private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 
-  private final Connection connection;
+  private static DatabaseEngine instance;
 
-  public DatabaseEngine(final Connection connection) {
-    this.connection = connection;
+  public static DatabaseEngine getInstance() {
+    if (instance == null) {
+      instance = new DatabaseEngine();
+    }
+    return instance;
+  }
+
+  private static final Map<DataSource, DatabaseEngine> instances = new HashMap<>();
+
+  public static DatabaseEngine getInstance(final DataSource dataSource) {
+    DatabaseEngine engine = instances.get(dataSource);
+    if (engine == null) {
+      engine = instances.put(dataSource, new DatabaseEngine(dataSource));
+    }
+    return engine;
+  }
+
+  private DataSource dataSource;
+
+  public DatabaseEngine() {
+
+  }
+
+  public DatabaseEngine(final DataSource dataSource) {
+    this.dataSource = dataSource;
+  }
+
+  public void setDataSource(final DataSource dataSource) {
+    this.dataSource = dataSource;
   }
 
   @Override
   public void addRecord(final User user, final Record record) {
-    final PreparedStatement statement;
-    try {
-      statement = connection.prepareStatement(
-              INSERT_RECORD,
-              Statement.RETURN_GENERATED_KEYS);
+    if (user == null) {
+      LOGGER.warning("User is null");
+      return;
+    }
+    if (record == null) {
+      LOGGER.warning("Record is null");
+      return;
+    }
 
-      statement.setBytes(1, user.getUUIDBytes());
-      statement.setDate(2, Date.valueOf(record.getDate()));
-      statement.setTime(3, Time.valueOf(record.getTime()));
-      statement.setBoolean(4, record.getType().getBoolean());
+    try (final Connection connection = dataSource.getConnection()) {
 
-      if (LOGGER.isLoggable(Level.FINE)) {
-        LOGGER.fine(String.format("Adding record (%s %s, %s) for user ID %s",
-                record.getDate(),
-                record.getTime(),
-                record.getType(),
-                user.getUUID()));
-      }
+      int id = 0;
 
-      if (statement.executeUpdate() != 1) {
-        statement.close();
-        connection.rollback();
-        throw new SQLException("Could not store record: " + statement.toString());
-      }
+      try (final PreparedStatement statement = connection.prepareStatement(INSERT_RECORD, Statement.RETURN_GENERATED_KEYS)) {
 
-      int recordId;
-      try (final ResultSet generatedKeys = statement.getGeneratedKeys()) {
-        if (generatedKeys.next()) {
-          recordId = generatedKeys.getInt(1);
+        statement.setInt(1, user.getId());
+        statement.setDate(2, Date.valueOf(record.getDate()));
+        statement.setTime(3, Time.valueOf(record.getTime()));
+        statement.setBoolean(4, record.getType().getBoolean());
+
+        if (statement.executeUpdate() != 0) {
+
+          try (final ResultSet generatedKeys = statement.getGeneratedKeys()) {
+
+            if (generatedKeys.next()) {
+              id = generatedKeys.getInt(1);
+            } else {
+              LOGGER.severe("Could not store record, no ID obtained");
+            }
+
+          } catch (final SQLException sqle) {
+            LOGGER.severe("Result Error: " + sqle.getMessage());
+          }
+
         } else {
-          statement.close();
-          connection.rollback();
-          throw new SQLException("Storing record failed, no ID obtained");
+          LOGGER.severe("Could not store record, insert failed");
         }
+
+      } catch (final SQLException sqle) {
+        LOGGER.severe("Statement Execution Error: " + sqle.getMessage());
       }
 
-      if (!connection.getAutoCommit()) {
-        connection.commit();
+      if (id > 0) {
+        if (!connection.getAutoCommit()) {
+          connection.commit();
+        }
+        record.setId(id);
+        if (LOGGER.isLoggable(Level.FINE)) {
+          LOGGER.fine(String.format("Successfully stored record (%s %s, %s) for user ID %s",
+                  record.getDate(),
+                  record.getTime(),
+                  record.getType(),
+                  user.getId()));
+        }
+      } else if (!connection.getAutoCommit()) {
+        connection.rollback();
       }
-      statement.close();
-      record.setId(recordId);
+
     } catch (final SQLException sqle) {
-      LOGGER.severe(sqle.getMessage());
+      LOGGER.severe("Connection Error: " + sqle.getMessage());
     }
   }
 
@@ -103,97 +153,110 @@ public class DatabaseEngine implements RecordEngine {
   }
 
   @Override
-  public Record getRecord(User user, int id) {
-    final PreparedStatement statement;
-    try {
-      statement = connection.prepareStatement(SELECT_RECORD);
-
-      statement.setInt(1, id);
-
-      statement.setBytes(2, user.getUUIDBytes());
-
-      LOGGER.fine("Searching for record with id " + id);
-
-      final ResultSet result = statement.executeQuery();
-
-      final Record record = new Record();
-
-      if (result.next()) {
-        record.setId(result.getInt("pk_record_id"));
-        record.setDate(result.getDate("date").toLocalDate());
-        record.setTime(result.getTime("time").toLocalTime());
-        record.setType(RecordType.getType(result.getBoolean("type")));
-
-        if (LOGGER.isLoggable(Level.FINE)) {
-          LOGGER.fine(String.format("Found record (%s %s, %s) with ID %s",
-                  record.getDate(),
-                  record.getTime(),
-                  record.getType(),
-                  record.getId()));
-        }
-      } else {
-        LOGGER.fine("Record with id " + id + " was not found");
-        result.close();
-        statement.close();
-        return null;
-      }
-
-      if (result.next()) {
-        // record not unique
-        result.close();
-        statement.close();
-        throw new SQLException("Multiple records found!");
-      }
-      result.close();
-      statement.close();
-      return record;
-    } catch (final SQLException sqle) {
-      LOGGER.severe(sqle.getMessage());
+  public Record getRecord(final User user, int id) {
+    if (user == null) {
+      LOGGER.warning("User is null");
+      return null;
     }
+
+    try (final Connection connection = dataSource.getConnection()) {
+
+      try (final PreparedStatement statement = connection.prepareStatement(SELECT_RECORD)) {
+        statement.setInt(1, id);
+        statement.setInt(2, user.getId());
+
+        try (final ResultSet result = statement.executeQuery()) {
+
+          if (result.next()) {
+            final Record record = new Record();
+            record.setId(result.getInt("pk_record_id"));
+            record.setDate(result.getDate("date").toLocalDate());
+            record.setTime(result.getTime("time").toLocalTime());
+            record.setType(RecordType.getType(result.getBoolean("type")));
+
+            if (result.next()) {
+              // record not unique
+              LOGGER.severe("Multiple records found with ID " + record.getId());
+              return null;
+            } else if (LOGGER.isLoggable(Level.FINE)) {
+              LOGGER.fine(String.format("Found record (%s %s, %s) with ID %s",
+                      record.getDate(),
+                      record.getTime(),
+                      record.getType(),
+                      record.getId()));
+            }
+
+            return record;
+
+          }
+
+          LOGGER.fine("No record with id " + id + " found");
+
+        } catch (final SQLException sqle) {
+          LOGGER.severe("Result Error: " + sqle.getMessage());
+        }
+
+      } catch (final SQLException sqle) {
+        LOGGER.severe("Statement Execution Error: " + sqle.getMessage());
+      }
+
+    } catch (final SQLException sqle) {
+      LOGGER.severe("Connection Error: " + sqle.getMessage());
+    }
+
     return null;
   }
 
   @Override
   public List<Record> getDayRecords(final User user, int yyyy, int mm, int dd) {
     final LocalDate date = LocalDate.of(yyyy, mm, dd);
-    final PreparedStatement statement;
-    try {
-      statement = connection.prepareStatement(SELECT_RECORDS_OF_DAY);
 
-      statement.setBytes(1, user.getUUIDBytes());
-      statement.setDate(2, Date.valueOf(LocalDate.of(yyyy, mm, dd)));
+    try (final Connection connection = dataSource.getConnection()) {
 
-      LOGGER.fine("Searching for records from " + date);
+      try (final PreparedStatement statement = connection.prepareStatement(SELECT_RECORDS_OF_DAY)) {
 
-      final ResultSet result = statement.executeQuery();
-      final List<Record> list = new ArrayList<>();
+        statement.setInt(1, user.getId());
+        statement.setDate(2, Date.valueOf(LocalDate.of(yyyy, mm, dd)));
 
-      if (result.next()) {
-        do {
-          final Record record = new Record();
-          record.setId(result.getInt("pk_record_id"));
-          record.setDate(result.getDate("date").toLocalDate());
-          record.setTime(result.getTime("time").toLocalTime());
-          record.setType(RecordType.getType(result.getBoolean("type")));
-          list.add(record);
+        try (final ResultSet result = statement.executeQuery()) {
 
-          if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.fine(String.format("Found record (%s %s, %s) with ID %s",
-                    record.getDate(),
-                    record.getTime(),
-                    record.getType(),
-                    record.getId()));
+          if (result.next()) {
+            LOGGER.fine("Found records from " + date);
+            final List<Record> list = new ArrayList<>();
+            Record record;
+            do {
+              record = new Record();
+              record.setId(result.getInt("pk_record_id"));
+              record.setDate(result.getDate("date").toLocalDate());
+              record.setTime(result.getTime("time").toLocalTime());
+              record.setType(RecordType.getType(result.getBoolean("type")));
+              list.add(record);
+
+              if (LOGGER.isLoggable(Level.FINE)) {
+                LOGGER.fine(String.format("Found record (%s %s, %s) with ID %s",
+                        record.getDate(),
+                        record.getTime(),
+                        record.getType(),
+                        record.getId()));
+              }
+            } while (result.next());
+            return list;
+          } else {
+            LOGGER.fine("No records found from " + date);
           }
-        } while (result.next());
-      } else {
-        LOGGER.fine("No records found from " + date);
+
+        } catch (final SQLException sqle) {
+          LOGGER.severe("Result Error: " + sqle.getMessage());
+        }
+
+      } catch (final SQLException sqle) {
+        LOGGER.severe("Statement Execution Error: " + sqle.getMessage());
       }
-      result.close();
-      statement.close();
-      return list;
+
     } catch (final SQLException sqle) {
-      LOGGER.severe(sqle.getMessage());
+      LOGGER.severe("Connection Error: " + sqle.getMessage());
     }
+
     return null;
   }
 
@@ -211,62 +274,67 @@ public class DatabaseEngine implements RecordEngine {
 
   @Override
   public List<Record> getMonthRecords(final User user, int month, int year) {
-    final List<Record> list = new ArrayList<>();
     final LocalDate tmp = LocalDate.of(year, month, 1);
     Date startDate;
     Date endDate;
+
     try {
       startDate = Date.valueOf(tmp);
       endDate = Date.valueOf(LocalDate.of(year, month, tmp.lengthOfMonth()));
     } catch (final DateTimeException pe) {
       LOGGER.severe(pe.getMessage());
-      return list;
+      return null;
     }
 
-    final PreparedStatement statement;
-    try {
-      statement = connection.prepareStatement(SELECT_RECORDS_OF_MONTH);
+    ;
+    try (final Connection connection = dataSource.getConnection()) {
 
-      statement.setBytes(1, user.getUUIDBytes());
-      statement.setDate(2, startDate);
-      statement.setDate(3, endDate);
+      try (final PreparedStatement statement = connection.prepareStatement(SELECT_RECORDS_OF_MONTH)) {
 
-      if (LOGGER.isLoggable(Level.FINE)) {
-        LOGGER.fine("Searching for records between " + startDate + " and " + endDate);
-      }
+        statement.setInt(1, user.getId());
+        statement.setDate(2, startDate);
+        statement.setDate(3, endDate);
 
-      final ResultSet result = statement.executeQuery();
+        try (final ResultSet result = statement.executeQuery()) {
 
-      if (result.next()) {
-        do {
-          final Record record = new Record();
-          record.setId(result.getInt("pk_record_id"));
-          record.setDate(result.getDate("date").toLocalDate());
-          record.setTime(result.getTime("time").toLocalTime());
-          record.setType(RecordType.getType(result.getBoolean("type")));
-          list.add(record);
+          if (result.next()) {
+            LOGGER.fine("Found records between " + startDate + " and " + endDate);
+            final List<Record> list = new ArrayList<>();
+            Record record;
+            do {
+              record = new Record();
+              record.setId(result.getInt("pk_record_id"));
+              record.setDate(result.getDate("date").toLocalDate());
+              record.setTime(result.getTime("time").toLocalTime());
+              record.setType(RecordType.getType(result.getBoolean("type")));
+              list.add(record);
 
-          if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.fine(String.format("Found record (%s %s, %s) with ID %s",
-                    record.getDate(),
-                    record.getTime(),
-                    record.getType(),
-                    record.getId()));
+              if (LOGGER.isLoggable(Level.FINE)) {
+                LOGGER.fine(String.format("Found record (%s %s, %s) with ID %s",
+                        record.getDate(),
+                        record.getTime(),
+                        record.getType(),
+                        record.getId()));
+              }
+
+            } while (result.next());
+            return list;
+          } else {
+            LOGGER.fine("No records found between " + startDate + " and " + endDate);
           }
 
-        } while (result.next());
-      } else {
-        if (LOGGER.isLoggable(Level.FINE)) {
-          LOGGER.fine("No records found between " + startDate + " and " + endDate);
+        } catch (final SQLException sqle) {
+          LOGGER.severe("Result Error: " + sqle.getMessage());
         }
+
+      } catch (final SQLException sqle) {
+        LOGGER.severe("Statement Execution Error: " + sqle.getMessage());
       }
 
-      result.close();
-      statement.close();
-      return list;
     } catch (final SQLException sqle) {
-      LOGGER.severe(sqle.getMessage());
+      LOGGER.severe("Connection Error: " + sqle.getMessage());
     }
+
     return null;
   }
 
@@ -278,13 +346,5 @@ public class DatabaseEngine implements RecordEngine {
   @Override
   public List<Record> getYearRecords(User user, int year) {
     return null;
-  }
-
-  public void close() {
-    try {
-      connection.close();
-    } catch (SQLException e) {
-      e.printStackTrace();
-    }
   }
 }

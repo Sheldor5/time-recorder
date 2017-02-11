@@ -1,9 +1,9 @@
 package at.sheldor5.tr.web.test;
 
-import at.sheldor5.tr.api.objects.Day;
-import at.sheldor5.tr.api.objects.Session;
-import at.sheldor5.tr.api.objects.User;
-import at.sheldor5.tr.auth.AuthenticationManager;
+import at.sheldor5.tr.api.time.Day;
+import at.sheldor5.tr.api.time.Session;
+import at.sheldor5.tr.api.user.User;
+import at.sheldor5.tr.core.auth.AuthenticationManager;
 import at.sheldor5.tr.core.persistence.DatabaseEngine;
 import at.sheldor5.tr.web.init.ConnectionPool;
 import java.io.IOException;
@@ -55,7 +55,7 @@ public class Test extends HttpServlet {
     }
 
     final LocalDate date = LocalDate.now();
-    final DatabaseEngine engine = new DatabaseEngine(ConnectionPool.getConnection());
+    final DatabaseEngine engine = DatabaseEngine.getInstance();
     final Day day = engine.getDay(user, date.getYear(), date.getMonthValue(), date.getDayOfMonth());
 
     final List<Session> sessions = day.getItems();

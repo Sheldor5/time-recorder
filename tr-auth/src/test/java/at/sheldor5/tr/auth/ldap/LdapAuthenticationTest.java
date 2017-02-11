@@ -1,7 +1,7 @@
 package at.sheldor5.tr.auth.ldap;
 
 import at.sheldor5.tr.api.plugins.AuthenticationPlugin;
-import at.sheldor5.tr.api.objects.User;
+import at.sheldor5.tr.api.user.User;
 import at.sheldor5.tr.api.utils.GlobalProperties;
 import java.io.File;
 import java.io.IOException;
@@ -36,7 +36,7 @@ public class LdapAuthenticationTest {
 
   @Test(expected = UnsupportedOperationException.class)
   public void test_add_user() {
-    LDAP.addUser(new User(USER_UUID, USERNAME, FORENAME, SURNAME), PASSWORD);
+    LDAP.addUser(new User(USERNAME, FORENAME, SURNAME), PASSWORD);
   }
 
   @Test
@@ -49,7 +49,7 @@ public class LdapAuthenticationTest {
   public void test_valid_credentials() throws Exception {
     final User user = LDAP.getUser(USERNAME, PASSWORD);
     Assert.assertNotNull(user);
-    Assert.assertEquals(USER_UUID, user.getUUID());
+    Assert.assertEquals(USER_UUID, user.getUuid());
     Assert.assertEquals(USERNAME, user.getUsername());
     Assert.assertEquals(FORENAME, user.getForename());
     Assert.assertEquals(SURNAME, user.getSurname());

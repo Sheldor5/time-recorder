@@ -1,6 +1,6 @@
 package at.sheldor5.tr.core.rules;
 
-import at.sheldor5.tr.api.objects.Day;
+import at.sheldor5.tr.api.time.Day;
 
 import java.io.File;
 import java.io.FileNotFoundException;

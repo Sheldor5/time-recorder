@@ -1,12 +1,12 @@
 package at.sheldor5.tr.sdk.engines;
 
 import at.sheldor5.tr.api.plugins.AuthenticationPlugin;
-import at.sheldor5.tr.api.RecordEngine;
-import at.sheldor5.tr.api.objects.GlobalConfiguration;
-import at.sheldor5.tr.api.objects.Record;
-import at.sheldor5.tr.api.objects.User;
-import at.sheldor5.tr.api.objects.Day;
-import at.sheldor5.tr.api.objects.RecordType;
+import at.sheldor5.tr.api.PersistenceEngine;
+import at.sheldor5.tr.api.utils.GlobalConfiguration;
+import at.sheldor5.tr.api.time.Record;
+import at.sheldor5.tr.api.user.User;
+import at.sheldor5.tr.api.time.Day;
+import at.sheldor5.tr.api.time.RecordType;
 import at.sheldor5.tr.api.utils.TimeUtils;
 import at.sheldor5.tr.sdk.auth.DummyAuthentication;
 import helper.TestUtils;
@@ -27,15 +27,14 @@ public class DummyEngineTest {
   private static final LocalDate TODAY = LocalDate.now();
   private static final LocalTime NOW = LocalTime.now();
 
-  private final RecordEngine engine = new DummyEngine();
+  private final PersistenceEngine engine = new DummyEngine();
   private final AuthenticationPlugin auth = new DummyAuthentication();
 
   @Test
   public void test_add_record() throws SQLException {
-    final UUID uuid = UUID.randomUUID();
-    final User user = new User(uuid, USER_NAME_PREFIX + TestUtils.getRandomLong(), USER_FORE, USER_SUR);
+    final User user = new User(User.getRandomUsername(USER_NAME_PREFIX), USER_FORE, USER_SUR);
     auth.addUser(user, USER_PASS);
-    Assert.assertNotNull(user.getUUID());
+    Assert.assertNotNull(user.getUuid());
 
     final Record record = new Record(0, TODAY, NOW, RecordType.CHECKIN);
     engine.addRecord(user, record);
@@ -44,10 +43,10 @@ public class DummyEngineTest {
 
   @Test
   public void test_get_record() throws SQLException {
-    final UUID uuid = UUID.randomUUID();
-    final User user = new User(uuid, USER_NAME_PREFIX + TestUtils.getRandomLong(), USER_FORE, USER_SUR);
+    final User user = new User(User.getRandomUsername(USER_NAME_PREFIX), USER_FORE, USER_SUR);
     auth.addUser(user, USER_PASS);
-    Assert.assertNotNull(user.getUUID());
+    Assert.assertNotNull(user.getUuid());
+
     final Record expected = new Record(0, TODAY, NOW, RecordType.CHECKIN);
     expected.setTime(expected.getTime().truncatedTo(GlobalConfiguration.MEASURE_UNIT));
     engine.addRecord(user, expected);
@@ -60,10 +59,9 @@ public class DummyEngineTest {
 
   @Test
   public void test_get_records_of_day() throws SQLException {
-    final UUID uuid = UUID.randomUUID();
-    final User user = new User(uuid, USER_NAME_PREFIX + TestUtils.getRandomLong(), USER_FORE, USER_SUR);
+    final User user = new User(User.getRandomUsername(USER_NAME_PREFIX), USER_FORE, USER_SUR);
     auth.addUser(user, USER_PASS);
-    Assert.assertNotNull(user.getUUID());
+    Assert.assertNotNull(user.getUuid());
 
     int yyyy = 2017;
 
@@ -93,10 +91,9 @@ public class DummyEngineTest {
 
   @Test
   public void test_get_day_object() throws SQLException {
-    final UUID uuid = UUID.randomUUID();
-    final User user = new User(uuid, USER_NAME_PREFIX + TestUtils.getRandomLong(), USER_FORE, USER_SUR);
+    final User user = new User(User.getRandomUsername(USER_NAME_PREFIX), USER_FORE, USER_SUR);
     auth.addUser(user, USER_PASS);
-    Assert.assertNotNull(user.getUUID());
+    Assert.assertNotNull(user.getUuid());
 
     int yyyy = 2017;
     int mm = 1;

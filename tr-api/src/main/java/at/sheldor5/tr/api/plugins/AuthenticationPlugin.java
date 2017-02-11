@@ -1,6 +1,6 @@
 package at.sheldor5.tr.api.plugins;
 
-import at.sheldor5.tr.api.objects.User;
+import at.sheldor5.tr.api.user.User;
 
 /**
  * Interface to serve username:password authentication.

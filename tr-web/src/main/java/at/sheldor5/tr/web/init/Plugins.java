@@ -3,8 +3,8 @@ package at.sheldor5.tr.web.init;
 import at.sheldor5.tr.api.plugins.AuthenticationPlugin;
 import at.sheldor5.tr.api.plugins.ExporterPlugin;
 import at.sheldor5.tr.api.utils.GlobalProperties;
-import at.sheldor5.tr.auth.db.DatabaseAuthentication;
-import at.sheldor5.tr.auth.AuthenticationManager;
+import at.sheldor5.tr.core.auth.DatabaseAuthentication;
+import at.sheldor5.tr.core.auth.AuthenticationManager;
 import at.sheldor5.tr.core.utils.RuntimeUtils;
 import at.sheldor5.tr.exporter.ExporterManager;
 
@@ -31,6 +31,7 @@ public class Plugins implements ServletContextListener {
     }
     loadAuthenticationPlugins();
     loadExporterPlugins();
+    AuthenticationManager.getInstance().initialize();
   }
 
   private void loadAuthenticationPlugins() {
@@ -48,7 +49,6 @@ public class Plugins implements ServletContextListener {
     for (final Class<AuthenticationPlugin> clazz : plugins) {
       try {
         plugin = clazz.newInstance();
-        plugin.initialize();
         manager.addPlugin(plugin);
       } catch (final Exception e) {
         LOGGER.warning("Authentication plugin <" + clazz.getName() + "> failed to initialize: " + e.getMessage());
@@ -58,6 +58,7 @@ public class Plugins implements ServletContextListener {
     if (manager.getPlugins().size() == 0) {
       System.out.println("no authentication plugins found");
       final DatabaseAuthentication databaseAuthentication = new DatabaseAuthentication();
+      databaseAuthentication.setDataSource(ConnectionPool.getDataSource());
       databaseAuthentication.initialize();
       manager.addPlugin(databaseAuthentication);
     }
