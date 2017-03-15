@@ -10,7 +10,7 @@
     </description>
 
     <listener>
-        <listener-class>se.jiderhamn.classloader.leak.prevention.ClassLoaderLeakPreventor</listener-class>
+        <listener-class>se.jiderhamn.classloader.leak.prevention.ClassLoaderLeakPreventionContainerInitializer</listener-class>
     </listener>
     <listener>
         <listener-class>at.sheldor5.tr.web.init.Configuration</listener-class>

@@ -2,6 +2,7 @@ package at.sheldor5.tr.core.auth;
 
 import at.sheldor5.tr.api.user.User;
 import at.sheldor5.tr.api.utils.GlobalProperties;
+import at.sheldor5.tr.auth.db.DatabaseAuthentication;
 import at.sheldor5.tr.auth.ldap.LdapAuthentication;
 import at.sheldor5.tr.core.persistence.DatabaseConnection;
 import com.microsoft.sqlserver.jdbc.SQLServerDataSource;

@@ -3,7 +3,7 @@ package at.sheldor5.tr.web.init;
 import at.sheldor5.tr.api.plugins.AuthenticationPlugin;
 import at.sheldor5.tr.api.plugins.ExporterPlugin;
 import at.sheldor5.tr.api.utils.GlobalProperties;
-import at.sheldor5.tr.core.auth.DatabaseAuthentication;
+import at.sheldor5.tr.auth.db.DatabaseAuthentication;
 import at.sheldor5.tr.core.auth.AuthenticationManager;
 import at.sheldor5.tr.core.utils.RuntimeUtils;
 import at.sheldor5.tr.exporter.ExporterManager;

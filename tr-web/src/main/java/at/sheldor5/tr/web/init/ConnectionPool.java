@@ -13,7 +13,6 @@ import java.util.Enumeration;
 import java.util.logging.Logger;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-
 import at.sheldor5.tr.core.persistence.DatabaseEngine;
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.apache.tomcat.jdbc.pool.PoolProperties;

@@ -7,7 +7,7 @@ import at.sheldor5.tr.api.user.User;
 import at.sheldor5.tr.api.utils.GlobalProperties;
 import at.sheldor5.tr.api.utils.TimeUtils;
 import at.sheldor5.tr.core.auth.AuthenticationManager;
-import at.sheldor5.tr.core.auth.DatabaseAuthentication;
+import at.sheldor5.tr.auth.db.DatabaseAuthentication;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
