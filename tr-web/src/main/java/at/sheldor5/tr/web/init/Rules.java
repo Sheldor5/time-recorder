@@ -1,6 +1,7 @@
 package at.sheldor5.tr.web.init;
 
-import at.sheldor5.tr.core.rules.RuleManager;
+import at.sheldor5.tr.rules.RuleManager;
+
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import java.io.File;
