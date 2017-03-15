@@ -25,7 +25,7 @@ public class DatabaseAuthentication implements AuthenticationPlugin {
   private static final String NAME = "tr-db";
 
   private static final String INSERT_USER = "INSERT INTO USERS (UUID, USERNAME, PASSWORD, FORENAME, SURNAME) VALUES (?, ?, ?, ?, ?)";
-  private static final String SELECT_USER = "SELECT PK_USER_ID, UUID, USERNAME, FORENAME, SURNAME FROM USERS WHERE SURNAME = ? AND PASSWORD = ?";
+  private static final String SELECT_USER = "SELECT PK_USER_ID, UUID, USERNAME, FORENAME, SURNAME FROM USERS WHERE USERNAME = ? AND PASSWORD = ?";
 
   private DataSource dataSource;
 
