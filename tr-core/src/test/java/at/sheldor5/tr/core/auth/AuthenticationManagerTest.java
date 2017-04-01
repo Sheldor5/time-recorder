@@ -4,11 +4,11 @@ import at.sheldor5.tr.api.user.User;
 import at.sheldor5.tr.api.utils.GlobalProperties;
 import at.sheldor5.tr.auth.db.DatabaseAuthentication;
 import at.sheldor5.tr.auth.ldap.LdapAuthentication;
-import at.sheldor5.tr.core.persistence.DatabaseConnection;
-import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+
+import org.h2.jdbcx.JdbcDataSource;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.BeforeClass;
@@ -40,8 +40,10 @@ public class AuthenticationManagerTest {
     GlobalProperties.load(PROPERTIES_DB);
     GlobalProperties.load(PROPERTIES_LDAP);
 
-    SQLServerDataSource dataSource = new SQLServerDataSource();
-    dataSource.setURL(DatabaseConnection.getJDBCUrl());
+    JdbcDataSource dataSource = new JdbcDataSource();
+    dataSource.setURL("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
+    dataSource.setUser("sa");
+    dataSource.setPassword("sa");
 
     manager = new AuthenticationManager();
     manager.setDataSource(dataSource);

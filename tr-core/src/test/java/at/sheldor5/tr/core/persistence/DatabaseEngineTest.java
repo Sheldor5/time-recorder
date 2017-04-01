@@ -14,7 +14,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
-import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
+import org.h2.jdbcx.JdbcDataSource;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -38,8 +38,10 @@ public class DatabaseEngineTest {
   public static void init() throws IOException, SQLException {
     GlobalProperties.load(PROPERTIES);
 
-    final SQLServerDataSource dataSource = new SQLServerDataSource();
-    dataSource.setURL(DatabaseConnection.getJDBCUrl());
+    JdbcDataSource dataSource = new JdbcDataSource();
+    dataSource.setURL("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
+    dataSource.setUser("sa");
+    dataSource.setPassword("sa");
 
     DatabaseConnection databaseConnection = new DatabaseConnection(dataSource.getConnection());
     databaseConnection.initialize();
