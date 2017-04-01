@@ -11,11 +11,12 @@ public class TimeUtils {
   public static final long MINUTE_IN_MILLIS = SECOND_IN_MILLIS * 60L;
   public static final long HOUR_IN_MILLIS = MINUTE_IN_MILLIS * 60L;
 
-  public static String getHumanReadableSummary(long seconds) {
-    long s = seconds % 60L;
-    long m = (seconds / 60L) % 60L;
-    long h = seconds / 3600L;
-    return String.format(SUMMARY_FORMAT_STRING, h, m, s);
+  public static String getHumanReadableSummary(long value) {
+    int s = (int) (value / TimeUtils.getConfiguretUnitSecondsMultiplier());
+    long seconds = s % 60L;
+    long minutes = (s / 60L) % 60L;
+    long hours = s / 3600L;
+    return String.format(SUMMARY_FORMAT_STRING, hours, minutes, seconds);
   }
 
   public static long getSeconds(int hours, int minutes, int seconds) {
@@ -57,6 +58,19 @@ public class TimeUtils {
         return 30;
       default:
         return 31;
+    }
+  }
+
+  public static int getConfiguretUnitSecondsMultiplier() {
+    switch (GlobalConfiguration.MEASURE_UNIT) {
+      case NANOS:
+        return 1000000000;
+      case MICROS:
+        return 1000000;
+      case MILLIS:
+        return 1000;
+      default:
+        return 1;
     }
   }
 }

@@ -1,5 +1,6 @@
 package at.sheldor5.tr.api.user;
 
+import at.sheldor5.tr.api.utils.RandomUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -41,7 +42,7 @@ public class UserTest {
 
   @Test
   public void test_initialization() {
-    int id = User.getSecureRandomId();
+    int id = RandomUtils.getSecureRandomId();
     final User user = new User(id, USERNAME, FORENAME, SURNAME);
 
     Assert.assertEquals(id, user.getId());
@@ -52,7 +53,7 @@ public class UserTest {
 
   @Test
   public void test_getter_setter() {
-    int id = User.getSecureRandomId();
+    int id = RandomUtils.getSecureRandomId();
     final User user = new User();
     user.setId(id);
     user.setUsername(USERNAME);
@@ -67,7 +68,7 @@ public class UserTest {
 
   @Test
   public void test_equality() {
-    int id = User.getSecureRandomId();
+    int id = RandomUtils.getSecureRandomId();
     final User user = new User(id, USERNAME, FORENAME, SURNAME);
     final User ok = new User(id, USERNAME, FORENAME, SURNAME);
 
@@ -77,8 +78,8 @@ public class UserTest {
 
   @Test
   public void test_inequality() {
-    int id1 = User.getSecureRandomId();
-    int id2 = User.getSecureRandomId();
+    int id1 = RandomUtils.getSecureRandomId();
+    int id2 = RandomUtils.getSecureRandomId();
     final User user = new User(id1, USERNAME, FORENAME, SURNAME);
     final User diff1 = new User(id2, USERNAME, FORENAME, SURNAME);
     final User diff2 = new User(id1, "testuser1", FORENAME, SURNAME);

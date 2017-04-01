@@ -11,46 +11,27 @@ public class RecordTest {
   private static final LocalTime time = LocalTime.of(8, 0);
 
   @Test(expected = IllegalArgumentException.class)
-  public void test_invalid_id() {
+  public void should_throw_on_setting_invalid_id() {
     final Record record = new Record();
     record.setId(-1);
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void test_invalid_date() {
+  public void should_throw_on_setting_invalid_date() {
     final Record record = new Record();
     record.setDate(null);
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void test_invalid_time() {
+  public void should_throw_on_setting_invalid_time() {
     final Record record = new Record();
     record.setTime(null);
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void test_invalid_type() {
+  public void should_throw_on_setting_invalid_type() {
     final Record record = new Record();
     record.setType(null);
-  }
-
-  @Test
-  public void test_initialization() {
-    final Record record1 = new Record(42, date, time, RecordType.CHECKIN);
-
-    Assert.assertEquals(42, record1.getId());
-    Assert.assertEquals(date, record1.getDate());
-    Assert.assertEquals(time, record1.getTime());
-    Assert.assertEquals(RecordType.CHECKIN, record1.getType());
-
-    final LocalDate date2 = LocalDate.of(2016, 12, 31);
-    final LocalTime time2 = LocalTime.of(23, 24, 25);
-    final Record record2 = new Record(date2, time2, RecordType.CHECKOUT);
-
-    Assert.assertEquals(-1, record2.getId());
-    Assert.assertEquals(date2, record2.getDate());
-    Assert.assertEquals(time2, record2.getTime());
-    Assert.assertEquals(RecordType.CHECKOUT, record2.getType());
   }
 
   @Test
@@ -73,45 +54,37 @@ public class RecordTest {
   }
 
   @Test
-  public void test_getters_setters() {
-    final Record record = new Record();
+  public void should_return_negative_comparison_value() {
+    final Record record = new Record(date, time, RecordType.CHECKIN);
 
-    record.setId(42);
-    record.setDate(date);
-    record.setTime(time);
-    record.setType(RecordType.CHECKIN);
+    final Record nextHour = new Record(date, time.plusHours(1), RecordType.CHECKOUT);
+    Assert.assertEquals(-1, record.compareTo(nextHour));
 
-    Assert.assertEquals(42, record.getId());
-    Assert.assertEquals(date, record.getDate());
-    Assert.assertEquals(time, record.getTime());
-    Assert.assertEquals(RecordType.CHECKIN, record.getType());
+    final Record nextDay = new Record(date.plusDays(1), time, RecordType.CHECKOUT);
+    Assert.assertEquals(-1, record.compareTo(nextDay));
   }
 
   @Test
-  public void test_comparison() {
-    final Record checkin = new Record(date, time, RecordType.CHECKIN);
-    Record checkout;
+  public void should_return_negative_positive_value() {
+    final Record record = new Record(date, time, RecordType.CHECKIN);
 
-    checkout = new Record(date, time.plusHours(1), RecordType.CHECKOUT);
-    Assert.assertEquals(-1, checkin.compareTo(checkout));
-    Assert.assertEquals(1, checkout.compareTo(checkin));
+    final Record previousHour = new Record(date, time.plusHours(1), RecordType.CHECKOUT);
+    Assert.assertEquals(1, previousHour.compareTo(record));
 
-    checkout = new Record(date.plusDays(1), time, RecordType.CHECKOUT);
-    Assert.assertEquals(-1, checkin.compareTo(checkout));
-    Assert.assertEquals(1, checkout.compareTo(checkin));
+    final Record previousDay = new Record(date.plusDays(1), time, RecordType.CHECKOUT);
+    Assert.assertEquals(1, previousDay.compareTo(record));
   }
 
   @Test
-  public void test_equality() {
-    final Record r1 = new Record(date, time, RecordType.CHECKIN);
-    final Record r2 = new Record(date, time, RecordType.CHECKIN);
+  public void should_be_equal() {
+    final Record record = new Record(LocalDate.of(2017, 1, 1), LocalTime.of(8, 0), RecordType.CHECKIN);
+    final Record other = new Record(LocalDate.of(2017, 1, 1), LocalTime.of(8, 0), RecordType.CHECKIN);
 
-    Assert.assertTrue(r1.equals(r2));
-    Assert.assertTrue(r2.equals(r1));
+    Assert.assertTrue(record.equals(other));
   }
 
   @Test
-  public void test_inequality() {
+  public void should_not_be_equal() {
     final Record record = new Record(date, time, RecordType.CHECKIN);
     Record diff;
 

@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import at.sheldor5.tr.tests.TestUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -27,17 +29,17 @@ public class DayTest {
     Session session;
     Day day;
 
-    session = new Session(date, start, end);
+    session = new Session(start, end);
     day = new Day(date);
     day.addItem(session);
-    Assert.assertEquals(14400L, day.getSummary());
-    Assert.assertEquals(14400L, day.getValuedSummary());
+    Assert.assertEquals(TestUtils.getTimeInConfiguredUnit(4), day.getSummary());
+    Assert.assertEquals(TestUtils.getTimeInConfiguredUnit(4), day.getValuedSummary());
 
-    session = new Session(date, start, end, 1.5D);
+    session = new Session(start, end, 1.5D);
     day = new Day(date);
     day.addItem(session);
-    Assert.assertEquals(14400L, day.getSummary());
-    Assert.assertEquals(21600L, day.getValuedSummary());
+    Assert.assertEquals(TestUtils.getTimeInConfiguredUnit(4), day.getSummary());
+    Assert.assertEquals(TestUtils.getTimeInConfiguredUnit(6), day.getValuedSummary());
   }
 
   @Test
@@ -48,17 +50,17 @@ public class DayTest {
     final Record end2 = new Record(date, LocalTime.of(15, 0), RecordType.CHECKOUT);
     final Record start3 = new Record(date, LocalTime.of(15, 30), RecordType.CHECKIN);
     final Record end3 = new Record(date, LocalTime.of(21, 30), RecordType.CHECKOUT);
-    final Session session1 = new Session(date, start1, end1, 1.5D);
-    final Session session2 = new Session(date, start2, end2, 1.0D);
-    final Session session3 = new Session(date, start3, end3, 2.0D);
+    final Session session1 = new Session(start1, end1, 1.5D);
+    final Session session2 = new Session(start2, end2, 1.0D);
+    final Session session3 = new Session(start3, end3, 2.0D);
 
     final Day day = new Day(date);
     day.addItem(session1);
     day.addItem(session2);
     day.addItem(session3);
 
-    Assert.assertEquals("57600 seconds (16 hours)", 57600L, day.getSummary());
-    Assert.assertEquals("90000 seconds (25 hours)", 90000L, day.getValuedSummary());
+    Assert.assertEquals("57600 seconds (16 hours)", TestUtils.getTimeInConfiguredUnit(16), day.getSummary());
+    Assert.assertEquals("90000 seconds (25 hours)", TestUtils.getTimeInConfiguredUnit(22) + TestUtils.getTimeInConfiguredUnit(3), day.getValuedSummary());
   }
 
   @Test
@@ -69,9 +71,9 @@ public class DayTest {
     final Record end2 = new Record(date, LocalTime.of(15, 0), RecordType.CHECKOUT);
     final Record start3 = new Record(date, LocalTime.of(15, 30), RecordType.CHECKIN);
     final Record end3 = new Record(date, LocalTime.of(21, 30), RecordType.CHECKOUT);
-    final Session session1 = new Session(date, start1, end1, 1.5D);
-    final Session session2 = new Session(date, start2, end2, 1.0D);
-    final Session session3 = new Session(date, start3, end3, 2.0D);
+    final Session session1 = new Session(start1, end1, 1.5D);
+    final Session session2 = new Session(start2, end2, 1.0D);
+    final Session session3 = new Session(start3, end3, 2.0D);
 
     final Day day = new Day(date);
     day.addItem(session3);
@@ -96,7 +98,7 @@ public class DayTest {
 
     final Day day = Day.buildDay(sessions);
 
-    Assert.assertEquals("28800 seconds (8 hours)", 28800L, day.getSummary());
+    Assert.assertEquals("28800 seconds (8 hours)", TestUtils.getTimeInConfiguredUnit(8), day.getSummary());
   }
 
   @Test
@@ -110,7 +112,7 @@ public class DayTest {
     final List<Session> sessions = Session.buildSessions(list);
 
     final Day day = Day.buildDay(sessions);
-    Assert.assertEquals("55799 seconds", 55799, day.getSummary());
+    Assert.assertEquals("55799 seconds", TestUtils.getTimeInConfiguredUnit(15, 29, 59, 999999999), day.getSummary());
   }
 
   @Test(expected = IllegalStateException.class)
@@ -122,7 +124,7 @@ public class DayTest {
 
     begin = new Record(date, LocalTime.of(8, 0, 0), RecordType.CHECKIN);
     end = new Record(date, LocalTime.of(12, 0, 0), RecordType.CHECKOUT);
-    session = new Session(date, begin, end);
+    session = new Session(begin, end);
     sessions.add(session);
 
     begin = new Record(date.plusDays(1), LocalTime.of(12, 0, 0), RecordType.CHECKIN);

@@ -1,5 +1,6 @@
 package at.sheldor5.tr.api.utils;
 
+import at.sheldor5.tr.tests.TestUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -9,19 +10,16 @@ public class TimeUtilsTest {
   public void test_millis_to_summary() {
     String actual;
 
-    actual = TimeUtils.getHumanReadableSummary(1L * 3600L);
+    actual = TimeUtils.getHumanReadableSummary(TestUtils.getTimeInConfiguredUnit(1));
     Assert.assertEquals("1:00:00", actual);
 
-    actual = TimeUtils.getHumanReadableSummary(
-            23L * 3600L
-                    + 59L * 60L
-                    + 59L);
+    actual = TimeUtils.getHumanReadableSummary(TestUtils.getTimeInConfiguredUnit(23, 59, 59));
     Assert.assertEquals("23:59:59", actual);
 
-    actual = TimeUtils.getHumanReadableSummary(24L * 3600L);
+    actual = TimeUtils.getHumanReadableSummary(24L * 3600L * TimeUtils.getConfiguretUnitSecondsMultiplier());
     Assert.assertEquals("24:00:00", actual);
 
-    actual = TimeUtils.getHumanReadableSummary(100L * 3600L);
+    actual = TimeUtils.getHumanReadableSummary(100L * 3600L * TimeUtils.getConfiguretUnitSecondsMultiplier());
     Assert.assertEquals("100:00:00", actual);
   }
 

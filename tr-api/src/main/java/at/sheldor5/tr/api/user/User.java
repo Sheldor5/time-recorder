@@ -2,41 +2,68 @@ package at.sheldor5.tr.api.user;
 
 import at.sheldor5.tr.api.utils.UuidUtils;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.UUID;
 
+/**
+ * This class represent a user.
+ */
 public class User {
-
-  private static final SecureRandom RANDOM = new SecureRandom();
 
   private int id = -1;
   private UUID uuid;
-  private byte[] uuid_bytes;
+  private byte[] uuidBytes;
   private String username;
   private Schedule schedule;
   private String forename;
   private String surname;
 
+  /**
+   * Default constructor.
+   */
   public User() {
 
   }
 
+  /**
+   * Constructor for given name.
+   *
+   * @param username The username of the user.
+   * @param forename The forename of the user.
+   * @param surname  The surname of the user.
+   */
   public User(final String username, final String forename, final String surname) {
     setUsername(username);
     setForename(forename);
     setSurname(surname);
   }
 
+  /**
+   * Constructor for given name and id.
+   *
+   * @param id       The id of the user.
+   * @param username The username of the user.
+   * @param forename The forename of the user.
+   * @param surname  The surname of the user.
+   */
   public User(int id, final String username, final String forename, final String surname) {
     this(username, forename, surname);
     setId(id);
   }
 
+  /**
+   * Getter for the id.
+   *
+   * @return The id of this user.
+   */
   public int getId() {
     return id;
   }
 
+  /**
+   * Setter for the id.
+   *
+   * @param id The id of this user.
+   */
   public void setId(int id) {
     if (id < 1) {
       throw new IllegalArgumentException("Invalid User ID");
@@ -44,18 +71,38 @@ public class User {
     this.id = id;
   }
 
+  /**
+   * Getter for the schedule.
+   *
+   * @return The schedule of this user.
+   */
   public Schedule getSchedule() {
     return schedule;
   }
 
+  /**
+   * Setter for the schedule.
+   *
+   * @param schedule The schedule of this user.
+   */
   public void setSchedule(final Schedule schedule) {
     this.schedule = schedule;
   }
 
+  /**
+   * Getter for the username.
+   *
+   * @return The username of this user.
+   */
   public String getUsername() {
     return username;
   }
 
+  /**
+   * Setter for the username.
+   *
+   * @param username The username of this user.
+   */
   public void setUsername(final String username) {
     if (username == null || username.length() < 5 || username.length() > 32) {
       throw new IllegalArgumentException("Username was null or its length exceeded the limit of 32 characters");
@@ -63,10 +110,20 @@ public class User {
     this.username = username;
   }
 
+  /**
+   * Getter for the forename.
+   *
+   * @return The forename of this user.
+   */
   public String getForename() {
     return forename;
   }
 
+  /**
+   * Setter for the forename.
+   *
+   * @param forename The forename of this user.
+   */
   public void setForename(final String forename) {
     if (forename == null || forename.length() > 32) {
       throw new IllegalArgumentException("Forename was null or its length exceeded the limit of 32 characters");
@@ -74,10 +131,20 @@ public class User {
     this.forename = forename;
   }
 
+  /**
+   * Getter for the surname.
+   *
+   * @return The surname of this user.
+   */
   public String getSurname() {
     return surname;
   }
 
+  /**
+   * Setter for the surname.
+   *
+   * @param surname The surname of this user.
+   */
   public void setSurname(final String surname) {
     if (surname == null || surname.length() > 32) {
       throw new IllegalArgumentException("Surname was null or its length exceeded the limit of 32 characters");
@@ -85,8 +152,61 @@ public class User {
     this.surname = surname;
   }
 
+  /**
+   * Getter for the UUID.
+   *
+   * @return The UUID of this user.
+   */
+  public UUID getUuid() {
+    return uuid;
+  }
+
+  /**
+   * Setter fot the UUID.
+   *
+   * @param uuid The UUID of this user.
+   */
+  public void setUuid(final UUID uuid) {
+    if (uuid == null) {
+      throw new IllegalArgumentException("User UUID was null");
+    }
+    this.uuid = uuid;
+    this.uuidBytes = UuidUtils.getBytes(uuid);
+  }
+
+  /**
+   * Getter for the bytes of the UUID.
+   *
+   * @return The bytes of the UUID of this user.
+   */
+  public byte[] getUuidBytes() {
+    return uuidBytes;
+  }
+
+  /**
+   * Setter for the bytes of the UUID.
+   *
+   * @param uuidBytes The bytes of the UUID of this user.
+   */
+  public void setUuidBytes(final byte[] uuidBytes) {
+    if (uuidBytes == null || uuidBytes.length != 16) {
+      throw new IllegalArgumentException("Invalid User UUID");
+    }
+    this.uuidBytes = uuidBytes;
+    this.uuid = UuidUtils.getUuid(uuidBytes);
+  }
+
+  /**
+   * Indicates whether some other object is "equal to" this one.
+   *
+   * @param other The object to compare.
+   * @return      True if both objects have the same username, forename, surname, id and uuid.
+   */
   @Override
   public boolean equals(final Object other) {
+    if (super.equals(other)) {
+      return true;
+    }
     if (other == null || !(other instanceof User)) {
       return false;
     }
@@ -101,62 +221,5 @@ public class User {
       return id == user.id;
     }
     return false;
-  }
-
-  public static String getRandomUsername(final String prefix) {
-    long value;
-    SecureRandom random;
-    try {
-      random = SecureRandom.getInstance("SHA1PRNG");
-      value = random.nextLong();
-      while (value < 0) {
-        value = random.nextLong();
-      }
-    } catch (NoSuchAlgorithmException nsae) {
-      System.out.println(nsae.getMessage());
-      return prefix + getSecureRandomLong();
-    }
-    value = Math.abs(value);
-    return prefix + Long.toString(value);
-  }
-
-  public static synchronized long getSecureRandomLong() {
-    long next = RANDOM.nextLong();
-    if (next < 0) {
-      next  *= -1;
-    }
-    return next;
-  }
-
-  public static synchronized int getSecureRandomId() {
-    int next = RANDOM.nextInt();
-    while (next < 0) {
-      next = RANDOM.nextInt();
-    }
-    return next;
-  }
-
-  public UUID getUuid() {
-    return uuid;
-  }
-
-  public byte[] getUuidBytes() {
-    return uuid_bytes;
-  }
-
-  public void setUuid(final UUID uuid) {
-    if (uuid == null) {
-      throw new IllegalArgumentException("User UUID was null");
-    }
-    this.uuid = uuid;
-    this.uuid_bytes = UuidUtils.getBytes(uuid);
-  }
-
-  public void setUuidBytes(final byte[] uuid_bytes) {
-    if (uuid_bytes == null || uuid_bytes.length != 16) {
-      throw new IllegalArgumentException("Invalid User UUID");
-    }
-    this.uuid_bytes = uuid_bytes;
-    this.uuid = UuidUtils.getUuid(uuid_bytes);
   }
 }

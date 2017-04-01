@@ -4,7 +4,10 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 /**
- * Java Bean for time records.
+ * This class represents a point in time.
+ *
+ * @author Michael Palata
+ * @since 1.0.0
  */
 public class Record implements Comparable<Record> {
 
@@ -47,7 +50,7 @@ public class Record implements Comparable<Record> {
   }
 
   /**
-   * Getter for ID.
+   * Getter for the ID.
    *
    * @return The ID of this record.
    */
@@ -56,19 +59,19 @@ public class Record implements Comparable<Record> {
   }
 
   /**
-   * Setter for ID.
+   * Setter for the ID.
    *
    * @param id The ID of this record.
    */
   public void setId(int id) {
     if (id < 0) {
-      throw new IllegalArgumentException("ID is negative");
+      throw new IllegalArgumentException("ID must not be negative");
     }
     this.id = id;
   }
 
   /**
-   * Getter for date.
+   * Getter for the date.
    *
    * @return The date of this record.
    */
@@ -77,19 +80,19 @@ public class Record implements Comparable<Record> {
   }
 
   /**
-   * Setter for date.
+   * Setter for the date.
    *
    * @param date The date of this record.
    */
   public void setDate(final LocalDate date) {
     if (date == null) {
-      throw new IllegalArgumentException("Date is null");
+      throw new IllegalArgumentException("Date must not be null");
     }
     this.date = date;
   }
 
   /**
-   * Getter for time.
+   * Getter for the time.
    *
    * @return The time of this record.
    */
@@ -98,19 +101,19 @@ public class Record implements Comparable<Record> {
   }
 
   /**
-   * Setter for time.
+   * Setter for the time.
    *
    * @param time The time of this record.
    */
   public void setTime(final LocalTime time) {
     if (time == null) {
-      throw new IllegalArgumentException("Time is null");
+      throw new IllegalArgumentException("Time must not be null");
     }
     this.time = time;
   }
 
   /**
-   * Getter for type.
+   * Getter for the type.
    *
    * @return The type of this record.
    */
@@ -119,13 +122,13 @@ public class Record implements Comparable<Record> {
   }
 
   /**
-   * Setter for type.
+   * Setter for the type.
    *
    * @param type The type of this record.
    */
   public void setType(final RecordType type) {
     if (type == null) {
-      throw new IllegalArgumentException("Type is null");
+      throw new IllegalArgumentException("Type must not be null");
     }
     this.type = type;
   }
@@ -144,12 +147,15 @@ public class Record implements Comparable<Record> {
    * Compare this record to another record.
    *
    * @param other The record to compare.
-   * @return Negative if this record is before the compared record,
-   *            positive if this record is after the compared record,
+   * @return Negative if this record is before the compared record in the time line,
+   *            positive if this record is after the compared record in the time line,
    *            zero if date and time are equal.
    */
   @Override
   public int compareTo(final Record other) {
+    if (date == null || time == null || other.date == null || other.time == null) {
+      return -1;
+    }
     int result = date.compareTo(other.date);
     if (result == 0) {
       return time.compareTo(other.time);
@@ -158,7 +164,7 @@ public class Record implements Comparable<Record> {
   }
 
   /**
-   * Check if this record if equals to another record.
+   * Indicates whether some other object is "equal to" this one.
    *
    * @param other The object to compare.
    * @return True if this record and the other record

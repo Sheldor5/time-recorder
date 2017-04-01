@@ -4,6 +4,6 @@ import java.time.temporal.ChronoUnit;
 
 public class GlobalConfiguration {
 
-  public static final ChronoUnit MEASURE_UNIT = ChronoUnit.SECONDS;
+  public static ChronoUnit MEASURE_UNIT = ChronoUnit.SECONDS;
 
 }

@@ -13,7 +13,7 @@ public class TestTable extends Table {
 
   static {
     COLUMNS.put("PK_USER_ID", Types.INTEGER);
-    COLUMNS.put("UUID", Types.VARBINARY);
+    COLUMNS.put("UUID", Types.BINARY);
   }
 
   public TestTable(final Connection connection) throws SQLException {
