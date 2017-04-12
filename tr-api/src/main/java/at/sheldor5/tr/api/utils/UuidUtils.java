@@ -1,6 +1,7 @@
 package at.sheldor5.tr.api.utils;
 
 import java.nio.ByteBuffer;
+import java.security.SecureRandom;
 import java.util.UUID;
 
 public class UuidUtils {
@@ -23,6 +24,22 @@ public class UuidUtils {
     long mostSigBits = bb.getLong();
     long leastSigBits = bb.getLong();
     return new UUID(mostSigBits, leastSigBits);
+  }
+
+  public static Byte[] toObject(byte[] bytes) {
+    Byte[] result = new Byte[bytes.length];
+    for (int i = 0; i < bytes.length; i++) {
+      result[i] = bytes[i];
+    }
+    return result;
+  }
+
+  public static byte[] toPrimitive(Byte[] bytes) {
+    byte[] result = new byte[bytes.length];
+    for (int i = 0; i < bytes.length; i++) {
+      result[i] = bytes[i];
+    }
+    return result;
   }
 
   public static byte[] getRandomUuidBytes() {

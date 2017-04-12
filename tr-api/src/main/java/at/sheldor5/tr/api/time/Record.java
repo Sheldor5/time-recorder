@@ -12,6 +12,7 @@ import java.time.LocalTime;
 public class Record implements Comparable<Record> {
 
   private int id = -1;
+  private int userId = -1;
   protected LocalDate date;
   protected LocalTime time;
   protected RecordType type;
@@ -33,7 +34,7 @@ public class Record implements Comparable<Record> {
   public Record(final LocalDate date, final LocalTime time, final RecordType type) {
     setDate(date);
     setTime(time);
-    setType(type);
+    setRecordType(type);
   }
 
   /**
@@ -68,6 +69,14 @@ public class Record implements Comparable<Record> {
       throw new IllegalArgumentException("ID must not be negative");
     }
     this.id = id;
+  }
+
+  public int getUserId() {
+    return userId;
+  }
+
+  public void setUserId(int userId) {
+    this.userId = userId;
   }
 
   /**
@@ -117,7 +126,7 @@ public class Record implements Comparable<Record> {
    *
    * @return The type of this record.
    */
-  public RecordType getType() {
+  public RecordType getRecordType() {
     return type;
   }
 
@@ -126,11 +135,29 @@ public class Record implements Comparable<Record> {
    *
    * @param type The type of this record.
    */
-  public void setType(final RecordType type) {
+  public void setRecordType(final RecordType type) {
     if (type == null) {
       throw new IllegalArgumentException("Type must not be null");
     }
     this.type = type;
+  }
+
+  /**
+   * Getter for the type.
+   *
+   * @return The type of this record.
+   */
+  public boolean getType() {
+    return type.getBoolean();
+  }
+
+  /**
+   * Setter for the type.
+   *
+   * @param type The type of this record.
+   */
+  public void setType(boolean type) {
+    this.type = RecordType.getType(type);
   }
 
   /**

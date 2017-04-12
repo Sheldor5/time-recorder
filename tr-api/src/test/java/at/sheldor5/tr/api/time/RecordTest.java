@@ -31,7 +31,7 @@ public class RecordTest {
   @Test(expected = IllegalArgumentException.class)
   public void should_throw_on_setting_invalid_type() {
     final Record record = new Record();
-    record.setType(null);
+    record.setRecordType(null);
   }
 
   @Test
@@ -48,7 +48,7 @@ public class RecordTest {
 
     Assert.assertFalse(record.isValid());
 
-    record.setType(RecordType.CHECKIN);
+    record.setType(RecordType.CHECKIN.getBoolean());
 
     Assert.assertTrue(record.isValid());
   }

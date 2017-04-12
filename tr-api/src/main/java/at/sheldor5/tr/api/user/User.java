@@ -11,8 +11,8 @@ public class User {
 
   private int id = -1;
   private UUID uuid;
-  private byte[] uuidBytes;
   private String username;
+  private String password;
   private Schedule schedule;
   private String forename;
   private String surname;
@@ -171,30 +171,8 @@ public class User {
       throw new IllegalArgumentException("User UUID was null");
     }
     this.uuid = uuid;
-    this.uuidBytes = UuidUtils.getBytes(uuid);
   }
 
-  /**
-   * Getter for the bytes of the UUID.
-   *
-   * @return The bytes of the UUID of this user.
-   */
-  public byte[] getUuidBytes() {
-    return uuidBytes;
-  }
-
-  /**
-   * Setter for the bytes of the UUID.
-   *
-   * @param uuidBytes The bytes of the UUID of this user.
-   */
-  public void setUuidBytes(final byte[] uuidBytes) {
-    if (uuidBytes == null || uuidBytes.length != 16) {
-      throw new IllegalArgumentException("Invalid User UUID");
-    }
-    this.uuidBytes = uuidBytes;
-    this.uuid = UuidUtils.getUuid(uuidBytes);
-  }
 
   /**
    * Indicates whether some other object is "equal to" this one.
