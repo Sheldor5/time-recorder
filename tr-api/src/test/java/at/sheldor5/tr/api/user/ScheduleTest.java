@@ -6,33 +6,50 @@ import at.sheldor5.tr.api.time.Session;
 import at.sheldor5.tr.api.utils.GlobalConfiguration;
 import org.junit.Assert;
 import org.junit.Test;
+import utils.TestUtils;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 
 public class ScheduleTest {
 
+  private static final Object LOCK = new Object();
+
   @Test
-  public void test_setter() {
-    Schedule schedule = new Schedule();
-    LocalTime amount = LocalTime.of(8, 0);
-    schedule.setTime(DayOfWeek.MONDAY, amount);
-    Assert.assertEquals(LocalTime.MIN.until(amount, GlobalConfiguration.MEASURE_UNIT), schedule.getTime(DayOfWeek.MONDAY));
+  public void should_return_amount_in_configured_units() {
+    final LocalTime monday = LocalTime.of(8, 0);
+    final Schedule schedule = new Schedule();
+    schedule.setMonday(monday);
+
+    synchronized (LOCK) {
+      try {
+        GlobalConfiguration.MEASURE_UNIT = ChronoUnit.SECONDS;
+
+        Assert.assertEquals(8L * 60L * 60L, schedule.getTime(DayOfWeek.MONDAY));
+
+        GlobalConfiguration.MEASURE_UNIT = ChronoUnit.MILLIS;
+        schedule.update();
+
+        Assert.assertEquals(8L * 60L * 60L * 1000L, schedule.getTime(DayOfWeek.MONDAY));
+      } finally {
+        GlobalConfiguration.MEASURE_UNIT = ChronoUnit.SECONDS;
+      }
+    }
+
   }
 
   @Test
   public void test_summary() {
-    LocalDate date = LocalDate.of(2017, 1, 1);
-    LocalTime start = LocalTime.of(8, 0);
-    LocalTime end = LocalTime.of(12, 0);
-    Record s = new Record(date, start, RecordType.CHECKIN);
-    Record e = new Record(date, end, RecordType.CHECKOUT);
-    Session session = new Session(s, e);
+    final LocalDate date = LocalDate.of(2017, 1, 1);
+    Session session = TestUtils.getDefaultSessionAnteMeridiem(date);
 
-    Schedule schedule = new Schedule();
-    schedule.setTime(date.getDayOfWeek(), 4, 0, 0);
+    synchronized (LOCK) {
+      Schedule schedule = new Schedule();
+      schedule.setTime(date.getDayOfWeek(), 4, 0, 0);
 
-    Assert.assertEquals(0, session.getValuedSummary() - schedule.getTime(session.getDate().getDayOfWeek()));
+      Assert.assertEquals(0, session.getValuedSummary() - schedule.getTime(session.getDate().getDayOfWeek()));
+    }
   }
 }

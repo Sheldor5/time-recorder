@@ -37,7 +37,6 @@
         <module>tr-api</module>
         <module>tr-rules</module>
         <module>tr-persistence</module>
-        <module>tr-sdk</module>
         <module>tr-core</module>
         <module>tr-exporter</module>
         <module>tr-web</module>

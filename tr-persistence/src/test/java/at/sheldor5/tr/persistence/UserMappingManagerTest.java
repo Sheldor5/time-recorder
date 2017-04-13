@@ -2,11 +2,6 @@ package at.sheldor5.tr.persistence;
 
 import at.sheldor5.tr.api.user.UserMapping;
 import at.sheldor5.tr.api.utils.GlobalProperties;
-import at.sheldor5.tr.api.utils.UuidUtils;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -14,7 +9,6 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.UUID;
 
 public class UserMappingManagerTest {
@@ -24,12 +18,7 @@ public class UserMappingManagerTest {
   @BeforeClass
   public static void init() throws IOException, SQLException {
     GlobalProperties.load(new File(PROPERTIES));
-  }
-
-  @Test
-  public void test_configuration() {
-    final Configuration configuration = PersistenceManager.getConfiguration();
-    Assert.assertNotNull(configuration);
+    DatabaseManager.init();
   }
 
   @Test
@@ -68,11 +57,19 @@ public class UserMappingManagerTest {
       UserMappingManager.createUserMapping(uuids[i]);
     }
 
+    final StringBuilder sb = new StringBuilder();
     UserMapping userMapping;
     for (int i = 0; i < uuids.length; i++) {
       userMapping = UserMappingManager.getUserMapping(uuids[i]);
-      System.out.println(userMapping);
+      sb.append(userMapping);
+      sb.append("\n");
     }
+    try {
+      Thread.sleep(200);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    System.out.println(sb.toString());
   }
 
 }

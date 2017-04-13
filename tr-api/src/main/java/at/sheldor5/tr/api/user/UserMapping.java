@@ -7,6 +7,19 @@ public class UserMapping {
   private int id;
   private UUID uuid;
 
+  public UserMapping() {
+    this(-1, null);
+  }
+
+  public UserMapping(int id) {
+    this(id, null);
+  }
+
+  public UserMapping(int id, final UUID uuid) {
+    this.id = id;
+    this.uuid = uuid;
+  }
+
   public int getId() {
     return id;
   }
@@ -19,12 +32,12 @@ public class UserMapping {
     return uuid;
   }
 
-  public void setUuid(UUID uuid) {
+  public void setUuid(final UUID uuid) {
     this.uuid = uuid;
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(final Object obj) {
     if (super.equals(obj)) {
       return true;
     }
@@ -37,7 +50,7 @@ public class UserMapping {
 
   @Override
   public String toString() {
-    return String.format("%d: %s", id, uuid);
+    return String.format("%s@%d {%d -> %s}", getClass().getSimpleName(), hashCode(), id, uuid);
   }
 
 }

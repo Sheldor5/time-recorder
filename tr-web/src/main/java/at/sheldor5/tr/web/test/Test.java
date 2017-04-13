@@ -4,8 +4,6 @@ import at.sheldor5.tr.api.time.Day;
 import at.sheldor5.tr.api.time.Session;
 import at.sheldor5.tr.api.user.User;
 import at.sheldor5.tr.core.auth.AuthenticationManager;
-import at.sheldor5.tr.core.persistence.DatabaseEngine;
-import at.sheldor5.tr.web.init.ConnectionPool;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDate;
@@ -55,8 +53,10 @@ public class Test extends HttpServlet {
     }
 
     final LocalDate date = LocalDate.now();
-    final DatabaseEngine engine = DatabaseEngine.getInstance();
-    final Day day = engine.getDay(user, date.getYear(), date.getMonthValue(), date.getDayOfMonth());
+
+    final Day day = null;
+
+    // TODO
 
     final List<Session> sessions = day.getItems();
     writer.println(date + " has " + sessions.size() + " sessions.<br>");

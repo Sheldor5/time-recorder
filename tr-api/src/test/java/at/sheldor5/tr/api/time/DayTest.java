@@ -5,7 +5,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import at.sheldor5.tr.tests.TestUtils;
+import utils.TestUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -94,9 +94,9 @@ public class DayTest {
     list.add(new Record(date, LocalTime.of(12, 0, 0), RecordType.CHECKOUT));
     list.add(new Record(date, LocalTime.of(12, 30, 0), RecordType.CHECKIN));
     list.add(new Record(date, LocalTime.of(16, 30, 0), RecordType.CHECKOUT));
-    final List<Session> sessions = Session.buildSessions(list);
+    final List<Session> sessions = SessionUtils.buildSessions(list);
 
-    final Day day = Day.buildDay(sessions);
+    final Day day = DayUtils.buildDay(sessions);
 
     Assert.assertEquals("28800 seconds (8 hours)", TestUtils.getTimeInConfiguredUnit(8), day.getSummary());
   }
@@ -109,9 +109,9 @@ public class DayTest {
     list.add(new Record(date, LocalTime.of(12, 30, 0), RecordType.CHECKIN));
     list.add(new Record(date.plusDays(1), LocalTime.of(16, 30, 0), RecordType.CHECKOUT));
 
-    final List<Session> sessions = Session.buildSessions(list);
+    final List<Session> sessions = SessionUtils.buildSessions(list);
 
-    final Day day = Day.buildDay(sessions);
+    final Day day = DayUtils.buildDay(sessions);
     Assert.assertEquals("55799 seconds", TestUtils.getTimeInConfiguredUnit(15, 29, 59, 999999999), day.getSummary());
   }
 
@@ -132,12 +132,12 @@ public class DayTest {
     session = new Session(begin, end);
     sessions.add(session);
 
-    Day.buildDay(sessions);
+    DayUtils.buildDay(sessions);
   }
 
   @Test
   public void test_build_invalid_day_2() {
-    Assert.assertNull(Day.buildDay(null));
-    Assert.assertNull(Day.buildDay(new ArrayList<>()));
+    Assert.assertNull(DayUtils.buildDay(null));
+    Assert.assertNull(DayUtils.buildDay(new ArrayList<>()));
   }
 }

@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Generic container class to store any type of time information.
  */
-public abstract class Container<T extends Comparable<? super T>> implements Comparable<Container> {
+abstract class Container<T extends Comparable<? super T>> implements Comparable<Container> {
 
   protected final List<T> items = new ArrayList<T>();
   protected final LocalDate date;
@@ -20,7 +20,7 @@ public abstract class Container<T extends Comparable<? super T>> implements Comp
    *
    * @param date The date the items of this container belong to.
    */
-  public Container(final LocalDate date) {
+  Container(final LocalDate date) {
     if (date == null) {
       throw new IllegalArgumentException("Date is null");
     }

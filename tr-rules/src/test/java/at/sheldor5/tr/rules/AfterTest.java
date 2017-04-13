@@ -72,11 +72,11 @@ public class AfterTest {
 
     final Session actual = before.split(session);
 
-    Assert.assertEquals("Session start time should not be updated by rule", start_t, session.getStart());
-    Assert.assertEquals("Session end time should be updated by rule", time, session.getEnd());
+    Assert.assertEquals("Session start time should not be updated by rule", start_t, session.getStart().getTime());
+    Assert.assertEquals("Session end time should be updated by rule", time, session.getEnd().getTime());
 
-    Assert.assertEquals("Session start time should be updated by rule", time, actual.getStart());
-    Assert.assertEquals("Session end time should not be updated by rule", end_t, actual.getEnd());
+    Assert.assertEquals("Session start time should be updated by rule", time, actual.getStart().getTime());
+    Assert.assertEquals("Session end time should not be updated by rule", end_t, actual.getEnd().getTime());
 
     Assert.assertEquals("Session summary should be updated", 3600L, session.getSummary());
     Assert.assertEquals("Session valued summary should not be update", 3600L, session.getValuedSummary());
@@ -103,8 +103,8 @@ public class AfterTest {
 
     Assert.assertNull("Session should not be split", actual);
 
-    Assert.assertEquals("Session start time should not be updated by rule", start_t, session.getStart());
-    Assert.assertEquals("Session end time should not be updated by rule", end_t, session.getEnd());
+    Assert.assertEquals("Session start time should not be updated by rule", start_t, session.getStart().getTime());
+    Assert.assertEquals("Session end time should not be updated by rule", end_t, session.getEnd().getTime());
 
     Assert.assertEquals("Session summary should not be updated", 3600L, session.getSummary());
     Assert.assertEquals("Session valued summary should not be updated", 3600L, session.getValuedSummary());
@@ -128,8 +128,8 @@ public class AfterTest {
 
     Assert.assertNull("Session should be updated only", actual);
 
-    Assert.assertEquals("Session start time should not be updated by rule", start_t, session.getStart());
-    Assert.assertEquals("Session end time should not be updated by rule", end_t, session.getEnd());
+    Assert.assertEquals("Session start time should not be updated by rule", start_t, session.getStart().getTime());
+    Assert.assertEquals("Session end time should not be updated by rule", end_t, session.getEnd().getTime());
 
     Assert.assertEquals("Session summary should not be updated", 3600L, session.getSummary());
     Assert.assertEquals("Session valued summary should be updated", 5400L, session.getValuedSummary());

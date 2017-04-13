@@ -20,17 +20,40 @@ import java.util.List;
  */
 public class Session extends Container<Record> {
 
-  protected LocalTime start;
-  protected LocalTime end;
-  protected double multiplier;
+  protected Record start;
+  protected Record end;
+  protected double multiplier = 1.0D;
 
   /**
    * Default Constructor.
    *
    * @param date The date on which this session took place.
    */
-  protected Session(final LocalDate date) {
+  public Session(final LocalDate date) {
     super(date);
+  }
+
+  /**
+   * Default Constructor.
+   *
+   * @param date The date on which this session took place.
+   */
+  public Session(final Record start, final Record end) {
+    super(neverNull(start));
+    setStart(start);
+    setEnd(end);
+  }
+
+  /**
+   * Default Constructor.
+   *
+   * @param date The date on which this session took place.
+   */
+  public Session(final Record start, final Record end, double multiplier) {
+    super(neverNull(start));
+    setStart(start);
+    setEnd(end);
+    setMultiplier(multiplier);
   }
 
   /**
@@ -40,8 +63,8 @@ public class Session extends Container<Record> {
    * @param end   The record on which this session ends.
    * @throws IllegalArgumentException If this session can not be built based on the given records.
    */
-  public Session(final Record start, final Record end) throws IllegalArgumentException {
-    this(start, end, 1.0D);
+  public Session(final LocalDate date, final Record start, final Record end) throws IllegalArgumentException {
+    this(date, start, end, 1.0D);
   }
 
   /**
@@ -52,10 +75,9 @@ public class Session extends Container<Record> {
    * @param multiplier The multiplier to value this sessions duration.
    * @throws IllegalArgumentException If this session can not be built based on the given records.
    */
-  public Session(final Record start, final Record end, double multiplier)
+  public Session(final LocalDate date, final Record start, final Record end, double multiplier)
           throws IllegalArgumentException {
-    super(neverNull(start));
-
+    super(date);
     if (end == null) {
       throw new NullPointerException("Session has no start or end: null");
     }
@@ -66,8 +88,8 @@ public class Session extends Container<Record> {
       throw new IllegalArgumentException("Session starts with CHECKOUT or ends with CHECKIN");
     }
 
-    setStart(start.time);
-    setEnd(end.time);
+    setStart(start);
+    setEnd(end);
 
     long duration = start.time.until(end.time, GlobalConfiguration.MEASURE_UNIT);
 
@@ -96,24 +118,27 @@ public class Session extends Container<Record> {
    *
    * @return The multiplier of this session.
    */
-  public LocalTime getStart() {
+  public Record getStart() {
     return start;
   }
 
   /**
    * Setter for the start time.
    *
-   * @param time The time on which this session starts.
+   * @param record The record on which this session starts.
    * @throws IllegalArgumentException If the start time is after this session's end time.
    */
-  public void setStart(final LocalTime time) {
-    if (time == null) {
-      throw new IllegalArgumentException("Time is null");
+  public void setStart(final Record record) {
+    if (record == null || record.type == null || record.type == RecordType.CHECKOUT) {
+      throw new IllegalArgumentException("Invalid record");
     }
-    if (end == null || end.isAfter(time)) {
-      start = time;
+    if (date != null && !date.equals(record.date)) {
+      throw new IllegalArgumentException("Session starts on another day");
+    }
+    if (end == null || end.time.isBefore(record.time)) {
+      start = record;
     } else {
-      throw new IllegalArgumentException("Session starts after it ends");
+      throw new IllegalArgumentException("Session starts after its end");
     }
   }
 
@@ -122,24 +147,27 @@ public class Session extends Container<Record> {
    *
    * @return The time on which this session ends.
    */
-  public LocalTime getEnd() {
+  public Record getEnd() {
     return end;
   }
 
   /**
    * Setter for the end time.
    *
-   * @param time The time on which this session ends.
+   * @param record The time on which this session ends.
    * @throws IllegalArgumentException If the end time is before this session's start time.
    */
-  public void setEnd(final LocalTime time) {
-    if (time == null) {
-      throw new IllegalArgumentException("Time is null");
+  public void setEnd(final Record record) {
+    if (record == null || record.type == null || record.type == RecordType.CHECKIN) {
+      throw new IllegalArgumentException("Invalid record");
     }
-    if (start == null || start.isBefore(time)) {
-      end = time;
+    if (date != null && !date.equals(record.date)) {
+      throw new IllegalArgumentException("Session starts on another day");
+    }
+    if (start == null || start.time.isBefore(record.time)) {
+      end = record;
     } else {
-      throw new IllegalArgumentException("Session ends before it starts");
+      throw new IllegalArgumentException("Session ends before its start");
     }
   }
 
@@ -151,7 +179,7 @@ public class Session extends Container<Record> {
    *         before this session's end time, false otherwise.
    */
   public boolean contains(final LocalTime time) {
-    return time.isAfter(start) && time.isBefore(end);
+    return time != null && time.isAfter(start.time) && time.isBefore(end.time);
   }
 
   /**
@@ -169,12 +197,16 @@ public class Session extends Container<Record> {
       return null;
     }
     // create session for the second part of the split
+    final Record otherStart = new Record(date, time, RecordType.CHECKIN);
     final Session session = new Session(date);
-    session.start = time;
+    session.start = otherStart;
     session.end = end;
     session.multiplier = multiplier;
+
     // update this object
-    end = time;
+    final Record thisEnd = new Record(date, time, RecordType.CHECKOUT);
+    end = thisEnd;
+
     // return following session
     return session;
   }
@@ -206,7 +238,7 @@ public class Session extends Container<Record> {
    */
   @Override
   public final List<Record> getItems() {
-    return Arrays.asList(new Record(date, start, RecordType.CHECKIN), new Record(date, end, RecordType.CHECKOUT));
+    return Arrays.asList(start, end);
   }
 
   /**
@@ -218,8 +250,8 @@ public class Session extends Container<Record> {
   public String toString() {
     return String.format("%s: %s - %s = %s (%d%% = %s)",
             date,
-            start,
-            end,
+            start.time,
+            end.time,
             TimeUtils.getHumanReadableSummary(getSummary()),
             (long) (multiplier * 100),
             TimeUtils.getHumanReadableSummary(getValuedSummary()));
@@ -232,10 +264,10 @@ public class Session extends Container<Record> {
    */
   @Override
   public long getSummary() {
-    if (start == null || end == null) {
+    if (start == null || start.time == null || end == null || end.time == null) {
       return -1;
     }
-    return start.until(end, GlobalConfiguration.MEASURE_UNIT);
+    return start.time.until(end.time, GlobalConfiguration.MEASURE_UNIT);
   }
 
   /**
@@ -245,10 +277,10 @@ public class Session extends Container<Record> {
    */
   @Override
   public long getValuedSummary() {
-    if (start == null || end == null) {
+    if (start == null || start.time == null || end == null || end.time == null) {
       return -1;
     }
-    return (long) (start.until(end, GlobalConfiguration.MEASURE_UNIT) * multiplier);
+    return (long) (multiplier * start.time.until(end.time, GlobalConfiguration.MEASURE_UNIT));
   }
 
   /**
@@ -269,88 +301,6 @@ public class Session extends Container<Record> {
     } else {
       return super.compareTo(other);
     }
-  }
-
-  /**
-   * Builds a list of sessions based on a list of records.
-   * In the first step the records are split up by their date and
-   * stored in a list which represents a list of days on which the
-   * sessions are. In the second step all records of a day are
-   * converted to sessions. If a day starts with a CHECKOUT record,
-   * a CHECKIN record ({@link LocalTime#MIN}) will be added to the
-   * beginning of the day. If a day ends with a CHECKIN record,
-   * a CHECKOUT record ({@link LocalTime#MAX}) will be added
-   * to the end of the day. This ensures that there is no
-   * invalid session in the returned list.
-   *
-   * @param records The list of records to build the sessions based on.
-   * @return A list of sessions.
-   */
-  public static List<Session> buildSessions(final List<Record> records) {
-    final List<List<Record>> days = new ArrayList<>();
-
-    List<Record> day = new ArrayList<>();
-
-    LocalDate date = records.get(0).getDate();
-    Record record = null;
-    for (int i = 0; i < records.size(); ) {
-      // day start
-      if (record == null) {
-        record = records.get(i++);
-      }
-
-      // day has to start with CHECKIN
-      if (record.type == RecordType.CHECKOUT) {
-        day.add(new Record(date, LocalTime.MIN, RecordType.CHECKIN));
-      }
-
-      // store each record
-      do {
-        day.add(record);
-        if (i >= records.size()) {
-          break;
-        }
-        record = records.get(i++);
-      } while (date.equals(record.date));
-
-      // day has to end with CHECKOUT
-      if (day.get(day.size() - 1).type == RecordType.CHECKIN) {
-        day.add(new Record(date, LocalTime.MAX, RecordType.CHECKOUT));
-      }
-
-      // check if count of records is even
-      if (day.size() % 2 == 1) {
-        throw new IllegalStateException("Uneven records for this day");
-      }
-
-      days.add(day);
-      if (i < records.size()) {
-        day = new ArrayList<>();
-        date = record.date;
-      } else if (i == records.size() && record.type == RecordType.CHECKIN) {
-        day = new ArrayList<>();
-        date = record.date;
-        if (record.type == RecordType.CHECKIN) {
-          day.add(record);
-          day.add(new Record(date, LocalTime.MAX, RecordType.CHECKOUT));
-        } else {
-          day.add(new Record(date, LocalTime.MIN, RecordType.CHECKIN));
-          day.add(record);
-        }
-        days.add(day);
-      }
-    }
-
-    final List<Session> sessions = new ArrayList<>();
-
-    for (List<Record> list : days) {
-      for (int j = 0; j < list.size(); j++) {
-        final Session session = new Session(list.get(j++), list.get(j));
-        sessions.add(session);
-      }
-    }
-
-    return sessions;
   }
 
   /**

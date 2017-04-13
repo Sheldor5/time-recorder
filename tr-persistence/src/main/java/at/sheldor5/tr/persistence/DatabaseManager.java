@@ -1,15 +1,18 @@
 package at.sheldor5.tr.persistence;
 
 import at.sheldor5.tr.api.utils.GlobalProperties;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
-public class PersistenceManager {
+public class DatabaseManager {
 
-  private static Configuration configuration;
+  private static boolean initialized = false;
+  private static SessionFactory sessionFactory;
 
-  public static Configuration getConfiguration() {
-    if (configuration == null) {
-      configuration = new Configuration();
+  public static void init() {
+    if (!initialized) {
+      Configuration configuration = new Configuration();
       configuration.setProperty("hibernate.connection.driver_class", GlobalProperties.getProperty("db.jdbc.class"));
       configuration.setProperty("hibernate.connection.url", GlobalProperties.getProperty("db.jdbc.url"));
       configuration.setProperty("hibernate.connection.username", GlobalProperties.getProperty("db.username"));
@@ -20,9 +23,16 @@ public class PersistenceManager {
       configuration.setProperty("hibernate.current_session_context_class", "thread");
       configuration.setProperty("hibernate.hbm2ddl.auto", "update");
       configuration.addResource("UserMapping.hbm.xml");
+      configuration.addResource("Schedule.hbm.xml");
       configuration.addResource("Record.hbm.xml");
+      configuration.addResource("User.hbm.xml");
+      sessionFactory = configuration.buildSessionFactory();
+      initialized = true;
     }
-    return configuration;
+  }
+
+  public static Session getSession() {
+    return sessionFactory.getCurrentSession();
   }
 
 }

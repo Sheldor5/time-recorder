@@ -193,42 +193,15 @@ public class AuthenticationManager implements PluginManager<AuthenticationPlugin
       return;
     }
 
-    final byte uuid_bytes[] = user.getUuidBytes();
-    if (uuid_bytes == null || uuid_bytes.length != 16) {
+    final UUID uuid = user.getUuid();
+    if (uuid == null) {
       LOGGER.severe("User UUID is invalid");
       return;
     }
 
     int id = 0;
-    try (final Connection connection = dataSource.getConnection()) {
-      try (final PreparedStatement statement = connection.prepareStatement(SELECT_MAPPED_USER)) {
-        statement.setBytes(1, uuid_bytes);
 
-        try (final ResultSet result = statement.executeQuery()) {
-          if (result.next()) {
-            id = result.getInt("pk_user_id");
-            LOGGER.fine(String.format("Found mapped ID %s for UUID %s", id, user.getUuid()));
-          }
-          if (result.next()) {
-            // user not unique
-            id = 0;
-            LOGGER.severe("Multiple user mappings found with UUID " + user.getUuid());
-          }
-        } catch (final SQLException sqle) {
-          LOGGER.severe(sqle.getMessage());
-        }
-      } catch (final SQLException sqle) {
-        LOGGER.severe(sqle.getMessage());
-      }
-
-      if (id > 0) {
-        user.setId(id);
-      } else {
-        LOGGER.fine("No user mapping found for UUID " + user.getUuid());
-      }
-    } catch (final SQLException sqle) {
-      LOGGER.severe(sqle.getMessage());
-    }
+    // TODO
   }
 
   private void commit(final Connection connection) throws SQLException {

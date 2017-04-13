@@ -1,4 +1,4 @@
-package at.sheldor5.tr.tests;
+package utils;
 
 import at.sheldor5.tr.api.time.Day;
 import at.sheldor5.tr.api.time.Record;

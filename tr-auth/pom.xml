@@ -40,6 +40,10 @@
                     <systemPropertyVariables>
                         <java.util.logging.config.file>src/test/resources/logging.properties</java.util.logging.config.file>
                     </systemPropertyVariables>
+                    <excludes>
+                        <!-- requires running LDAP server -->
+                        <exclude>**/*LdapAuthenticationTest.java</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
         </plugins>

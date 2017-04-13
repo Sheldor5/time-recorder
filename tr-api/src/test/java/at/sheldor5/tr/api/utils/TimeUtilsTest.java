@@ -1,6 +1,6 @@
 package at.sheldor5.tr.api.utils;
 
-import at.sheldor5.tr.tests.TestUtils;
+import utils.TestUtils;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -5,7 +5,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import at.sheldor5.tr.tests.TestUtils;
+import utils.TestUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -95,12 +95,12 @@ public class SessionTest {
     session = new Session(date);
     Assert.assertNull(session.getStart());
     Assert.assertNull(session.getEnd());
-    Assert.assertEquals(0.0D, session.getMultiplier(), 0.0D);
+    Assert.assertEquals(1.0D, session.getMultiplier(), 0.0D);
 
     session = new Session(start, end);
     Assert.assertEquals(date, session.getDate());
-    Assert.assertEquals(startTime, session.getStart());
-    Assert.assertEquals(endTime, session.getEnd());
+    Assert.assertEquals(startTime, session.getStart().getTime());
+    Assert.assertEquals(endTime, session.getEnd().getTime());
     Assert.assertEquals(1.0D, session.getMultiplier(), 0.0D);
   }
 
@@ -116,8 +116,8 @@ public class SessionTest {
     session.setMultiplier(multiplier);
 
     Assert.assertEquals( date, session.getDate());
-    Assert.assertEquals(startTime, session.getStart());
-    Assert.assertEquals(endTime, session.getEnd());
+    Assert.assertEquals(startTime, session.getStart().getTime());
+    Assert.assertEquals(endTime, session.getEnd().getTime());
     Assert.assertEquals(multiplier, session.getMultiplier(), 0.0D);
 
     final List<Record> records = session.getItems();
@@ -259,7 +259,7 @@ public class SessionTest {
     list.add(new Record(date, LocalTime.of(12, 30, 0), RecordType.CHECKIN));
     list.add(new Record(date, LocalTime.of(16, 30, 0), RecordType.CHECKOUT));
 
-    final List<Session> sessions = Session.buildSessions(list);
+    final List<Session> sessions = SessionUtils.buildSessions(list);
 
     Assert.assertEquals(2, sessions.size());
 
@@ -283,7 +283,7 @@ public class SessionTest {
     list.add(new Record(date.plusDays(2), LocalTime.of(12, 30, 0), RecordType.CHECKIN));
     list.add(new Record(date.plusDays(2), LocalTime.of(16, 30, 0), RecordType.CHECKOUT));
 
-    final List<Session> sessions = Session.buildSessions(list);
+    final List<Session> sessions = SessionUtils.buildSessions(list);
 
     Assert.assertEquals(6, sessions.size());
 

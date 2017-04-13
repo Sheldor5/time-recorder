@@ -1,6 +1,6 @@
 package at.sheldor5.tr.api.user;
 
-import at.sheldor5.tr.api.utils.UuidUtils;
+import at.sheldor5.tr.api.utils.StringUtils;
 
 import java.util.UUID;
 
@@ -9,19 +9,44 @@ import java.util.UUID;
  */
 public class User {
 
-  private int id = -1;
+  private int id;
   private UUID uuid;
   private String username;
   private String password;
-  private Schedule schedule;
   private String forename;
   private String surname;
+  private Schedule schedule;
+
+  public User() {
+    this(-1);
+  }
+
+  public User(int id) {
+    this(id, null);
+  }
+
+  public User(int id, final UUID uuid) {
+    this(id, uuid, null);
+  }
+
+  public User(int id, final UUID uuid, final String username) {
+    this(username, null, null);
+    this.id = id;
+    this.uuid = uuid;
+  }
 
   /**
-   * Default constructor.
+   * Constructor for given name.
+   *
+   * @param username The username of the user.
+   * @param forename The forename of the user.
+   * @param surname  The surname of the user.
    */
-  public User() {
-
+  public User(final String username, final String plainTextPassword, final String forename, final String surname) {
+    this.username = username;
+    setPlainTextPassword(plainTextPassword);
+    this.forename = forename;
+    this.surname = surname;
   }
 
   /**
@@ -32,9 +57,9 @@ public class User {
    * @param surname  The surname of the user.
    */
   public User(final String username, final String forename, final String surname) {
-    setUsername(username);
-    setForename(forename);
-    setSurname(surname);
+    this.username = username;
+    this.forename = forename;
+    this.surname = surname;
   }
 
   /**
@@ -65,10 +90,91 @@ public class User {
    * @param id The id of this user.
    */
   public void setId(int id) {
-    if (id < 1) {
-      throw new IllegalArgumentException("Invalid User ID");
-    }
     this.id = id;
+  }
+
+  /**
+   * Getter for the username.
+   *
+   * @return The username of this user.
+   */
+  public String getUsername() {
+    return username;
+  }
+
+  /**
+   * Setter for the username.
+   *
+   * @param username The username of this user.
+   */
+  public void setUsername(final String username) {
+    this.username = username;
+  }
+
+  public String getPassword() {
+    return password;
+  }
+
+  public void setPassword(final String password) {
+    this.password = password;
+  }
+
+  public void setPlainTextPassword(final String plainTextPassword) {
+    this.password = StringUtils.getMD5(plainTextPassword);
+  }
+
+  /**
+   * Getter for the forename.
+   *
+   * @return The forename of this user.
+   */
+  public String getForename() {
+    return forename;
+  }
+
+  /**
+   * Setter for the forename.
+   *
+   * @param forename The forename of this user.
+   */
+  public void setForename(final String forename) {
+    this.forename = forename;
+  }
+
+  /**
+   * Getter for the surname.
+   *
+   * @return The surname of this user.
+   */
+  public String getSurname() {
+    return surname;
+  }
+
+  /**
+   * Setter for the surname.
+   *
+   * @param surname The surname of this user.
+   */
+  public void setSurname(final String surname) {
+    this.surname = surname;
+  }
+
+  /**
+   * Getter for the UUID.
+   *
+   * @return The UUID of this user.
+   */
+  public UUID getUuid() {
+    return uuid;
+  }
+
+  /**
+   * Setter fot the UUID.
+   *
+   * @param uuid The UUID of this user.
+   */
+  public void setUuid(final UUID uuid) {
+    this.uuid = uuid;
   }
 
   /**
@@ -88,91 +194,6 @@ public class User {
   public void setSchedule(final Schedule schedule) {
     this.schedule = schedule;
   }
-
-  /**
-   * Getter for the username.
-   *
-   * @return The username of this user.
-   */
-  public String getUsername() {
-    return username;
-  }
-
-  /**
-   * Setter for the username.
-   *
-   * @param username The username of this user.
-   */
-  public void setUsername(final String username) {
-    if (username == null || username.length() < 5 || username.length() > 32) {
-      throw new IllegalArgumentException("Username was null or its length exceeded the limit of 32 characters");
-    }
-    this.username = username;
-  }
-
-  /**
-   * Getter for the forename.
-   *
-   * @return The forename of this user.
-   */
-  public String getForename() {
-    return forename;
-  }
-
-  /**
-   * Setter for the forename.
-   *
-   * @param forename The forename of this user.
-   */
-  public void setForename(final String forename) {
-    if (forename == null || forename.length() > 32) {
-      throw new IllegalArgumentException("Forename was null or its length exceeded the limit of 32 characters");
-    }
-    this.forename = forename;
-  }
-
-  /**
-   * Getter for the surname.
-   *
-   * @return The surname of this user.
-   */
-  public String getSurname() {
-    return surname;
-  }
-
-  /**
-   * Setter for the surname.
-   *
-   * @param surname The surname of this user.
-   */
-  public void setSurname(final String surname) {
-    if (surname == null || surname.length() > 32) {
-      throw new IllegalArgumentException("Surname was null or its length exceeded the limit of 32 characters");
-    }
-    this.surname = surname;
-  }
-
-  /**
-   * Getter for the UUID.
-   *
-   * @return The UUID of this user.
-   */
-  public UUID getUuid() {
-    return uuid;
-  }
-
-  /**
-   * Setter fot the UUID.
-   *
-   * @param uuid The UUID of this user.
-   */
-  public void setUuid(final UUID uuid) {
-    if (uuid == null) {
-      throw new IllegalArgumentException("User UUID was null");
-    }
-    this.uuid = uuid;
-  }
-
 
   /**
    * Indicates whether some other object is "equal to" this one.
@@ -199,5 +220,10 @@ public class User {
       return id == user.id;
     }
     return false;
+  }
+
+  @Override
+  public String toString() {
+    return String.format("%s@%d: {%d, %s, %s, %s, %s}", getClass().getSimpleName(), hashCode(), id, username, password, forename, surname);
   }
 }
