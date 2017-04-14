@@ -1,0 +1,13 @@
+dn: dc=sheldor5,dc=at
+objectClass: dcObject
+objectClass: organization
+o: sheldor5.at
+dc: sheldor5
+dn: ou=users,dc=sheldor5,dc=at
+objectClass: organizationalUnit
+objectClass: top
+ou: users
+dn: ou=groups,dc=sheldor5,dc=at
+objectClass: organizationalUnit
+objectClass: top
+ou: groups

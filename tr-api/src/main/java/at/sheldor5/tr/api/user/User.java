@@ -13,6 +13,7 @@ public class User {
   private UUID uuid;
   private String username;
   private String password;
+  private String salt;
   private String forename;
   private String surname;
   private Schedule schedule;
