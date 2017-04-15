@@ -8,7 +8,11 @@ public class UserMapping {
   private UUID uuid;
 
   public UserMapping() {
-    this(-1, null);
+    this(null);
+  }
+
+  public UserMapping(final UUID uuid) {
+    this(0, uuid);
   }
 
   public UserMapping(int id) {

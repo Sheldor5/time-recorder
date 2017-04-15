@@ -16,13 +16,12 @@ public interface AuthenticationPlugin extends Plugin {
   void initialize() throws IllegalStateException;
 
   /**
-   * Add a new user to this plugin's backend user directory.
+   * Add a new user or update an existing user to this plugin's backend user directory.
    *
-   * @param user The user to add.
-   * @param plainTextPassword The unencrypted password.
+   * @param user The user to add orupdate.
    * @throws UnsupportedOperationException If this method is not supported by this plugin.
    */
-  void addUser(final User user, final String plainTextPassword) throws UnsupportedOperationException;
+  void saveUser(final User user) throws UnsupportedOperationException;
 
   /**
    * Try to authenticate and return an {@link User} object

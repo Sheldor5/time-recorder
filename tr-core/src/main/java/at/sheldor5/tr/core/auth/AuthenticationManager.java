@@ -52,10 +52,10 @@ public class AuthenticationManager implements PluginManager<AuthenticationPlugin
     this.dataSource = dataSource;
   }
 
-  public void addUser(final User user, final String plainTextPassword) {
+  public void saveUser(final User user) {
     for (final AuthenticationPlugin plugin : plugins) {
       try {
-        plugin.addUser(user, plainTextPassword);
+        plugin.saveUser(user);
       } catch (final Exception e) {
         // ignore
       }
@@ -68,12 +68,13 @@ public class AuthenticationManager implements PluginManager<AuthenticationPlugin
       user = plugin.getUser(username, password);
       if (user != null) {
         mapUser(user);
-        if (user.getId() < 1) {
+        // TODO
+        /*if (user.getId() < 1) {
           addUserMapping(user);
         }
         if (user.getId() > 0) {
           return user;
-        }
+        }*/
       }
     }
     return null;
@@ -159,7 +160,8 @@ public class AuthenticationManager implements PluginManager<AuthenticationPlugin
 
             if (generatedKeys.next()) {
               id = generatedKeys.getInt(1);
-              user.setId(id);
+              // TODO
+              // user.setId(id);
               LOGGER.fine("Successfully mapped UUID " + uuid + " to User ID " + id);
             }
 

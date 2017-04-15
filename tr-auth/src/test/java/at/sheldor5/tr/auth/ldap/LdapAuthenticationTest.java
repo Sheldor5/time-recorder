@@ -36,7 +36,7 @@ public class LdapAuthenticationTest {
 
   @Test(expected = UnsupportedOperationException.class)
   public void test_add_user() {
-    LDAP.addUser(new User(USERNAME, FORENAME, SURNAME), PASSWORD);
+    LDAP.saveUser(null);
   }
 
   @Test

@@ -48,6 +48,8 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version.source>1.8</java.version.source>
         <java.version.target>1.8</java.version.target>
+        <hibernate.version>5.2.9.Final</hibernate.version>
+        <h2.version>1.4.193</h2.version>
     </properties>
 
     <!-- Build Settings -->

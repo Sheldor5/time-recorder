@@ -7,18 +7,10 @@ public class UserTest {
 
   @Test
   public void should_set_password() {
-    final String expected = "passwort";
+    final String expected = "password";
     final User user = new User();
     user.setPassword(expected);
     Assert.assertEquals(expected, user.getPassword());
-  }
-
-  @Test
-  public void should_hash_password() {
-    final String unexpected = "passwort";
-    final User user = new User();
-    user.setPlainTextPassword(unexpected);
-    Assert.assertNotEquals(unexpected, user.getPassword());
   }
 
 }

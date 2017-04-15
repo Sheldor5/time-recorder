@@ -8,9 +8,12 @@
         <id name="id" type="int" column="PK_RECORD_ID">
             <generator class="native"/>
         </id>
-        <many-to-one name="userId" column="FK_USER_ID" class="at.sheldor5.tr.api.user.UserMapping"/>
-        <property name="date" type="date" column="DATE"/>
-        <property name="time" type="time" column="TIME"/>
-        <property name="type" type="boolean" column="TYPE"/>
+        <many-to-one name="user" column="FK_USER_ID" class="at.sheldor5.tr.api.user.UserMapping"/>
+        <property name="date" type="java.time.LocalDate" column="DATE"/>
+        <property name="time" type="java.time.LocalTime" column="TIME"/>
+        <property name="type" type="boolean" column="TYPE">
+            <!-- converter -->
+            <type name="at.sheldor5.tr.persistence.converter.RecordTypeAttributeConverter"/>
+        </property>
     </class>
 </hibernate-mapping>

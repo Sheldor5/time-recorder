@@ -10,6 +10,8 @@ public class BCryptTest {
     final String password = "admin";
     final String salt = BCrypt.gensalt(12);
     final String hashedPassword = BCrypt.hashpw(password, salt);
+    System.out.println(hashedPassword.length());
+    System.out.println(hashedPassword);
     Assert.assertTrue(BCrypt.checkpw(password, hashedPassword));
   }
 }

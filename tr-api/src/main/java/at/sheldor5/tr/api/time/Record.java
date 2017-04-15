@@ -1,5 +1,8 @@
 package at.sheldor5.tr.api.time;
 
+import at.sheldor5.tr.api.user.User;
+import at.sheldor5.tr.api.user.UserMapping;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -11,8 +14,8 @@ import java.time.LocalTime;
  */
 public class Record implements Comparable<Record> {
 
-  private int id = -1;
-  private int userId = -1;
+  private int id;
+  private UserMapping user;
   protected LocalDate date;
   protected LocalTime time;
   protected RecordType type;
@@ -71,12 +74,15 @@ public class Record implements Comparable<Record> {
     this.id = id;
   }
 
-  public int getUserId() {
-    return userId;
+  public UserMapping getUser() {
+    return user;
   }
 
-  public void setUserId(int userId) {
-    this.userId = userId;
+  public void setUser(final UserMapping user) {
+    /*if (user == null) {
+      throw new IllegalArgumentException("User mapping must not be null");
+    }*/
+    this.user = user;
   }
 
   /**

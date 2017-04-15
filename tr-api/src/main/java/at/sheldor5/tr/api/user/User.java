@@ -1,7 +1,5 @@
 package at.sheldor5.tr.api.user;
 
-import at.sheldor5.tr.api.utils.StringUtils;
-
 import java.util.UUID;
 
 /**
@@ -9,89 +7,33 @@ import java.util.UUID;
  */
 public class User {
 
-  private int id;
   private UUID uuid;
   private String username;
   private String password;
-  private String salt;
   private String forename;
   private String surname;
   private Schedule schedule;
 
+  /**
+   * Default constructor for empty user.
+   */
   public User() {
-    this(-1);
-  }
 
-  public User(int id) {
-    this(id, null);
-  }
-
-  public User(int id, final UUID uuid) {
-    this(id, uuid, null);
-  }
-
-  public User(int id, final UUID uuid, final String username) {
-    this(username, null, null);
-    this.id = id;
-    this.uuid = uuid;
   }
 
   /**
-   * Constructor for given name.
+   * Constructor for given properties.
    *
    * @param username The username of the user.
+   * @param password The password of the user (should be hashed).
    * @param forename The forename of the user.
    * @param surname  The surname of the user.
    */
-  public User(final String username, final String plainTextPassword, final String forename, final String surname) {
+  public User(final String username, final String password, final String forename, final String surname) {
     this.username = username;
-    setPlainTextPassword(plainTextPassword);
+    this.password = password;
     this.forename = forename;
     this.surname = surname;
-  }
-
-  /**
-   * Constructor for given name.
-   *
-   * @param username The username of the user.
-   * @param forename The forename of the user.
-   * @param surname  The surname of the user.
-   */
-  public User(final String username, final String forename, final String surname) {
-    this.username = username;
-    this.forename = forename;
-    this.surname = surname;
-  }
-
-  /**
-   * Constructor for given name and id.
-   *
-   * @param id       The id of the user.
-   * @param username The username of the user.
-   * @param forename The forename of the user.
-   * @param surname  The surname of the user.
-   */
-  public User(int id, final String username, final String forename, final String surname) {
-    this(username, forename, surname);
-    setId(id);
-  }
-
-  /**
-   * Getter for the id.
-   *
-   * @return The id of this user.
-   */
-  public int getId() {
-    return id;
-  }
-
-  /**
-   * Setter for the id.
-   *
-   * @param id The id of this user.
-   */
-  public void setId(int id) {
-    this.id = id;
   }
 
   /**
@@ -118,10 +60,6 @@ public class User {
 
   public void setPassword(final String password) {
     this.password = password;
-  }
-
-  public void setPlainTextPassword(final String plainTextPassword) {
-    this.password = StringUtils.getMD5(plainTextPassword);
   }
 
   /**
@@ -200,7 +138,7 @@ public class User {
    * Indicates whether some other object is "equal to" this one.
    *
    * @param other The object to compare.
-   * @return      True if both objects have the same username, forename, surname, id and uuid.
+   * @return True if both objects have the same username, forename, surname, id and uuid.
    */
   @Override
   public boolean equals(final Object other) {
@@ -211,20 +149,11 @@ public class User {
       return false;
     }
     final User user = (User) other;
-    if (username.equals(user.username) && forename.equals(user.forename) && surname.equals(user.surname)) {
-      if (id < 0 || user.id < 0) {
-        if (uuid == null) {
-          return false;
-        }
-        return uuid.equals(user.uuid);
-      }
-      return id == user.id;
-    }
-    return false;
+    return uuid.equals(user.uuid) && username.equals(user.username) && forename.equals(user.forename) && surname.equals(user.surname);
   }
 
   @Override
   public String toString() {
-    return String.format("%s@%d: {%d, %s, %s, %s, %s}", getClass().getSimpleName(), hashCode(), id, username, password, forename, surname);
+    return String.format("%s@%d: {%s, %s, %s, %s}", getClass().getSimpleName(), hashCode(), username, password, forename, surname);
   }
 }

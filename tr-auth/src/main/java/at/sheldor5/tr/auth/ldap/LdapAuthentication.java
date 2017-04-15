@@ -50,10 +50,10 @@ public class LdapAuthentication implements AuthenticationPlugin {
   }
 
   /**
-   * @see AuthenticationPlugin#addUser(User, String).
+   * @see AuthenticationPlugin#saveUser(User).
    */
   @Override
-  public void addUser(final User user, final String plainTextPassword) {
+  public void saveUser(final User user) {
     throw new UnsupportedOperationException("Currently not supported");
   }
 

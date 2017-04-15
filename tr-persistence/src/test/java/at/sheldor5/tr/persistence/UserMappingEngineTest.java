@@ -2,6 +2,7 @@ package at.sheldor5.tr.persistence;
 
 import at.sheldor5.tr.api.user.UserMapping;
 import at.sheldor5.tr.api.utils.GlobalProperties;
+import org.hibernate.exception.ConstraintViolationException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -11,9 +12,10 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.UUID;
 
-public class UserMappingManagerTest {
+public class UserMappingEngineTest {
 
   private static final String PROPERTIES = "test.properties";
+  private static final UserMappingEngine USER_MAPPING_ENGINE = new UserMappingEngine();
 
   @BeforeClass
   public static void init() throws IOException, SQLException {
@@ -22,31 +24,34 @@ public class UserMappingManagerTest {
   }
 
   @Test
-  public void should_create_user_mapping() {
-    final UUID expected = UUID.randomUUID();
-
-    final UserMapping actual = UserMappingManager.createUserMapping(expected);
-
-    Assert.assertNotNull(actual);
-
-    Assert.assertEquals(expected, actual.getUuid());
-    Assert.assertTrue(actual.getId() > 0);
-  }
-
-  @Test
-  public void should_return_user_mapping() {
+  public void should_persist_and_return_user_mapping() {
     final UUID uuid = UUID.randomUUID();
 
-    final UserMapping expected = UserMappingManager.createUserMapping(uuid);
-    Assert.assertNotNull(expected);
-    Assert.assertEquals(uuid, expected.getUuid());
+    final UserMapping expected = new UserMapping(uuid);
+
+    USER_MAPPING_ENGINE.create(expected);
+
     Assert.assertTrue(expected.getId() > 0);
 
-    final UserMapping actual = UserMappingManager.getUserMapping(uuid);
+    final UserMapping actual = USER_MAPPING_ENGINE.read(uuid);
 
     Assert.assertNotNull(actual);
-
     Assert.assertEquals(expected, actual);
+  }
+
+  @Test(expected = ConstraintViolationException.class)
+  public void should_throw_on_duplication() {
+    final UUID uuid = UUID.randomUUID();
+
+    final UserMapping original = new UserMapping(uuid);
+
+    USER_MAPPING_ENGINE.create(original);
+
+    Assert.assertTrue(original.getId() > 0);
+
+    final UserMapping duplicate = new UserMapping(uuid);
+
+    USER_MAPPING_ENGINE.create(duplicate);
   }
 
   @Test
@@ -54,13 +59,13 @@ public class UserMappingManagerTest {
     UUID[] uuids = new UUID[10];
     for (int i = 0; i < uuids.length; i++) {
       uuids[i] = UUID.randomUUID();
-      UserMappingManager.createUserMapping(uuids[i]);
+      USER_MAPPING_ENGINE.create(new UserMapping(uuids[i]));
     }
 
     final StringBuilder sb = new StringBuilder();
     UserMapping userMapping;
     for (int i = 0; i < uuids.length; i++) {
-      userMapping = UserMappingManager.getUserMapping(uuids[i]);
+      userMapping = USER_MAPPING_ENGINE.read(uuids[i]);
       sb.append(userMapping);
       sb.append("\n");
     }
@@ -71,5 +76,4 @@ public class UserMappingManagerTest {
     }
     System.out.println(sb.toString());
   }
-
 }

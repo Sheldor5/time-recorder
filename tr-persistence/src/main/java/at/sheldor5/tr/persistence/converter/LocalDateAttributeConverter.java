@@ -3,6 +3,7 @@ package at.sheldor5.tr.persistence.converter;
 import java.sql.Date;
 import java.time.LocalDate;
 import javax.persistence.AttributeConverter;
+import javax.persistence.Converter;
 
 /**
  * Converter for Java8's {@link LocalDate} to SQL's {@link Date}.
@@ -10,6 +11,7 @@ import javax.persistence.AttributeConverter;
  * @deprecated See https://github.com/hibernate/hibernate-orm/wiki/Migration-Guide---5.2.
  */
 @Deprecated
+@Converter
 public class LocalDateAttributeConverter implements AttributeConverter<LocalDate, Date> {
 
   @Override

@@ -12,7 +12,7 @@ import java.time.LocalTime;
 public class Schedule {
 
   private int id;
-  private int userId;
+  private UserMapping user;
   private LocalDate dueDate;
   private LocalTime monday = LocalTime.MIN;
   private LocalTime tuesday = LocalTime.MIN;
@@ -44,21 +44,21 @@ public class Schedule {
   }
 
   /**
-   * Getter for the user ID.
+   * Getter for the user.
    *
-   * @return The id of the user this Schedule belongs to.
+   * @return The user this Schedule belongs to.
    */
-  public int getUserId() {
-    return userId;
+  public UserMapping getUser() {
+    return user;
   }
 
   /**
-   * Setter for the user ID.
+   * Setter for the user.
    *
-   * @param userId The id of the user this Schedule belongs to.
+   * @param user The user this Schedule belongs to.
    */
-  public void setUserId(int userId) {
-    this.userId = userId;
+  public void setUser(final UserMapping user) {
+    this.user = user;
   }
 
   /**

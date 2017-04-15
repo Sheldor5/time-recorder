@@ -38,9 +38,10 @@ public class Test extends HttpServlet {
     writer.println("<body bgcolor=white>");
 
     User user = AuthenticationManager.getInstance().getUser("time-recorder", "password");
+    user.setPassword("password");
 
     if (user == null) {
-      AuthenticationManager.getInstance().addUser(user, "password");
+      AuthenticationManager.getInstance().saveUser(user);
     }
 
     user = AuthenticationManager.getInstance().getUser("time-recorder", "password");
