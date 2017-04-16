@@ -77,8 +77,8 @@ public class TimeOperationTest {
     final LocalDate monday = LocalDate.of(2017, 1, 2);
     final LocalTime start_t = LocalTime.of(11, 0);
     final LocalTime end_t = LocalTime.of(13, 0);
-    final Record begin = new Record(0, monday, start_t, RecordType.CHECKIN);
-    final Record end = new Record(0, monday, end_t, RecordType.CHECKOUT);
+    final Record begin = new Record(monday, start_t, RecordType.CHECKIN);
+    final Record end = new Record(monday, end_t, RecordType.CHECKOUT);
     final TestTimeOperation rule = new TestTimeOperation(time, 1.5D, 1, 2, 3, 4, 5, 6);
 
     final Session session = new Session(monday, begin, end);

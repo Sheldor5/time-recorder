@@ -25,33 +25,33 @@ public class BeforeTest {
     Record end;
     Session session;
 
-    begin = new Record(0, date, LocalTime.MIN, RecordType.CHECKIN);
-    end = new Record(0, date, LocalTime.of(4, 0), RecordType.CHECKOUT);
+    begin = new Record(date, LocalTime.MIN, RecordType.CHECKIN);
+    end = new Record(date, LocalTime.of(4, 0), RecordType.CHECKOUT);
     session = new Session(date, begin, end);
     Assert.assertTrue("Rule should apply", before.applies(session));
 
-    begin = new Record(0, date, LocalTime.of(3, 0), RecordType.CHECKIN);
-    end = new Record(0, date, LocalTime.of(4, 0), RecordType.CHECKOUT);
+    begin = new Record(date, LocalTime.of(3, 0), RecordType.CHECKIN);
+    end = new Record(date, LocalTime.of(4, 0), RecordType.CHECKOUT);
     session = new Session(date, begin, end);
     Assert.assertTrue("Rule should apply", before.applies(session));
 
-    begin = new Record(0, date, LocalTime.of(4, 0), RecordType.CHECKIN);
-    end = new Record(0, date, LocalTime.of(5, 0), RecordType.CHECKOUT);
+    begin = new Record(date, LocalTime.of(4, 0), RecordType.CHECKIN);
+    end = new Record(date, LocalTime.of(5, 0), RecordType.CHECKOUT);
     session = new Session(date, begin, end);
     Assert.assertTrue("Rule should apply", before.applies(session));
 
-    begin = new Record(0, date, LocalTime.of(4, 59, 59, 999999999), RecordType.CHECKIN);
-    end = new Record(0, date, LocalTime.MAX, RecordType.CHECKOUT);
+    begin = new Record(date, LocalTime.of(4, 59, 59, 999999999), RecordType.CHECKIN);
+    end = new Record(date, LocalTime.MAX, RecordType.CHECKOUT);
     session = new Session(date, begin, end);
     Assert.assertTrue("Rule should apply", before.applies(session));
 
-    begin = new Record(0, date, LocalTime.of(5, 0), RecordType.CHECKIN);
-    end = new Record(0, date, LocalTime.MAX, RecordType.CHECKOUT);
+    begin = new Record(date, LocalTime.of(5, 0), RecordType.CHECKIN);
+    end = new Record(date, LocalTime.MAX, RecordType.CHECKOUT);
     session = new Session(date, begin, end);
     Assert.assertFalse("Rule should not apply", before.applies(session));
 
-    begin = new Record(0, date, LocalTime.of(5, 0, 0, 1), RecordType.CHECKIN);
-    end = new Record(0, date, LocalTime.MAX, RecordType.CHECKOUT);
+    begin = new Record(date, LocalTime.of(5, 0, 0, 1), RecordType.CHECKIN);
+    end = new Record(date, LocalTime.MAX, RecordType.CHECKOUT);
     session = new Session(date, begin, end);
     Assert.assertFalse("Rule should not apply", before.applies(session));
   }
@@ -61,8 +61,8 @@ public class BeforeTest {
     final LocalDate monday = LocalDate.of(2017, 1, 2);
     final LocalTime start_t = LocalTime.of(4, 0);
     final LocalTime end_t = LocalTime.of(6, 0);
-    final Record begin = new Record(0, monday, start_t, RecordType.CHECKIN);
-    final Record end = new Record(0, monday, end_t, RecordType.CHECKOUT);
+    final Record begin = new Record(monday, start_t, RecordType.CHECKIN);
+    final Record end = new Record(monday, end_t, RecordType.CHECKOUT);
     final Before before = new Before(time, 1.5D, 1, 2, 3, 4, 5, 6);
 
 
@@ -90,8 +90,8 @@ public class BeforeTest {
     final LocalDate monday = LocalDate.of(2017, 1, 2);
     final LocalTime start_t = LocalTime.of(6, 0);
     final LocalTime end_t = LocalTime.of(7, 0);
-    final Record begin = new Record(0, monday, start_t, RecordType.CHECKIN);
-    final Record end = new Record(0, monday, end_t, RecordType.CHECKOUT);
+    final Record begin = new Record(monday, start_t, RecordType.CHECKIN);
+    final Record end = new Record(monday, end_t, RecordType.CHECKOUT);
     final Before before = new Before(time, 1.5D, 1, 2, 3, 4, 5, 6);
 
 
@@ -115,8 +115,8 @@ public class BeforeTest {
     final LocalDate monday = LocalDate.of(2017, 1, 2);
     final LocalTime start_t = LocalTime.of(3, 0);
     final LocalTime end_t = LocalTime.of(4, 0);
-    final Record begin = new Record(0, monday, start_t, RecordType.CHECKIN);
-    final Record end = new Record(0, monday, end_t, RecordType.CHECKOUT);
+    final Record begin = new Record(monday, start_t, RecordType.CHECKIN);
+    final Record end = new Record(monday, end_t, RecordType.CHECKOUT);
     final Before before = new Before(time, 1.5D, 1, 2, 3, 4, 5, 6);
 
 

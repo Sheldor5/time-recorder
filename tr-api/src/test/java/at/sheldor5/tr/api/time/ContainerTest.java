@@ -51,11 +51,6 @@ public class ContainerTest {
 
   private static final LocalDate date = LocalDate.of(2017, 1, 1);
 
-  @Test(expected = IllegalArgumentException.class)
-  public void test_invalid_initialization() {
-    new TestContainer(null);
-  }
-
   @Test
   public void test_initialization() {
     final Container<TestItem> container = new TestContainer(date);

@@ -5,15 +5,14 @@ import at.sheldor5.tr.api.utils.TimeUtils;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 /**
  * This class represents a period in the time line.
- * Each <tt>{@link Session}</tt> has a start and end time
- * and a multiplier to value the time between the start
- * and end time.
+ * Each {@link Session} has a {@link Record} representing the session's start
+ * and a {@link Record} representing the session's end.
+ * A session has also a multiplier to value the time between the start and end time.
  *
  * @author Michael Palata
  * @since 1.0.0

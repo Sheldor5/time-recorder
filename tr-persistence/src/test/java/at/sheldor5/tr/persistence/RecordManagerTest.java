@@ -4,22 +4,21 @@ import at.sheldor5.tr.api.time.Record;
 import at.sheldor5.tr.api.time.RecordType;
 import at.sheldor5.tr.api.user.UserMapping;
 import at.sheldor5.tr.api.utils.GlobalProperties;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.UUID;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
-public class RecordEngineTest {
+public class RecordManagerTest {
 
   private static final String PROPERTIES = "test.properties";
-  private static final UserMappingEngine USER_MAPPING_ENGINE = new UserMappingEngine();
-  private static final RecordEngine RECORD_ENGINE = new RecordEngine();
+  private static final UserMappingManager USER_MAPPING_ENGINE = new UserMappingManager();
+  private static final RecordManager RECORD_ENGINE = new RecordManager();
 
   private static final LocalDate DATE = LocalDate.of(2017, 1, 1);
 
@@ -28,7 +27,6 @@ public class RecordEngineTest {
   @BeforeClass
   public static void init() throws IOException, SQLException {
     GlobalProperties.load(new File(PROPERTIES));
-    DatabaseManager.init();
     UserMapping userMapping = new UserMapping(UUID.randomUUID());
     USER_MAPPING_ENGINE.create(userMapping);
     Assert.assertTrue(userMapping.getId() > 0);
@@ -64,13 +62,13 @@ public class RecordEngineTest {
     Assert.assertNotNull(actual);
     Assert.assertEquals(expected, actual);
 
-    actual.setRecordType(RecordType.CHECKOUT);
+    actual.setType(RecordType.CHECKOUT);
     actual.setTime(LocalTime.of(9, 0));
 
     RECORD_ENGINE.update(actual);
     final Record updated = RECORD_ENGINE.read(actual.getId());
 
     Assert.assertEquals(LocalTime.of(9, 0), updated.getTime());
-    Assert.assertEquals(RecordType.CHECKOUT, updated.getRecordType());
+    Assert.assertEquals(RecordType.CHECKOUT, updated.getType());
   }
 }

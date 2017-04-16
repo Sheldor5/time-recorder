@@ -7,12 +7,13 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Generic container class to store any type of time information.
+ * Abstract container class to store any type of time information.
  */
 abstract class Container<T extends Comparable<? super T>> implements Comparable<Container> {
 
-  protected final List<T> items = new ArrayList<T>();
   protected final LocalDate date;
+
+  protected List<T> items = new ArrayList<T>();
   protected boolean sorted = false;
 
   /**
@@ -21,34 +22,32 @@ abstract class Container<T extends Comparable<? super T>> implements Comparable<
    * @param date The date the items of this container belong to.
    */
   Container(final LocalDate date) {
-    if (date == null) {
-      throw new IllegalArgumentException("Date is null");
-    }
     this.date = date;
   }
 
   /**
-   * Getter for date.
+   * Returns the date of this container.
    *
-   * @return This container's date.
+   * @return the date of this container.
    */
   public final LocalDate getDate() {
     return date;
   }
 
   /**
-   * Add an item to this container.
+   * Adds an item {@link T} to this container.
+   * Each item gets validated by {@link #validateItem(Comparable)}
+   * before it gets added. Adding an invalid item throws an
+   * {@link IllegalArgumentException}
    *
    * @param item The item to add.
    */
   public void addItem(final T item) {
-    synchronized (items) {
-      if (validateItem(item)) {
-        items.add(item);
-        sorted = false;
-      } else {
-        throw new IllegalArgumentException("Invalid item");
-      }
+    if (validateItem(item)) {
+      items.add(item);
+      sorted = false;
+    } else {
+      throw new IllegalArgumentException("Invalid item");
     }
   }
 
@@ -58,13 +57,24 @@ abstract class Container<T extends Comparable<? super T>> implements Comparable<
    * @return List of items.
    */
   public List<T> getItems() {
-    synchronized (items) {
-      if (!sorted) {
-        Collections.sort(items);
-        sorted = true;
-      }
+    if (!sorted) {
+      Collections.sort(items);
+      sorted = true;
     }
-    return new ArrayList<T>(items);
+    return items;
+  }
+
+  /**
+   * Set all items of this container.
+   *
+   * @param items the list of items for this session.
+   */
+  public void setItems(final List<T> items) {
+    if (items == null) {
+      return;
+    }
+    this.items.clear();
+    this.items = items;
   }
 
   /**
@@ -91,6 +101,15 @@ abstract class Container<T extends Comparable<? super T>> implements Comparable<
    * @return Valued summary of this container.
    */
   public abstract long getValuedSummary();
+
+  /**
+   * Validates this container.
+   *
+   * @return {@code true} if this container's date is set, false otherwise.
+   */
+  public boolean isValid() {
+    return date != null;
+  }
 
   /**
    * Compare this container to another container.

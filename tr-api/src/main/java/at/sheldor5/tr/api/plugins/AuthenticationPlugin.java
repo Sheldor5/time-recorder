@@ -10,16 +10,16 @@ public interface AuthenticationPlugin extends Plugin {
   /**
    * Used for initialization.
    *
-   * @throws IllegalStateException If the initialization fails and
-   *        this plugin can not be used for further operations.
+   * @throws IllegalStateException if the initialization fails and
+   *                               this plugin can not be used for further operations.
    */
   void initialize() throws IllegalStateException;
 
   /**
    * Add a new user or update an existing user to this plugin's backend user directory.
    *
-   * @param user The user to add orupdate.
-   * @throws UnsupportedOperationException If this method is not supported by this plugin.
+   * @param user                           the user to add orupdate.
+   * @throws UnsupportedOperationException if this method is not supported by this plugin.
    */
   void saveUser(final User user) throws UnsupportedOperationException;
 
@@ -27,9 +27,9 @@ public interface AuthenticationPlugin extends Plugin {
    * Try to authenticate and return an {@link User} object
    * which holds all information about the authenticated user.
    *
-   * @param username The user's login name.
-   * @param password The user's password in plain text.
-   * @return The successfully authenticated user.
+   * @param username the user's login name.
+   * @param password the user's password in plain text.
+   * @return         the successfully authenticated user, null otherwise.
    */
   User getUser(final String username, final String password);
 

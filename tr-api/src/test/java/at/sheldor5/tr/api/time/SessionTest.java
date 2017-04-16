@@ -29,8 +29,8 @@ public class SessionTest {
   public void test_session_negative_duration() {
     final LocalTime startTime = LocalTime.of(1, 0);
     final LocalTime endTime = LocalTime.of(0, 0);
-    final Record start = new Record(0, date, startTime, RecordType.CHECKIN);
-    final Record end = new Record(0, date, endTime, RecordType.CHECKOUT);
+    final Record start = new Record(date, startTime, RecordType.CHECKIN);
+    final Record end = new Record(date, endTime, RecordType.CHECKOUT);
     new Session(start, end);
   }
 
@@ -38,8 +38,8 @@ public class SessionTest {
   public void test_session_start_checkout() {
     final LocalTime startTime = LocalTime.of(8, 0);
     final LocalTime endTime = LocalTime.of(12, 0);
-    final Record start = new Record(0, date, startTime, RecordType.CHECKOUT);
-    final Record end = new Record(0, date, endTime, RecordType.CHECKOUT);
+    final Record start = new Record(date, startTime, RecordType.CHECKOUT);
+    final Record end = new Record(date, endTime, RecordType.CHECKOUT);
     new Session(start, end);
   }
 
@@ -47,8 +47,8 @@ public class SessionTest {
   public void test_session_end_checkin() {
     final LocalTime startTime = LocalTime.of(8, 0);
     final LocalTime endTime = LocalTime.of(12, 0);
-    final Record start = new Record(0, date, startTime, RecordType.CHECKIN);
-    final Record end = new Record(0, date, endTime, RecordType.CHECKIN);
+    final Record start = new Record(date, startTime, RecordType.CHECKIN);
+    final Record end = new Record(date, endTime, RecordType.CHECKIN);
     new Session(start, end);
   }
 
@@ -58,8 +58,8 @@ public class SessionTest {
     final LocalDate endDate = LocalDate.of(2017, 1, 2);
     final LocalTime startTime = LocalTime.of(8, 0);
     final LocalTime endTime = LocalTime.of(12, 0);
-    final Record start = new Record(0, startDate, startTime, RecordType.CHECKIN);
-    final Record end = new Record(0, endDate, endTime, RecordType.CHECKOUT);
+    final Record start = new Record(startDate, startTime, RecordType.CHECKIN);
+    final Record end = new Record(endDate, endTime, RecordType.CHECKOUT);
     new Session(start, end);
   }
 
@@ -69,8 +69,8 @@ public class SessionTest {
     final LocalDate endDate = LocalDate.of(2017, 1, 1);
     final LocalTime startTime = LocalTime.of(8, 0);
     final LocalTime endTime = LocalTime.of(8, 0);
-    final Record start = new Record(0, startDate, startTime, RecordType.CHECKIN);
-    final Record end = new Record(0, endDate, endTime, RecordType.CHECKOUT);
+    final Record start = new Record(startDate, startTime, RecordType.CHECKIN);
+    final Record end = new Record(endDate, endTime, RecordType.CHECKOUT);
     new Session(start, end);
   }
 
@@ -78,8 +78,8 @@ public class SessionTest {
   public void test_add_item() {
     final LocalTime startTime = LocalTime.of(8, 0);
     final LocalTime endTime = LocalTime.of(12, 0);
-    final Record start = new Record(0, date, startTime, RecordType.CHECKIN);
-    final Record end = new Record(0, date, endTime, RecordType.CHECKOUT);
+    final Record start = new Record(date, startTime, RecordType.CHECKIN);
+    final Record end = new Record(date, endTime, RecordType.CHECKOUT);
     final Session session = new Session(start, end);
     session.addItem(new Record());
   }
@@ -88,8 +88,8 @@ public class SessionTest {
   public void test_session_initialization() {
     final LocalTime startTime = LocalTime.of(8, 0);
     final LocalTime endTime = LocalTime.of(12, 0);
-    final Record start = new Record(0, date, startTime, RecordType.CHECKIN);
-    final Record end = new Record(0, date, endTime, RecordType.CHECKOUT);
+    final Record start = new Record(date, startTime, RecordType.CHECKIN);
+    final Record end = new Record(date, endTime, RecordType.CHECKOUT);
     Session session;
 
     session = new Session(date);
@@ -109,8 +109,8 @@ public class SessionTest {
     final LocalDate date = LocalDate.of(2017, 1, 1);
     final LocalTime startTime = LocalTime.of(8, 0);
     final LocalTime endTime = LocalTime.of(12, 0);
-    final Record start = new Record(0, date, startTime, RecordType.CHECKIN);
-    final Record end = new Record(0, date, endTime, RecordType.CHECKOUT);
+    final Record start = new Record(date, startTime, RecordType.CHECKIN);
+    final Record end = new Record(date, endTime, RecordType.CHECKOUT);
     final double multiplier = 2.0D;
     final Session session = new Session(start, end);
     session.setMultiplier(multiplier);
@@ -133,9 +133,9 @@ public class SessionTest {
     final LocalTime startTime1 = LocalTime.of(8, 0);
     final LocalTime startTime2 = LocalTime.of(8, 0, 1);
     final LocalTime endTime = LocalTime.of(12, 0);
-    final Record start1 = new Record(0, date, startTime1, RecordType.CHECKIN);
-    final Record start2 = new Record(0, date, startTime2, RecordType.CHECKIN);
-    final Record end = new Record(0, date, endTime, RecordType.CHECKOUT);
+    final Record start1 = new Record(date, startTime1, RecordType.CHECKIN);
+    final Record start2 = new Record(date, startTime2, RecordType.CHECKIN);
+    final Record end = new Record(date, endTime, RecordType.CHECKOUT);
     final Session a = new Session(start1, end);
     final Session b = new Session(start2, end);
 
@@ -152,8 +152,8 @@ public class SessionTest {
   public void test_item_validation() {
     final LocalTime startTime = LocalTime.of(8, 0);
     final LocalTime endTime = LocalTime.of(12, 0);
-    final Record start = new Record(0, date, startTime, RecordType.CHECKIN);
-    final Record end = new Record(0, date, endTime, RecordType.CHECKOUT);
+    final Record start = new Record(date, startTime, RecordType.CHECKIN);
+    final Record end = new Record(date, endTime, RecordType.CHECKOUT);
     final Session session = new Session(start, end);
     Assert.assertTrue(session.validateItem(null));
   }
@@ -165,14 +165,14 @@ public class SessionTest {
     Record end;
 
     // 1 second
-    start = new Record(0, date, LocalTime.of(8, 0), RecordType.CHECKIN);
-    end = new Record(0, date, LocalTime.of(8, 0, 1), RecordType.CHECKOUT);
+    start = new Record(date, LocalTime.of(8, 0), RecordType.CHECKIN);
+    end = new Record(date, LocalTime.of(8, 0, 1), RecordType.CHECKOUT);
     session = new Session(start, end);
     Assert.assertEquals(TestUtils.getTimeInConfiguredUnit(0, 0, 1), session.getSummary());
 
     // 4 hours
-    start = new Record(0, date, LocalTime.of(8, 0), RecordType.CHECKIN);
-    end = new Record(0, date, LocalTime.of(12, 0), RecordType.CHECKOUT);
+    start = new Record(date, LocalTime.of(8, 0), RecordType.CHECKIN);
+    end = new Record(date, LocalTime.of(12, 0), RecordType.CHECKOUT);
     session = new Session(start, end);
     Assert.assertEquals(TestUtils.getTimeInConfiguredUnit(4), session.getSummary());
   }
@@ -181,8 +181,8 @@ public class SessionTest {
   public void test_session_contains() {
     final LocalTime startTime = LocalTime.of(8, 0);
     final LocalTime endTime = LocalTime.of(12, 0);
-    final Record start = new Record(0, date, startTime, RecordType.CHECKIN);
-    final Record end = new Record(0, date, endTime, RecordType.CHECKOUT);
+    final Record start = new Record(date, startTime, RecordType.CHECKIN);
+    final Record end = new Record(date, endTime, RecordType.CHECKOUT);
     final Session session = new Session(start, end);
 
     LocalTime time;
@@ -222,8 +222,8 @@ public class SessionTest {
   public void test_session_split() {
     final LocalTime startTime = LocalTime.of(8, 0);
     final LocalTime endTime = LocalTime.of(12, 0);
-    final Record start = new Record(0, date, startTime, RecordType.CHECKIN);
-    final Record end = new Record(0, date, endTime, RecordType.CHECKOUT);
+    final Record start = new Record(date, startTime, RecordType.CHECKIN);
+    final Record end = new Record(date, endTime, RecordType.CHECKOUT);
     final Session session = new Session(start, end);
 
     Session actual;
@@ -259,7 +259,7 @@ public class SessionTest {
     list.add(new Record(date, LocalTime.of(12, 30, 0), RecordType.CHECKIN));
     list.add(new Record(date, LocalTime.of(16, 30, 0), RecordType.CHECKOUT));
 
-    final List<Session> sessions = SessionUtils.buildSessions(list);
+    final List<Session> sessions = SessionFactory.buildSessions(list);
 
     Assert.assertEquals(2, sessions.size());
 
@@ -283,7 +283,7 @@ public class SessionTest {
     list.add(new Record(date.plusDays(2), LocalTime.of(12, 30, 0), RecordType.CHECKIN));
     list.add(new Record(date.plusDays(2), LocalTime.of(16, 30, 0), RecordType.CHECKOUT));
 
-    final List<Session> sessions = SessionUtils.buildSessions(list);
+    final List<Session> sessions = SessionFactory.buildSessions(list);
 
     Assert.assertEquals(6, sessions.size());
 

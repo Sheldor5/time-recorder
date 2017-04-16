@@ -1,19 +1,21 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC
         "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping package="at.sheldor5.tr.api.time">
     <class name="Record" table="RECORDS">
         <id name="id" type="int" column="PK_RECORD_ID">
             <generator class="native"/>
         </id>
-        <many-to-one name="user" column="FK_USER_ID" class="at.sheldor5.tr.api.user.UserMapping"/>
-        <property name="date" type="java.time.LocalDate" column="DATE"/>
+        <many-to-one name="user" column="FK_USER_MAPPING_ID" class="at.sheldor5.tr.api.user.UserMapping"/>
+        <property name="date" type="java.time.LocalDate" column="DATE" index="I_DATE"/>
         <property name="time" type="java.time.LocalTime" column="TIME"/>
-        <property name="type" type="boolean" column="TYPE">
-            <!-- converter -->
-            <type name="at.sheldor5.tr.persistence.converter.RecordTypeAttributeConverter"/>
+        <property name="type" column="TYPE">
+            <type name="org.hibernate.type.EnumType">
+                <param name="enumClass">at.sheldor5.tr.api.time.RecordType</param>
+                <param name="useNamed">false</param>
+            </type>
         </property>
     </class>
 </hibernate-mapping>

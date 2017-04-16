@@ -4,7 +4,7 @@ import at.sheldor5.tr.api.user.User;
 import at.sheldor5.tr.api.utils.GlobalProperties;
 import at.sheldor5.tr.api.utils.RandomUtils;
 import at.sheldor5.tr.api.utils.StringUtils;
-import at.sheldor5.tr.persistence.DatabaseManager;
+import at.sheldor5.tr.persistence.EntityManagerHelper;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -26,8 +26,7 @@ public class DatabaseAuthenticationTest {
   @BeforeClass
   public static void init() throws IOException, SQLException {
     GlobalProperties.load(new File(PROPERTIES));
-    DatabaseManager.getConfiguration().addResource("User.hbm.xml");
-    DatabaseManager.init();
+    AUTH_DB.initialize();
   }
 
   @Test

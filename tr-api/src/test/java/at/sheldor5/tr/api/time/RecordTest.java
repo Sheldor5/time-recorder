@@ -10,30 +10,6 @@ public class RecordTest {
   private static final LocalDate date = LocalDate.of(2017, 1, 1);
   private static final LocalTime time = LocalTime.of(8, 0);
 
-  @Test(expected = IllegalArgumentException.class)
-  public void should_throw_on_setting_invalid_id() {
-    final Record record = new Record();
-    record.setId(-1);
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void should_throw_on_setting_invalid_date() {
-    final Record record = new Record();
-    record.setDate(null);
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void should_throw_on_setting_invalid_time() {
-    final Record record = new Record();
-    record.setTime(null);
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void should_throw_on_setting_invalid_type() {
-    final Record record = new Record();
-    record.setRecordType(null);
-  }
-
   @Test
   public void test_record_validity() {
     final Record record = new Record();
@@ -48,7 +24,7 @@ public class RecordTest {
 
     Assert.assertFalse(record.isValid());
 
-    record.setType(RecordType.CHECKIN.getBoolean());
+    record.setType(RecordType.CHECKIN);
 
     Assert.assertTrue(record.isValid());
   }

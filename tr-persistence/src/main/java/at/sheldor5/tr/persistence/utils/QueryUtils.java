@@ -3,6 +3,7 @@ package at.sheldor5.tr.persistence.utils;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 
+import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -19,7 +20,7 @@ public class QueryUtils {
 
   /**
    *
-   * @param session
+   * @param entityManager
    * @param entityClass
    * @param fieldName
    * @param fieldType
@@ -28,8 +29,8 @@ public class QueryUtils {
    * @param <T> Field Type
    * @return
    */
-  public static  <E, T> TypedQuery<E> findByField(Session session, Class<E> entityClass, String fieldName, Class<T> fieldType, T fieldValue) {
-    CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+  public static  <E, T> TypedQuery<E> findByField(final EntityManager entityManager, Class<E> entityClass, String fieldName, Class<T> fieldType, T fieldValue) {
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<E> criteriaQuery = criteriaBuilder.createQuery(entityClass);
 
     // SELECT Object FROM ObjectTable
@@ -43,18 +44,18 @@ public class QueryUtils {
 
     criteriaQuery.where(predicate);
 
-    TypedQuery<E> query = session.createQuery(criteriaQuery);
+    TypedQuery<E> query = entityManager.createQuery(criteriaQuery);
     query.setParameter(parameter, fieldValue);
 
     return query;
   }
 
   public static  <E, F1, F2> TypedQuery<E> findByFields(
-          final Session session, final Class<E> entityClass,
+          final EntityManager entityManager, final Class<E> entityClass,
           final String field1Name, final Class<F1> field1Type, final F1 field1Value,
           final String field2Name, final Class<F2> field2Type, final F2 field2Value,
           boolean andRestriction) {
-    CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<E> criteriaQuery = criteriaBuilder.createQuery(entityClass);
 
     // SELECT Object FROM ObjectTable
@@ -84,7 +85,7 @@ public class QueryUtils {
     // WHERE
     criteriaQuery.where(predicate);
 
-    TypedQuery<E> query = session.createQuery(criteriaQuery);
+    TypedQuery<E> query = entityManager.createQuery(criteriaQuery);
     query.setParameter(parameter1, field1Value);
     query.setParameter(parameter2, field2Value);
 

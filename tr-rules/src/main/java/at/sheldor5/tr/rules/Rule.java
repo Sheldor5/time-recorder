@@ -57,11 +57,14 @@ public class Rule {
       return;
     }
     final List<Session> sessions = day.getItems();
+    final List<Session> result = new ArrayList<>();
     for (final Session session : sessions) {
+      result.add(session);
       for (final Session s : applyExcluding(session)) {
-        day.addItem(s);
+        result.add(s);
       }
     }
+    day.setItems(result);
   }
 
   /**

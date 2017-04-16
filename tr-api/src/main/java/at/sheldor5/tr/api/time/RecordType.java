@@ -1,56 +1,57 @@
 package at.sheldor5.tr.api.time;
 
+/**
+ * Record types.
+ */
 public enum RecordType {
-  CHECKIN(1, true, "CHECKIN"),
-  CHECKOUT(0, false, "CHECKOUT");
 
-  private final int intValue;
+  /**
+   * This type indicates that a {@link Record} represents the start of an event,
+   * or the start of a {@link Session}.
+   */
+  CHECKIN(true, "CHECKIN"),
+
+  /**
+   * This type indicates that a {@link Record} represents the end of an event,
+   * or the end of a {@link Session}.
+   */
+  CHECKOUT(false, "CHECKOUT");
+
   private final boolean boolValue;
   private final String stringValue;
 
-  RecordType(int intValue, boolean boolValue, final String stringValue) {
-    this.intValue = intValue;
+  RecordType(boolean boolValue, final String stringValue) {
     this.boolValue = boolValue;
     this.stringValue = stringValue;
   }
 
+  /**
+   * Returns the {@code boolean} value representing this type.
+   *
+   * @return the {@code boolean} value representing this type.
+   */
   public boolean getBoolean() {
     return boolValue;
   }
 
-  public int getInteger() {
-    return intValue;
-  }
-
+  /**
+   * Returns the {@link String} representation of this type.
+   *
+   * @return the {@link String} representation of this type.
+   */
   @Override
   public String toString() {
     return stringValue;
   }
 
   /**
-   * Record type factory for boolean values.
+   * Returns the {@link RecordType} represented by a {@code boolean} value.
    *
-   * @param boolValue The boolean value of the type.
-   * @return The type for this boolean value.
+   * @param boolValue the boolean value of the type.
+   * @return the type for this boolean value.
    */
   public static RecordType getType(boolean boolValue) {
     return boolValue ? CHECKIN : CHECKOUT;
-  }
-
-
-  /**
-   * Record type factory for int values.
-   *
-   * @param intValue The int value of the type.
-   * @return The type for this int value.
-   */
-  public static RecordType getType(int intValue) {
-    if (intValue == 1) {
-      return CHECKIN;
-    } else if (intValue == 0) {
-      return CHECKOUT;
-    }
-    return null;
   }
 
 }

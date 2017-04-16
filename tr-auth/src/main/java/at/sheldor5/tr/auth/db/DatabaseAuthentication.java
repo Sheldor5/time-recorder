@@ -2,15 +2,11 @@ package at.sheldor5.tr.auth.db;
 
 import at.sheldor5.tr.api.plugins.AuthenticationPlugin;
 import at.sheldor5.tr.api.user.User;
-import at.sheldor5.tr.api.utils.StringUtils;
-import at.sheldor5.tr.persistence.DatabaseManager;
-import at.sheldor5.tr.persistence.utils.QueryUtils;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.mindrot.jbcrypt.BCrypt;
+import static at.sheldor5.tr.persistence.EntityManagerHelper.*;
 
-import javax.persistence.TypedQuery;
-import java.util.List;
+import javax.persistence.EntityExistsException;
+import javax.persistence.EntityManager;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class DatabaseAuthentication implements AuthenticationPlugin {
 
@@ -23,7 +19,7 @@ public class DatabaseAuthentication implements AuthenticationPlugin {
 
   @Override
   public void initialize() throws IllegalStateException {
-    DatabaseManager.getConfiguration().addResource("User.hbm.xml");
+
   }
 
   @Override
@@ -32,23 +28,39 @@ public class DatabaseAuthentication implements AuthenticationPlugin {
       return;
     }
 
-    Session session = DatabaseManager.getSession();
-    Transaction tx = session.beginTransaction();
+    EntityManager entityManager = getEntityManager();
+    beginTransaction();
 
-    session.saveOrUpdate(user);
-    session.flush();
+    try {
+      entityManager.persist(user);
+      commit();
+    } catch (final EntityExistsException eee) {
+      try {
+        rollback();
+        beginTransaction();
+        entityManager.merge(user);
+        commit();
+      } catch (final Exception e) {
+        rollback();
+        eee.printStackTrace();
+        e.printStackTrace();
+      }
+    } catch (final Exception e) {
+      rollback();
+      e.printStackTrace();
+    }
 
-    tx.commit();
+    closeEntityManager();
   }
 
   @Override
   public User getUser(final String username, final String plainTextPassword) {
-    Session session = DatabaseManager.getSession();
-    Transaction tx = session.beginTransaction();
+    EntityManager entityManager = getEntityManager();
+    beginTransaction();
 
-    User user = session.get(User.class, username);
+    User user = entityManager.find(User.class, username);
 
-    tx.commit();
+    commit();
 
     if (user == null || !BCrypt.checkpw(plainTextPassword, user.getPassword())) {
       return null;

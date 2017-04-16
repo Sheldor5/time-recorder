@@ -12,7 +12,7 @@ public interface ExporterPlugin extends Plugin {
    * The property identifier for the
    * displayed name, required for language packs.
    *
-   * @return The identifier for property files.
+   * @return the identifier for property files.
    */
   String displayNamePropertyIdentifier();
 
@@ -21,7 +21,7 @@ public interface ExporterPlugin extends Plugin {
    * Used for the header field "Content-Type"
    * of HTTP responses.
    *
-   * @return  MIME-Type of the generated content.
+   * @return  the MIME-Type of the generated content.
    */
   MimeType getMimeType();
 

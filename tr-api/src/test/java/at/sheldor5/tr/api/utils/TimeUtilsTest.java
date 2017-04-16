@@ -25,7 +25,7 @@ public class TimeUtilsTest {
 
   @Test
   public void test_string_to_time() {
-    Assert.assertEquals(1L * TimeUtils.HOUR_IN_MILLIS, TimeUtils.getMillis("1:00:00"));
+    Assert.assertEquals(TimeUtils.HOUR_IN_MILLIS, TimeUtils.getMillis("1:00:00"));
     Assert.assertEquals(
             12L * TimeUtils.HOUR_IN_MILLIS
                     + 34L * TimeUtils.MINUTE_IN_MILLIS

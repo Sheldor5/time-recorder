@@ -2,25 +2,24 @@ package at.sheldor5.tr.persistence;
 
 import at.sheldor5.tr.api.user.UserMapping;
 import at.sheldor5.tr.api.utils.GlobalProperties;
-import org.hibernate.exception.ConstraintViolationException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import javax.persistence.PersistenceException;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.UUID;
 
-public class UserMappingEngineTest {
+public class UserMappingManagerTest {
 
   private static final String PROPERTIES = "test.properties";
-  private static final UserMappingEngine USER_MAPPING_ENGINE = new UserMappingEngine();
+  private static final UserMappingManager USER_MAPPING_ENGINE = new UserMappingManager();
 
   @BeforeClass
   public static void init() throws IOException, SQLException {
     GlobalProperties.load(new File(PROPERTIES));
-    DatabaseManager.init();
   }
 
   @Test
@@ -39,7 +38,7 @@ public class UserMappingEngineTest {
     Assert.assertEquals(expected, actual);
   }
 
-  @Test(expected = ConstraintViolationException.class)
+  @Test(expected = PersistenceException.class)
   public void should_throw_on_duplication() {
     final UUID uuid = UUID.randomUUID();
 
@@ -61,19 +60,14 @@ public class UserMappingEngineTest {
       uuids[i] = UUID.randomUUID();
       USER_MAPPING_ENGINE.create(new UserMapping(uuids[i]));
     }
-
-    final StringBuilder sb = new StringBuilder();
     UserMapping userMapping;
-    for (int i = 0; i < uuids.length; i++) {
-      userMapping = USER_MAPPING_ENGINE.read(uuids[i]);
-      sb.append(userMapping);
-      sb.append("\n");
+    int c = 0;
+    for (final UUID uuid : uuids) {
+      userMapping = USER_MAPPING_ENGINE.read(uuid);
+      if (userMapping != null) {
+        c++;
+      }
     }
-    try {
-      Thread.sleep(200);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
-    System.out.println(sb.toString());
+    Assert.assertEquals(10, c);
   }
 }

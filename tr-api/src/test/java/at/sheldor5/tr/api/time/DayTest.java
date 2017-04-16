@@ -26,16 +26,19 @@ public class DayTest {
     final Record start = new Record(date, LocalTime.of(8, 0), RecordType.CHECKIN);
     final Record end = new Record(date, LocalTime.of(12, 0), RecordType.CHECKOUT);
 
+    TestUtils.getDefaultSessionAnteMeridiem(date);
+
     Session session;
     Day day;
 
-    session = new Session(start, end);
+    session = TestUtils.getDefaultSessionAnteMeridiem(date);
     day = new Day(date);
     day.addItem(session);
     Assert.assertEquals(TestUtils.getTimeInConfiguredUnit(4), day.getSummary());
     Assert.assertEquals(TestUtils.getTimeInConfiguredUnit(4), day.getValuedSummary());
 
-    session = new Session(start, end, 1.5D);
+    session = TestUtils.getDefaultSessionAnteMeridiem(date);
+    session.setMultiplier(1.5D);
     day = new Day(date);
     day.addItem(session);
     Assert.assertEquals(TestUtils.getTimeInConfiguredUnit(4), day.getSummary());
@@ -94,9 +97,9 @@ public class DayTest {
     list.add(new Record(date, LocalTime.of(12, 0, 0), RecordType.CHECKOUT));
     list.add(new Record(date, LocalTime.of(12, 30, 0), RecordType.CHECKIN));
     list.add(new Record(date, LocalTime.of(16, 30, 0), RecordType.CHECKOUT));
-    final List<Session> sessions = SessionUtils.buildSessions(list);
+    final List<Session> sessions = SessionFactory.buildSessions(list);
 
-    final Day day = DayUtils.buildDay(sessions);
+    final Day day = DayFactory.buildDay(sessions);
 
     Assert.assertEquals("28800 seconds (8 hours)", TestUtils.getTimeInConfiguredUnit(8), day.getSummary());
   }
@@ -109,9 +112,9 @@ public class DayTest {
     list.add(new Record(date, LocalTime.of(12, 30, 0), RecordType.CHECKIN));
     list.add(new Record(date.plusDays(1), LocalTime.of(16, 30, 0), RecordType.CHECKOUT));
 
-    final List<Session> sessions = SessionUtils.buildSessions(list);
+    final List<Session> sessions = SessionFactory.buildSessions(list);
 
-    final Day day = DayUtils.buildDay(sessions);
+    final Day day = DayFactory.buildDay(sessions);
     Assert.assertEquals("55799 seconds", TestUtils.getTimeInConfiguredUnit(15, 29, 59, 999999999), day.getSummary());
   }
 
@@ -122,9 +125,7 @@ public class DayTest {
     Record begin;
     Record end;
 
-    begin = new Record(date, LocalTime.of(8, 0, 0), RecordType.CHECKIN);
-    end = new Record(date, LocalTime.of(12, 0, 0), RecordType.CHECKOUT);
-    session = new Session(begin, end);
+    session = TestUtils.getDefaultSessionAnteMeridiem(date);
     sessions.add(session);
 
     begin = new Record(date.plusDays(1), LocalTime.of(12, 0, 0), RecordType.CHECKIN);
@@ -132,12 +133,12 @@ public class DayTest {
     session = new Session(begin, end);
     sessions.add(session);
 
-    DayUtils.buildDay(sessions);
+    DayFactory.buildDay(sessions);
   }
 
   @Test
   public void test_build_invalid_day_2() {
-    Assert.assertNull(DayUtils.buildDay(null));
-    Assert.assertNull(DayUtils.buildDay(new ArrayList<>()));
+    Assert.assertNull(DayFactory.buildDay(null));
+    Assert.assertNull(DayFactory.buildDay(new ArrayList<>()));
   }
 }
