@@ -1,12 +1,8 @@
-package at.sheldor5.tr.auth.ldap;
+package at.sheldor5.tr.api.plugins;
 
-import at.sheldor5.tr.api.plugins.AuthenticationPlugin;
 import at.sheldor5.tr.api.user.User;
 import at.sheldor5.tr.api.utils.GlobalProperties;
-import java.util.Hashtable;
-import java.util.UUID;
-import java.util.logging.Logger;
-import javax.naming.Context;
+
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
@@ -14,40 +10,29 @@ import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 import javax.naming.ldap.InitialLdapContext;
 import javax.naming.ldap.LdapContext;
+import java.util.Hashtable;
+import java.util.UUID;
+import java.util.logging.Logger;
 
-/**
- * LDAP Authentication Service Implementation.
- */
-public class LdapAuthentication implements AuthenticationPlugin {
+abstract public class LdapAuthentication implements AuthenticationPlugin {
 
-  private static final Logger LOGGER = Logger.getLogger(LdapAuthentication.class.getName());
+  protected static final Logger LOGGER = Logger.getLogger(LdapAuthentication.class.getName());
 
-  private static final String NAME = "tr-ldap";
+  protected static final String NAME = "tr-ldap";
 
-  private static String PROVIDER_URL;
-  private static String SEARCH_BASE;
+  protected String PROVIDER_URL;
+  protected String SEARCH_BASE;
 
   /**
    * Result attributes for LDAP queries.
    */
-  private static final SearchControls CONTROLS = new SearchControls();
-
-  static {
-    CONTROLS.setSearchScope(SearchControls.SUBTREE_SCOPE);
-    String[] attrIDs = {"entryUUID", "givenname", "sn"};
-    CONTROLS.setReturningAttributes(attrIDs);
-  }
+  protected static final SearchControls CONTROLS = new SearchControls();
 
   /**
    * @see AuthenticationPlugin#initialize().
    */
   @Override
-  public void initialize() throws IllegalStateException {
-    PROVIDER_URL = "ldap://" + GlobalProperties.getProperty("ldap.host") + ":" + GlobalProperties.getProperty("ldap.port");
-    SEARCH_BASE = "uid=%s," + GlobalProperties.getProperty("ldap.search.base");
-    LOGGER.fine("Using Url: " + PROVIDER_URL);
-    LOGGER.fine("Using Search Base: " + SEARCH_BASE);
-  }
+  abstract public void initialize() throws IllegalStateException;
 
   /**
    * @see AuthenticationPlugin#saveUser(User).
@@ -73,12 +58,12 @@ public class LdapAuthentication implements AuthenticationPlugin {
 
     try {
       final String name = GlobalProperties.getProperty("ldap.search.base");
-      final String filter = "uid=" + username;
+      final String filter = getFilter(username);
       final NamingEnumeration<SearchResult> answer = context.search(name, filter, CONTROLS);
       if (answer.hasMore()) {
         Attributes attrs = answer.next().getAttributes();
 
-        final UUID uuid = UUID.fromString((String) attrs.get("entryUUID").get());
+        final UUID uuid = getUUID(attrs);
 
         String forename;
         try {
@@ -112,24 +97,17 @@ public class LdapAuthentication implements AuthenticationPlugin {
     return null;
   }
 
-  protected static LdapContext getUserLdapContext(final String username, final String password) {
+  protected abstract String getFilter(String username);
+
+  abstract protected UUID getUUID(Attributes attrs) throws NamingException;
+
+  protected LdapContext getUserLdapContext(final String username, final String password) {
     LdapContext ctx = null;
-
-    final String user = String.format(SEARCH_BASE, username);
-
+    final String user = createUserString(username);
     LOGGER.fine("Authenticating user: " + user);
-
     try {
-      final Hashtable<String, String> env = new Hashtable<>();
-      env.put(Context.PROVIDER_URL, PROVIDER_URL);
-      env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-      env.put(Context.SECURITY_AUTHENTICATION, "simple");
-      env.put(Context.SECURITY_PRINCIPAL, user);
-      env.put(Context.SECURITY_CREDENTIALS, password);
-      env.put(Context.REFERRAL, "follow");
-
+      final Hashtable<String, String> env = setupEnvironment(user, password);
       ctx = new InitialLdapContext(env, null);
-
       LOGGER.fine("Successfully authenticated user: " + user);
     } catch (final NamingException ne) {
       final String msg = ne.getMessage();
@@ -141,6 +119,10 @@ public class LdapAuthentication implements AuthenticationPlugin {
 
     return ctx;
   }
+
+  abstract protected String createUserString(String username);
+
+  abstract protected Hashtable<String, String> setupEnvironment(String user, String password);
 
   @Override
   public String getName() {
