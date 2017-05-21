@@ -31,7 +31,7 @@ public class LdapAuthenticationTest {
   @Test
   public void test_valid_user_context() {
     final LdapContext context = LdapAuthentication.getUserLdapContext(USERNAME, PASSWORD);
-    Assert.assertNotNull("LDAP connection should return user context", context);
+    Assert.assertNotNull("LDAP connection should return userMapping context", context);
   }
 
   @Test(expected = UnsupportedOperationException.class)

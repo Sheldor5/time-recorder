@@ -1,4 +1,4 @@
-package at.sheldor5.tr.core.records;
+package at.sheldor5.tr.core.utils;
 
 @Deprecated
 public class Summary {

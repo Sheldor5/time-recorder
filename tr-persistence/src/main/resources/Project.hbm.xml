@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="at.sheldor5.tr.api.project">
+    <class name="Project" table="PROJECTS">
+        <id name="id" type="int" column="PK_PROJECT_ID">
+            <generator class="native"/>
+        </id>
+        <property name="name" type="string" column="NAME" />
+        <many-to-one name="parent" column="FK_PROJECT_ID" class="Project"/>
+    </class>
+</hibernate-mapping>

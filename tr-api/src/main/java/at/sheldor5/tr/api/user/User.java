@@ -3,7 +3,7 @@ package at.sheldor5.tr.api.user;
 import java.util.UUID;
 
 /**
- * This class represent a user.
+ * This class represent a userMapping.
  */
 public class User {
 
@@ -15,19 +15,26 @@ public class User {
   private Schedule schedule;
 
   /**
-   * Default constructor for empty user.
+   * Default constructor for empty userMapping.
    */
   public User() {
+    this(null, null, null, null);
+  }
 
+  /**
+   * Default constructor for empty userMapping.
+   */
+  public User(final String username, final String password) {
+    this(username, password, null, null);
   }
 
   /**
    * Constructor for given properties.
    *
-   * @param username The username of the user.
-   * @param password The password of the user (should be hashed).
-   * @param forename The forename of the user.
-   * @param surname  The surname of the user.
+   * @param username The username of the userMapping.
+   * @param password The password of the userMapping (should be hashed).
+   * @param forename The forename of the userMapping.
+   * @param surname  The surname of the userMapping.
    */
   public User(final String username, final String password, final String forename, final String surname) {
     this.username = username;
@@ -39,7 +46,7 @@ public class User {
   /**
    * Getter for the username.
    *
-   * @return The username of this user.
+   * @return The username of this userMapping.
    */
   public String getUsername() {
     return username;
@@ -48,7 +55,7 @@ public class User {
   /**
    * Setter for the username.
    *
-   * @param username The username of this user.
+   * @param username The username of this userMapping.
    */
   public void setUsername(final String username) {
     this.username = username;
@@ -65,7 +72,7 @@ public class User {
   /**
    * Getter for the forename.
    *
-   * @return The forename of this user.
+   * @return The forename of this userMapping.
    */
   public String getForename() {
     return forename;
@@ -74,7 +81,7 @@ public class User {
   /**
    * Setter for the forename.
    *
-   * @param forename The forename of this user.
+   * @param forename The forename of this userMapping.
    */
   public void setForename(final String forename) {
     this.forename = forename;
@@ -83,7 +90,7 @@ public class User {
   /**
    * Getter for the surname.
    *
-   * @return The surname of this user.
+   * @return The surname of this userMapping.
    */
   public String getSurname() {
     return surname;
@@ -92,7 +99,7 @@ public class User {
   /**
    * Setter for the surname.
    *
-   * @param surname The surname of this user.
+   * @param surname The surname of this userMapping.
    */
   public void setSurname(final String surname) {
     this.surname = surname;
@@ -101,7 +108,7 @@ public class User {
   /**
    * Getter for the UUID.
    *
-   * @return The UUID of this user.
+   * @return The UUID of this userMapping.
    */
   public UUID getUuid() {
     return uuid;
@@ -110,7 +117,7 @@ public class User {
   /**
    * Setter fot the UUID.
    *
-   * @param uuid The UUID of this user.
+   * @param uuid The UUID of this userMapping.
    */
   public void setUuid(final UUID uuid) {
     this.uuid = uuid;
@@ -119,7 +126,7 @@ public class User {
   /**
    * Getter for the schedule.
    *
-   * @return The schedule of this user.
+   * @return The schedule of this userMapping.
    */
   public Schedule getSchedule() {
     return schedule;
@@ -128,7 +135,7 @@ public class User {
   /**
    * Setter for the schedule.
    *
-   * @param schedule The schedule of this user.
+   * @param schedule The schedule of this userMapping.
    */
   public void setSchedule(final Schedule schedule) {
     this.schedule = schedule;

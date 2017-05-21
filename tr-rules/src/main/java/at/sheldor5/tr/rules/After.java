@@ -19,13 +19,13 @@ public class After extends TimeOperation {
 
   @Override
   public boolean applies(final Session session) {
-    return applies(session.getDate()) && applies(session.getEnd().getTime());
+    return applies(session.getDate()) && applies(session.getEnd());
   }
 
   @Override
   public Session split(final Session session) {
     if (applies(session)) {
-      if (this.time.isBefore(session.getStart().getTime()) || this.time.equals(session.getStart().getTime())) {
+      if (this.time.isBefore(session.getStart()) || this.time.equals(session.getStart())) {
         update(session);
         return null;
       }

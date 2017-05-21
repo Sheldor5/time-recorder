@@ -8,14 +8,14 @@
         <id name="id" type="int" column="PK_SCHEDULE_ID">
             <generator class="native"/>
         </id>
-        <many-to-one name="user" column="FK_USER_ID" class="at.sheldor5.tr.api.user.UserMapping"/>
-        <property name="dueDate" type="date" column="DUEDATE"/>
-        <property name="monday" type="time" column="MONDAY"/>
-        <property name="tuesday" type="time" column="TUESDAY"/>
-        <property name="wednesday" type="time" column="WEDNESDAY"/>
-        <property name="thursday" type="time" column="THURSDAY"/>
-        <property name="friday" type="time" column="FRIDAY"/>
-        <property name="saturday" type="time" column="SATURDAY"/>
-        <property name="sunday" type="time" column="SUNDAY"/>
+        <many-to-one name="userMapping" column="FK_USER_ID" class="at.sheldor5.tr.api.user.UserMapping"/>
+        <property name="dueDate" type="java.time.LocalDate" column="DUEDATE"/>
+        <property name="monday" type="java.time.LocalTime" column="MONDAY"/>
+        <property name="tuesday" type="java.time.LocalTime" column="TUESDAY"/>
+        <property name="wednesday" type="java.time.LocalTime" column="WEDNESDAY"/>
+        <property name="thursday" type="java.time.LocalTime" column="THURSDAY"/>
+        <property name="friday" type="java.time.LocalTime" column="FRIDAY"/>
+        <property name="saturday" type="java.time.LocalTime" column="SATURDAY"/>
+        <property name="sunday" type="java.time.LocalTime" column="SUNDAY"/>
     </class>
 </hibernate-mapping>

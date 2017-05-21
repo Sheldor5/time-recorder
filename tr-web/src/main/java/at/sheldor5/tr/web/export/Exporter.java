@@ -15,7 +15,7 @@ public class Exporter extends HttpServlet {
   @Override
   public void doGet(final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
     final HttpSession session = request.getSession();
-    final Object object = session.getAttribute("user");
+    final Object object = session.getAttribute("userMapping");
 
     if (object == null) {
       response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

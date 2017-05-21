@@ -16,20 +16,20 @@ public interface AuthenticationPlugin extends Plugin {
   void initialize() throws IllegalStateException;
 
   /**
-   * Add a new user or update an existing user to this plugin's backend user directory.
+   * Add a new userMapping or update an existing userMapping to this plugin's backend userMapping directory.
    *
-   * @param user                           the user to add orupdate.
+   * @param user                           the userMapping to add orupdate.
    * @throws UnsupportedOperationException if this method is not supported by this plugin.
    */
   void saveUser(final User user) throws UnsupportedOperationException;
 
   /**
    * Try to authenticate and return an {@link User} object
-   * which holds all information about the authenticated user.
+   * which holds all information about the authenticated userMapping.
    *
-   * @param username the user's login name.
-   * @param password the user's password in plain text.
-   * @return         the successfully authenticated user, null otherwise.
+   * @param username the userMapping's login name.
+   * @param password the userMapping's password in plain text.
+   * @return         the successfully authenticated userMapping, null otherwise.
    */
   User getUser(final String username, final String password);
 

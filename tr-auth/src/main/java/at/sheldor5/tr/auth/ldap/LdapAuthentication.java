@@ -63,7 +63,7 @@ public class LdapAuthentication implements AuthenticationPlugin {
   @Override
   public User getUser(final String username, final String password) {
 
-    LOGGER.fine("Trying to authenticate user \"" + username + "\"");
+    LOGGER.fine("Trying to authenticate userMapping \"" + username + "\"");
 
     final LdapContext context = getUserLdapContext(username, password);
 
@@ -100,7 +100,7 @@ public class LdapAuthentication implements AuthenticationPlugin {
           user.setUsername(username);
           user.setForename(forename);
           user.setSurname(surname);
-          LOGGER.fine("Got user \"" + forename + " " + surname + "\" with ID " + uuid);
+          LOGGER.fine("Got userMapping \"" + forename + " " + surname + "\" with ID " + uuid);
           return user;
         }
         LOGGER.warning("Found multiple LDAP entries");
@@ -117,7 +117,7 @@ public class LdapAuthentication implements AuthenticationPlugin {
 
     final String user = String.format(SEARCH_BASE, username);
 
-    LOGGER.fine("Authenticating user: " + user);
+    LOGGER.fine("Authenticating userMapping: " + user);
 
     try {
       final Hashtable<String, String> env = new Hashtable<>();
@@ -130,13 +130,13 @@ public class LdapAuthentication implements AuthenticationPlugin {
 
       ctx = new InitialLdapContext(env, null);
 
-      LOGGER.fine("Successfully authenticated user: " + user);
+      LOGGER.fine("Successfully authenticated userMapping: " + user);
     } catch (final NamingException ne) {
       final String msg = ne.getMessage();
       if (!msg.contains("error code 49")) {
         LOGGER.warning(ne.getMessage());
       }
-      LOGGER.fine("Authentication failed for user: " + user);
+      LOGGER.fine("Authentication failed for userMapping: " + user);
     }
 
     return ctx;

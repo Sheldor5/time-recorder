@@ -20,7 +20,7 @@ public class Login extends HttpServlet {
   @Override
   public void doPost(final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
     final HttpSession session = request.getSession();
-    final Object object = session.getAttribute("user");
+    final Object object = session.getAttribute("userMapping");
 
     if (object == null) {
       final String username = request.getParameter("username");

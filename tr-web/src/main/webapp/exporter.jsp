@@ -1,6 +1,6 @@
 <%@ page import="at.sheldor5.tr.web.authentication.Login" %>
 <%
-    if (session.getAttribute("user") == null) {
+    if (session.getAttribute("userMapping") == null) {
       response.sendRedirect(Login.HTML_LOGIN);
     }
 %>

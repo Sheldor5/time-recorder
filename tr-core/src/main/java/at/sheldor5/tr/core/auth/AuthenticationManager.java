@@ -69,11 +69,11 @@ public class AuthenticationManager implements PluginManager<AuthenticationPlugin
       if (user != null) {
         mapUser(user);
         // TODO
-        /*if (user.getId() < 1) {
-          addUserMapping(user);
+        /*if (userMapping.getId() < 1) {
+          addUserMapping(userMapping);
         }
-        if (user.getId() > 0) {
-          return user;
+        if (userMapping.getId() > 0) {
+          return userMapping;
         }*/
       }
     }
@@ -161,7 +161,7 @@ public class AuthenticationManager implements PluginManager<AuthenticationPlugin
             if (generatedKeys.next()) {
               id = generatedKeys.getInt(1);
               // TODO
-              // user.setId(id);
+              // userMapping.setId(id);
               LOGGER.fine("Successfully mapped UUID " + uuid + " to User ID " + id);
             }
 
@@ -170,7 +170,7 @@ public class AuthenticationManager implements PluginManager<AuthenticationPlugin
           }
 
         } else {
-          LOGGER.severe("Could not map user, insertion failed");
+          LOGGER.severe("Could not map userMapping, insertion failed");
         }
 
       } catch (final SQLException sqle) {
@@ -180,7 +180,7 @@ public class AuthenticationManager implements PluginManager<AuthenticationPlugin
       if (id > 0) {
         commit(connection);
       } else {
-        LOGGER.severe("Could not map user, no ID obtained");
+        LOGGER.severe("Could not map userMapping, no ID obtained");
         rollback(connection);
       }
 

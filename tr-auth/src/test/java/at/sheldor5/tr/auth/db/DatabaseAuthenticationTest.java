@@ -61,6 +61,7 @@ public class DatabaseAuthenticationTest {
     final String newForename = "NeuerVorname";
     final String newSurname = "NeuerNachname";
     final User update = new User(username, newHashedPassword, newForename, newSurname);
+    update.setUuid(user.getUuid());
 
     AUTH_DB.saveUser(update);
     final User updated = AUTH_DB.getUser(username, plainTextPassword);
@@ -70,6 +71,20 @@ public class DatabaseAuthenticationTest {
     Assert.assertEquals(newHashedPassword, updated.getPassword());
     Assert.assertEquals(newForename, updated.getForename());
     Assert.assertEquals(newSurname, updated.getSurname());
+  }
+
+  @Test
+  public void should_fail_with_invalid_password() {
+    final String username = RandomUtils.getRandomUsername(USERNAME_PREFIX);
+    final String plainTextPassword = StringUtils.getMD5(username);
+    final String hashedPassword = BCrypt.hashpw(plainTextPassword, BCrypt.gensalt());
+    final User user = new User(username, hashedPassword, FORENAME, SURNAME);
+
+    AUTH_DB.saveUser(user);
+
+    final User actual = AUTH_DB.getUser(username, "invalid");
+
+    Assert.assertNull(actual);
   }
 
 }

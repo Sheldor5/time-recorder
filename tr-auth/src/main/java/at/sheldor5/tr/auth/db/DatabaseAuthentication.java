@@ -6,11 +6,14 @@ import static at.sheldor5.tr.persistence.EntityManagerHelper.*;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
+
+import at.sheldor5.tr.persistence.provider.UserProvider;
 import org.mindrot.jbcrypt.BCrypt;
 
 public class DatabaseAuthentication implements AuthenticationPlugin {
 
   private static final String NAME = "tr-db";
+  private static final UserProvider USER_PROVIDER = new UserProvider();
 
   @Override
   public String getName() {
@@ -28,39 +31,15 @@ public class DatabaseAuthentication implements AuthenticationPlugin {
       return;
     }
 
-    EntityManager entityManager = getEntityManager();
-    beginTransaction();
-
-    try {
-      entityManager.persist(user);
-      commit();
-    } catch (final EntityExistsException eee) {
-      try {
-        rollback();
-        beginTransaction();
-        entityManager.merge(user);
-        commit();
-      } catch (final Exception e) {
-        rollback();
-        eee.printStackTrace();
-        e.printStackTrace();
-      }
-    } catch (final Exception e) {
-      rollback();
-      e.printStackTrace();
-    }
-
-    closeEntityManager();
+    USER_PROVIDER.save(user);
   }
 
   @Override
   public User getUser(final String username, final String plainTextPassword) {
-    EntityManager entityManager = getEntityManager();
-    beginTransaction();
 
-    User user = entityManager.find(User.class, username);
+    System.out.println(username);
 
-    commit();
+    final User user = USER_PROVIDER.get(username);
 
     if (user == null || !BCrypt.checkpw(plainTextPassword, user.getPassword())) {
       return null;

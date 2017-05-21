@@ -1,14 +1,14 @@
-<%@ page import="at.sheldor5.tr.api.user.User" %>
+<%@ page import="at.sheldor5.tr.api.userMapping.User" %>
 <%@include file="header.html"%>
 <h1>Hallo, <%
-    Object object = session.getAttribute("user");
+    Object object = session.getAttribute("userMapping");
     if (object != null && object instanceof User) {
-      User user = (User) object;
-        System.out.println(user.getUsername());
-        System.out.println(user.getForename());
-        System.out.println(user.getSurname());
+      User userMapping = (User) object;
+        System.out.println(userMapping.getUsername());
+        System.out.println(userMapping.getForename());
+        System.out.println(userMapping.getSurname());
 %>
-<%=user.getForename()%> <%=user.getSurname()%>
+<%=userMapping.getForename()%> <%=userMapping.getSurname()%>
     <%
     } else {
         System.out.println("null");

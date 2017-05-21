@@ -1,7 +1,5 @@
 package at.sheldor5.tr.api.user;
 
-import at.sheldor5.tr.api.time.Record;
-import at.sheldor5.tr.api.time.RecordType;
 import at.sheldor5.tr.api.time.Session;
 import at.sheldor5.tr.api.utils.GlobalConfiguration;
 import org.junit.Assert;
@@ -43,7 +41,7 @@ public class ScheduleTest {
   @Test
   public void test_summary() {
     final LocalDate date = LocalDate.of(2017, 1, 1);
-    Session session = TestUtils.getDefaultSessionAnteMeridiem(date);
+    Session session = TestUtils.getDefaultSessionAnteMeridian(date);
 
     synchronized (LOCK) {
       Schedule schedule = new Schedule();

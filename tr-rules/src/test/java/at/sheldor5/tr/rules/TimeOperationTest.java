@@ -1,8 +1,6 @@
 package at.sheldor5.tr.rules;
 
 import at.sheldor5.tr.api.time.Day;
-import at.sheldor5.tr.api.time.Record;
-import at.sheldor5.tr.api.time.RecordType;
 import at.sheldor5.tr.api.time.Session;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -75,10 +73,8 @@ public class TimeOperationTest {
   @Test
   public void test_update_session() {
     final LocalDate monday = LocalDate.of(2017, 1, 2);
-    final LocalTime start_t = LocalTime.of(11, 0);
-    final LocalTime end_t = LocalTime.of(13, 0);
-    final Record begin = new Record(monday, start_t, RecordType.CHECKIN);
-    final Record end = new Record(monday, end_t, RecordType.CHECKOUT);
+    final LocalTime begin = LocalTime.of(11, 0);
+    final LocalTime end = LocalTime.of(13, 0);
     final TestTimeOperation rule = new TestTimeOperation(time, 1.5D, 1, 2, 3, 4, 5, 6);
 
     final Session session = new Session(monday, begin, end);

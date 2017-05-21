@@ -3,8 +3,6 @@ package at.sheldor5.tr.exporter;
 import at.sheldor5.tr.api.plugins.ExporterPlugin;
 import at.sheldor5.tr.api.time.Day;
 import at.sheldor5.tr.api.time.Month;
-import at.sheldor5.tr.api.time.Record;
-import at.sheldor5.tr.api.time.RecordType;
 import at.sheldor5.tr.api.time.Session;
 import at.sheldor5.tr.exporter.text.PlainTextExporter;
 import at.sheldor5.tr.exporter.utils.ExporterUtils;
@@ -35,8 +33,6 @@ public class PlainTextExporterTest {
     ExporterUtils.toFile(inputStream, OUTPUT);
   }
 
-
-
   public static Year getSimpleTestYear(int y) {
     final LocalDate date = LocalDate.of(y, 1, 1);
     Year year = new Year(date);
@@ -51,16 +47,10 @@ public class PlainTextExporterTest {
         final LocalDate d_ = LocalDate.of(y, m, d);
         Day day = new Day(d_);
 
-        Session session = new Session(
-                d_,
-                new Record(d_, t1, RecordType.CHECKIN),
-                new Record(d_, t2, RecordType.CHECKOUT));
+        Session session = new Session(d_, t1, t2);
         day.addItem(session);
 
-        session = new Session(
-                d_,
-                new Record(d_, t3, RecordType.CHECKIN),
-                new Record(d_, t4, RecordType.CHECKOUT));
+        session = new Session(d_, t3, t4);
         day.addItem(session);
 
         month.addItem(day);

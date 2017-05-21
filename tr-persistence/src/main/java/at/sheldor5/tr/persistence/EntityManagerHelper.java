@@ -1,12 +1,9 @@
 package at.sheldor5.tr.persistence;
 
-import org.hibernate.cfg.Configuration;
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.FlushModeType;
 import javax.persistence.Persistence;
-import java.util.Map;
 
 public class EntityManagerHelper {
 

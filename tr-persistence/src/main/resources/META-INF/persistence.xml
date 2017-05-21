@@ -9,16 +9,18 @@
         <description>Persistence unit for Hibernate User Guide</description>
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <mapping-file>UserMapping.hbm.xml</mapping-file>
-        <mapping-file>Record.hbm.xml</mapping-file>
+        <mapping-file>Project.hbm.xml</mapping-file>
+        <mapping-file>Session.hbm.xml</mapping-file>
         <mapping-file>Schedule.hbm.xml</mapping-file>
         <mapping-file>User.hbm.xml</mapping-file>
         <properties>
             <property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>
             <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:tr;DB_CLOSE_DELAY=-1;MVCC=TRUE"/>
-            <property name="javax.persistence.jdbc.user" value="sa"/>
+            <property name="javax.persistence.jdbc.userMapping" value="sa"/>
             <property name="javax.persistence.jdbc.password" value="sa"/>
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.hbm2ddl.auto" value="update"/>
+            <property name="current_session_context_class" value="thread" />
         </properties>
     </persistence-unit>
 </persistence>

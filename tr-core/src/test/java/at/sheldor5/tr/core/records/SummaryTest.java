@@ -1,5 +1,6 @@
 package at.sheldor5.tr.core.records;
 
+import at.sheldor5.tr.core.utils.Summary;
 import org.junit.Assert;
 import org.junit.Test;
 
