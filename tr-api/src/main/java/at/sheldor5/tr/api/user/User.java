@@ -7,35 +7,21 @@ import java.util.UUID;
  */
 public class User {
 
-  private UUID uuid;
-  private String username;
-  private String password;
-  private String forename;
-  private String surname;
-  private Schedule schedule;
+  protected UUID uuid;
+  protected String username;
+  protected String password;
+  protected String forename;
+  protected String surname;
+  protected Schedule schedule;
 
-  /**
-   * Default constructor for empty userMapping.
-   */
   public User() {
     this(null, null, null, null);
   }
 
-  /**
-   * Default constructor for empty userMapping.
-   */
   public User(final String username, final String password) {
     this(username, password, null, null);
   }
 
-  /**
-   * Constructor for given properties.
-   *
-   * @param username The username of the userMapping.
-   * @param password The password of the userMapping (should be hashed).
-   * @param forename The forename of the userMapping.
-   * @param surname  The surname of the userMapping.
-   */
   public User(final String username, final String password, final String forename, final String surname) {
     this.username = username;
     this.password = password;
@@ -43,20 +29,10 @@ public class User {
     this.surname = surname;
   }
 
-  /**
-   * Getter for the username.
-   *
-   * @return The username of this userMapping.
-   */
   public String getUsername() {
     return username;
   }
 
-  /**
-   * Setter for the username.
-   *
-   * @param username The username of this userMapping.
-   */
   public void setUsername(final String username) {
     this.username = username;
   }
@@ -69,74 +45,34 @@ public class User {
     this.password = password;
   }
 
-  /**
-   * Getter for the forename.
-   *
-   * @return The forename of this userMapping.
-   */
   public String getForename() {
     return forename;
   }
 
-  /**
-   * Setter for the forename.
-   *
-   * @param forename The forename of this userMapping.
-   */
   public void setForename(final String forename) {
     this.forename = forename;
   }
 
-  /**
-   * Getter for the surname.
-   *
-   * @return The surname of this userMapping.
-   */
   public String getSurname() {
     return surname;
   }
 
-  /**
-   * Setter for the surname.
-   *
-   * @param surname The surname of this userMapping.
-   */
   public void setSurname(final String surname) {
     this.surname = surname;
   }
 
-  /**
-   * Getter for the UUID.
-   *
-   * @return The UUID of this userMapping.
-   */
   public UUID getUuid() {
     return uuid;
   }
 
-  /**
-   * Setter fot the UUID.
-   *
-   * @param uuid The UUID of this userMapping.
-   */
   public void setUuid(final UUID uuid) {
     this.uuid = uuid;
   }
 
-  /**
-   * Getter for the schedule.
-   *
-   * @return The schedule of this userMapping.
-   */
   public Schedule getSchedule() {
     return schedule;
   }
 
-  /**
-   * Setter for the schedule.
-   *
-   * @param schedule The schedule of this userMapping.
-   */
   public void setSchedule(final Schedule schedule) {
     this.schedule = schedule;
   }

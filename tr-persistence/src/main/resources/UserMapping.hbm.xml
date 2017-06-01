@@ -9,5 +9,11 @@
             <generator class="native"/>
         </id>
         <property name="uuid" type="java.util.UUID" column="UUID" unique="true"/>
+        <property name="role" column="ROLE">
+            <type name="org.hibernate.type.EnumType">
+                <param name="enumClass">at.sheldor5.tr.api.user.Role</param>
+                <param name="useNamed">true</param>
+            </type>
+        </property>
     </class>
 </hibernate-mapping>

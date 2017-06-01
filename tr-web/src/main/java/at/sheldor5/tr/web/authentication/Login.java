@@ -14,7 +14,7 @@ import javax.servlet.http.HttpSession;
 @WebServlet(name = "login", urlPatterns = "/login")
 public class Login extends HttpServlet {
 
-  public static final String HTML_LOGIN = "/index.html";
+  public static final String HTML_LOGIN = "/index.xhtml.html";
   private static final String HTML_HOME = "/home.jsp";
 
   @Override

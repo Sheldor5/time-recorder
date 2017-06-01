@@ -11,7 +11,7 @@ import java.io.IOException;
 @WebServlet(name = "logout", urlPatterns = "/logout")
 public class Logout extends HttpServlet {
 
-  private static final String HTML_LOGIN = "/index.html";
+  private static final String HTML_LOGIN = "/index.xhtml.html";
 
   @Override
   public void doGet(final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {

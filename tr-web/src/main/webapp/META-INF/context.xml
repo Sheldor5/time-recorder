@@ -1,0 +1,6 @@
+<Context>
+    <Realm className="org.apache.catalina.realm.JAASRealm"
+           appName="Login"
+           userClassNames="at.sheldor5.tr.web.module.authentication.UserPrincipal"
+           roleClassNames="at.sheldor5.tr.web.module.authentication.UserPrincipal" />
+</Context>

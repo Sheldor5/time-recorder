@@ -4,8 +4,9 @@ import java.util.UUID;
 
 public class UserMapping {
 
-  private int id;
-  private UUID uuid;
+  protected int id;
+  protected UUID uuid;
+  protected Role role;
 
   public UserMapping() {
     this(null);
@@ -38,6 +39,14 @@ public class UserMapping {
 
   public void setUuid(final UUID uuid) {
     this.uuid = uuid;
+  }
+
+  public Role getRole() {
+    return role;
+  }
+
+  public void setRole(Role role) {
+    this.role = role;
   }
 
   @Override
