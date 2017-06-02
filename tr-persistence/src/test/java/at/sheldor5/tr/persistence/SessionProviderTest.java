@@ -12,14 +12,10 @@ import java.util.UUID;
 
 import at.sheldor5.tr.persistence.provider.SessionProvider;
 import at.sheldor5.tr.persistence.provider.UserMappingProvider;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 
-public class SessionProviderTest {
+public class SessionProviderTest extends TestFixture {
 
-  private static final String PROPERTIES = "test.properties";
   private static final UserMappingProvider USER_MAPPING_ENGINE = new UserMappingProvider();
   private static final SessionProvider SESSION_PROVIDER = new SessionProvider();
 
@@ -27,9 +23,8 @@ public class SessionProviderTest {
 
   private static UserMapping userMapping;
 
-  @BeforeClass
-  public static void setup() throws IOException, SQLException {
-    GlobalProperties.load(new File(PROPERTIES));
+  @Before
+  public void setup() throws IOException, SQLException {
     UserMapping userMapping = new UserMapping(UUID.randomUUID());
     USER_MAPPING_ENGINE.save(userMapping);
     Assert.assertTrue(userMapping.getId() > 0);

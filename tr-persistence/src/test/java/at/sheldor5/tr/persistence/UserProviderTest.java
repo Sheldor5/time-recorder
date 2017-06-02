@@ -13,15 +13,9 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.UUID;
 
-public class UserProviderTest {
+public class UserProviderTest extends TestFixture {
 
-  private static final String PROPERTIES = "test.properties";
   private static final UserProvider USER_PROVIDER = new UserProvider();
-
-  @BeforeClass
-  public static void setup() throws IOException, SQLException {
-    GlobalProperties.load(new File(PROPERTIES));
-  }
 
   @Test
   public void test_persist_user() {

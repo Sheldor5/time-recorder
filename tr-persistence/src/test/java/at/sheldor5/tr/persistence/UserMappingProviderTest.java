@@ -13,15 +13,9 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.UUID;
 
-public class UserMappingProviderTest {
+public class UserMappingProviderTest extends TestFixture {
 
-  private static final String PROPERTIES = "test.properties";
   private static final UserMappingProvider USER_MAPPING_PROVIDER = new UserMappingProvider();
-
-  @BeforeClass
-  public static void setup() throws IOException, SQLException {
-    GlobalProperties.load(new File(PROPERTIES));
-  }
 
   @Test
   public void should_persist_and_return_user_mapping() {

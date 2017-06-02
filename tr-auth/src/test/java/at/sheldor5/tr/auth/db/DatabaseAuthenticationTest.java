@@ -6,6 +6,7 @@ import at.sheldor5.tr.api.utils.RandomUtils;
 import at.sheldor5.tr.api.utils.StringUtils;
 import at.sheldor5.tr.persistence.EntityManagerHelper;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mindrot.jbcrypt.BCrypt;
@@ -14,18 +15,16 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 
-public class DatabaseAuthenticationTest {
+public class DatabaseAuthenticationTest extends TestFixture {
 
-  private static final String PROPERTIES = "db.properties";
   private static final DatabaseAuthentication AUTH_DB = new DatabaseAuthentication();
 
   private static final String USERNAME_PREFIX = "USER_";
   private static final String FORENAME = "Vorname";
   private static final String SURNAME = "Nachname";
 
-  @BeforeClass
-  public static void init() throws IOException, SQLException {
-    GlobalProperties.load(new File(PROPERTIES));
+  @Before
+  public void setup() {
     AUTH_DB.initialize();
   }
 
