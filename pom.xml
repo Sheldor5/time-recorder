@@ -51,6 +51,7 @@
         <hibernate.version>5.2.9.Final</hibernate.version>
         <h2.version>1.4.193</h2.version>
         <fast-classpath-scanner.version>2.0.21</fast-classpath-scanner.version>
+        <javax.faces.version>2.3.0</javax.faces.version>
     </properties>
 
     <!-- Build Settings -->
