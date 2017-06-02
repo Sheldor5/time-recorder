@@ -1,13 +1,17 @@
 package at.sheldor5.tr.web.module.authentication;
 
+import at.sheldor5.tr.api.user.Role;
 import at.sheldor5.tr.api.user.User;
+import at.sheldor5.tr.api.user.UserMapping;
 import at.sheldor5.tr.core.auth.AuthenticationManager;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.*;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -29,6 +33,11 @@ public class LoginModuleImpl implements LoginModule {
   private CallbackHandler callbackHandler;
   private Map sharedState;
   private Map options;
+  private UserPrincipal userPrincipal;
+  private RolePrincipal rolePrincipal;
+  private String login;
+  private UserMapping userMapping;
+  private List<Role> roles = new ArrayList<>();
 
   public LoginModuleImpl() {
     LOGGER.info("LoginModuleImpl()");
@@ -69,16 +78,35 @@ public class LoginModuleImpl implements LoginModule {
       return false;
     }
 
-    // Perform credential realization and credential authentication
-    // @TODO
-    final User user = AUTHENTICATION_MANAGER.getUser(username, password);
+    login = username;
 
-    return user != null;
+    // Perform credential realization and credential authentication
+    userMapping = AUTHENTICATION_MANAGER.getUserMapping(username, password);
+
+    if (userMapping != null) {
+      final Role role = userMapping.getRole();
+      if (role != null) {
+        roles.add(role);
+        Collections.addAll(roles, role.getImplies());
+      }
+    }
+
+    return userMapping != null;
   }
 
   @Override
   public boolean commit() throws LoginException {
-    return false;
+    userPrincipal = new UserPrincipal(login);
+    subject.getPrincipals().add(userPrincipal);
+
+    if (roles.size() > 0) {
+      for (final Role role : roles) {
+        rolePrincipal = new RolePrincipal(role);
+        subject.getPrincipals().add(rolePrincipal);
+      }
+    }
+
+    return true;
   }
 
   @Override

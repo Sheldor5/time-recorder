@@ -1,12 +1,7 @@
 package at.sheldor5.tr.web.init;
 
-import at.sheldor5.tr.web.module.authentication.CallbackHandlerImpl;
-
-import javax.security.auth.login.LoginContext;
-import javax.security.auth.login.LoginException;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Logger;
 

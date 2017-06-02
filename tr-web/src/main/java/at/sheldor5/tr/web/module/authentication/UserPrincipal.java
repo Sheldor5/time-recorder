@@ -33,6 +33,11 @@ public class UserPrincipal implements Principal {
     return name;
   }
 
+  @Override
+  public boolean implies(final Subject subject) {
+    return false;
+  }
+
   /**
    * Compares the specified Object with this <code>SamplePrincipal</code>
    * for equality.  Returns true if the given object is also a

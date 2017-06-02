@@ -12,8 +12,7 @@ import org.mindrot.jbcrypt.BCrypt;
 
 public class DatabaseAuthentication implements AuthenticationPlugin {
 
-  private static final String NAME = "tr-db";
-  private static final UserProvider USER_PROVIDER = new UserProvider();
+  public static final String NAME = "tr-db";
 
   @Override
   public String getName() {
@@ -31,15 +30,24 @@ public class DatabaseAuthentication implements AuthenticationPlugin {
       return;
     }
 
-    USER_PROVIDER.save(user);
+    try (final UserProvider userProvider = new UserProvider()) {
+      userProvider.save(user);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
   @Override
   public User getUser(final String username, final String plainTextPassword) {
-
     System.out.println(username);
 
-    final User user = USER_PROVIDER.get(username);
+    User user = null;
+
+    try (final UserProvider userProvider = new UserProvider()) {
+      user = userProvider.get(username);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
 
     if (user == null || !BCrypt.checkpw(plainTextPassword, user.getPassword())) {
       return null;

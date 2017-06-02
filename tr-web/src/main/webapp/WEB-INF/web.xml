@@ -37,10 +37,44 @@
         <url-pattern>*.xhtml</url-pattern>
     </servlet-mapping>
 
+    <!-- POST -->
+    <listener>
+        <listener-class>se.jiderhamn.classloader.leak.prevention.ClassLoaderLeakPreventionContainerInitializer</listener-class>
+    </listener>
+    <listener>
+        <listener-class>at.sheldor5.tr.web.init.Configuration</listener-class>
+    </listener>
+    <listener>
+        <listener-class>at.sheldor5.tr.web.init.Persistence</listener-class>
+    </listener>
+    <listener>
+        <listener-class>at.sheldor5.tr.web.init.Plugins</listener-class>
+    </listener>
+    <listener>
+        <listener-class>at.sheldor5.tr.web.init.Rules</listener-class>
+    </listener>
+
     <!-- Security -->
     <listener>
         <listener-class>at.sheldor5.tr.web.init.Security</listener-class>
     </listener>
+
+    <login-config>
+        <auth-method>FORM</auth-method>
+        <form-login-config>
+            <form-login-page>/login.xhtml</form-login-page>
+            <form-error-page>/home/home.xhtml</form-error-page>
+        </form-login-config>
+    </login-config>
+
+    <security-role>
+        <description/>
+        <role-name>USER</role-name>
+    </security-role>
+    <security-role>
+        <description/>
+        <role-name>ADMIN</role-name>
+    </security-role>
 
     <security-constraint>
         <display-name>Users Security Constraint</display-name>
@@ -51,25 +85,12 @@
         </web-resource-collection>
         <auth-constraint>
             <description/>
-            <role-name>User</role-name>
+            <role-name>USER</role-name>
         </auth-constraint>
     </security-constraint>
 
     <security-constraint>
-        <display-name>Controller Security Constraint</display-name>
-        <web-resource-collection>
-            <web-resource-name>/controller</web-resource-name>
-            <description/>
-            <url-pattern>/controller/*</url-pattern>
-        </web-resource-collection>
-        <auth-constraint>
-            <description/>
-            <role-name>Controller</role-name>
-        </auth-constraint>
-    </security-constraint>
-
-    <security-constraint>
-        <display-name>Admins Security Constraint</display-name>
+        <display-name>Administrator Security Constraint</display-name>
         <web-resource-collection>
             <web-resource-name>/admin</web-resource-name>
             <description/>
@@ -77,51 +98,8 @@
         </web-resource-collection>
         <auth-constraint>
             <description/>
-            <role-name>Admin</role-name>
+            <role-name>ADMIN</role-name>
         </auth-constraint>
     </security-constraint>
-
-    <login-config>
-        <auth-method>FORM</auth-method>
-        <realm-name>file</realm-name>
-
-        <form-login-config>
-            <form-login-page>/login.xhtml</form-login-page>
-            <form-error-page>/login.xhtml</form-error-page>
-        </form-login-config>
-    </login-config>
-
-    <security-role>
-        <description/>
-        <role-name>User</role-name>
-    </security-role>
-
-    <security-role>
-        <description/>
-        <role-name>Controller</role-name>
-    </security-role>
-
-    <security-role>
-        <description/>
-        <role-name>Admin</role-name>
-    </security-role>
-
-    <!--
-    <listener>
-        <listener-class>se.jiderhamn.classloader.leak.prevention.ClassLoaderLeakPreventionContainerInitializer</listener-class>
-    </listener>
-    <listener>
-        <listener-class>at.sheldor5.tr.web.init.Configuration</listener-class>
-    </listener>
-    <listener>
-        <listener-class>at.sheldor5.tr.web.init.ConnectionPool</listener-class>
-    </listener>
-    <listener>
-        <listener-class>at.sheldor5.tr.web.init.Plugins</listener-class>
-    </listener>
-    <listener>
-        <listener-class>at.sheldor5.tr.web.init.Rules</listener-class>
-    </listener>
-    -->
 
 </web-app>

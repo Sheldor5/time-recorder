@@ -1,9 +1,12 @@
 package at.sheldor5.tr.core.auth;
 
 import at.sheldor5.tr.api.plugins.AuthenticationPlugin;
+import at.sheldor5.tr.api.user.Role;
 import at.sheldor5.tr.api.user.User;
 import at.sheldor5.tr.api.plugins.PluginManager;
+import at.sheldor5.tr.api.user.UserMapping;
 import at.sheldor5.tr.api.utils.UuidUtils;
+import at.sheldor5.tr.persistence.provider.UserMappingProvider;
 
 import javax.sql.DataSource;
 import java.nio.ByteBuffer;
@@ -23,9 +26,6 @@ public class AuthenticationManager implements PluginManager<AuthenticationPlugin
 
   private static final Logger LOGGER = Logger.getLogger(AuthenticationManager.class.getName());
 
-  private static final String INSERT_USER_MAPPING = "INSERT INTO [user_mapping] ([uuid]) VALUES (?)";
-  private static final String SELECT_MAPPED_USER = "SELECT [pk_user_id] FROM [user_mapping] WHERE [uuid] = ?";
-
   private static AuthenticationManager instance;
 
   public static AuthenticationManager getInstance() {
@@ -34,8 +34,6 @@ public class AuthenticationManager implements PluginManager<AuthenticationPlugin
     }
     return instance;
   }
-
-  private DataSource dataSource;
 
   private final List<AuthenticationPlugin> plugins = new ArrayList<>();
 
@@ -48,10 +46,6 @@ public class AuthenticationManager implements PluginManager<AuthenticationPlugin
     }
   }
 
-  public void setDataSource(final DataSource dataSource) {
-    this.dataSource = dataSource;
-  }
-
   public void saveUser(final User user) {
     for (final AuthenticationPlugin plugin : plugins) {
       try {
@@ -62,19 +56,17 @@ public class AuthenticationManager implements PluginManager<AuthenticationPlugin
     }
   }
 
-  public User getUser(final String username, final String password) {
+  public UserMapping getUserMapping(final String username, final String password) {
+    UserMapping userMapping;
     User user;
     for (final AuthenticationPlugin plugin : plugins) {
       user = plugin.getUser(username, password);
       if (user != null) {
-        mapUser(user);
-        // TODO
-        /*if (userMapping.getId() < 1) {
-          addUserMapping(userMapping);
-        }
-        if (userMapping.getId() > 0) {
+        userMapping = mapUser(user);
+        if (userMapping != null) {
+          userMapping.setUser(user);
           return userMapping;
-        }*/
+        }
       }
     }
     return null;
@@ -134,88 +126,29 @@ public class AuthenticationManager implements PluginManager<AuthenticationPlugin
     }
   }
 
-  public void addUserMapping(final User user) {
+  public UserMapping mapUser(final User user) {
     if (user == null) {
       LOGGER.severe("User is null");
-      return;
-    }
-
-    final UUID uuid = user.getUuid();
-
-    if (uuid == null) {
-      LOGGER.severe("UUID is null");
-      return;
-    }
-
-    int id = 0;
-    try (final Connection connection = dataSource.getConnection()) {
-
-      try (final PreparedStatement statement = connection.prepareStatement(INSERT_USER_MAPPING, Statement.RETURN_GENERATED_KEYS)) {
-
-        statement.setBytes(1, UuidUtils.getBytes(uuid));
-
-        if (statement.executeUpdate() != 0) {
-
-          try (final ResultSet generatedKeys = statement.getGeneratedKeys()) {
-
-            if (generatedKeys.next()) {
-              id = generatedKeys.getInt(1);
-              // TODO
-              // userMapping.setId(id);
-              LOGGER.fine("Successfully mapped UUID " + uuid + " to User ID " + id);
-            }
-
-          } catch (final SQLException sqle) {
-            LOGGER.severe(sqle.getMessage());
-          }
-
-        } else {
-          LOGGER.severe("Could not map userMapping, insertion failed");
-        }
-
-      } catch (final SQLException sqle) {
-        LOGGER.severe(sqle.getMessage());
-      }
-
-      if (id > 0) {
-        commit(connection);
-      } else {
-        LOGGER.severe("Could not map userMapping, no ID obtained");
-        rollback(connection);
-      }
-
-    } catch (final SQLException sqle) {
-      LOGGER.severe(sqle.getMessage());
-    }
-  }
-
-  public void mapUser(final User user) {
-    if (user == null) {
-      LOGGER.severe("User is null");
-      return;
+      return null;
     }
 
     final UUID uuid = user.getUuid();
     if (uuid == null) {
-      LOGGER.severe("User UUID is invalid");
-      return;
+      LOGGER.severe("User UUID is null");
+      return null;
     }
 
-    int id = 0;
-
-    // TODO
-  }
-
-  private void commit(final Connection connection) throws SQLException {
-    if (!connection.getAutoCommit()) {
-      connection.commit();
+    UserMapping userMapping;
+    try (final UserMappingProvider userMappingProvider = new UserMappingProvider()) {
+      userMapping = userMappingProvider.get(uuid);
+      if (userMapping == null) {
+        userMapping = new UserMapping(uuid);
+        userMapping.setRole(Role.USER);
+        userMappingProvider.save(userMapping);
+      }
     }
-  }
 
-  private void rollback(final Connection connection) throws SQLException {
-    if (!connection.getAutoCommit()) {
-      connection.rollback();
-    }
+    return userMapping;
   }
 
 }

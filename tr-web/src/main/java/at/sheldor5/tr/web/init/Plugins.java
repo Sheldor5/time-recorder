@@ -3,9 +3,12 @@ package at.sheldor5.tr.web.init;
 import at.sheldor5.tr.api.plugins.AuthenticationPlugin;
 import at.sheldor5.tr.api.plugins.ExporterPlugin;
 import at.sheldor5.tr.api.utils.GlobalProperties;
+import at.sheldor5.tr.auth.db.DatabaseAuthentication;
 import at.sheldor5.tr.core.auth.AuthenticationManager;
 import at.sheldor5.tr.core.utils.RuntimeUtils;
 import at.sheldor5.tr.exporter.ExporterManager;
+import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
+import io.github.lukehutch.fastclasspathscanner.matchprocessor.ImplementingClassMatchProcessor;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -17,76 +20,64 @@ import java.util.logging.Logger;
 public class Plugins implements ServletContextListener {
 
   private static final Logger LOGGER = Logger.getLogger(Plugins.class.getName());
-
   private static final String PLUGINS_PATH = "plugins";
-  private String pluginsPath;
+
+  private final AuthenticationManager authenticationManager = AuthenticationManager.getInstance();
+  private final ExporterManager exporterManager = ExporterManager.getInstance();
+  private final FastClasspathScanner classpathScanner = new FastClasspathScanner();
 
   @Override
   public void contextInitialized(ServletContextEvent servletContextEvent) {
-    pluginsPath = GlobalProperties.getProperty("plugins.directory");
-    if (pluginsPath == null || pluginsPath.isEmpty()) {
-      LOGGER.info("Plugins directory is not configured");
-      return;
-    }
-    loadAuthenticationPlugins();
-    loadExporterPlugins();
-    AuthenticationManager.getInstance().initialize();
-  }
+    classpathScanner.overrideClassLoaders(servletContextEvent.getServletContext().getClassLoader());
 
-  private void loadAuthenticationPlugins() {
-    final AuthenticationManager manager = AuthenticationManager.getInstance();
+    final String verbose = GlobalProperties.getProperty("plugins.verbose");
 
-    List<Class<AuthenticationPlugin>> plugins;
-    try {
-      plugins = RuntimeUtils.getClassesImplementing(pluginsPath, AuthenticationPlugin.class);
-    } catch (final IOException ioe) {
-      LOGGER.warning(ioe.getMessage());
-      plugins = new ArrayList<>();
+    if (verbose != null && "true".equals(verbose)) {
+      classpathScanner.verbose();
     }
 
-    AuthenticationPlugin plugin;
-    for (final Class<AuthenticationPlugin> clazz : plugins) {
+    // Authentication Plugins
+    classpathScanner.matchClassesImplementing(AuthenticationPlugin.class, c -> {
       try {
-        plugin = clazz.newInstance();
-        manager.addPlugin(plugin);
+        AuthenticationPlugin plugin = c.newInstance();
+        if (plugin.getName() == null || plugin.getName().isEmpty()) {
+          LOGGER.warning("Authentication plugin <" + c.getName() + "> failed to initialize: name is null or empty");
+          return;
+        }
+        authenticationManager.addPlugin(plugin);
       } catch (final Exception e) {
-        LOGGER.warning("Authentication plugin <" + clazz.getName() + "> failed to initialize: " + e.getMessage());
+        LOGGER.warning("Authentication plugin <" + c.getName() + "> failed to initialize: " + e.getMessage());
       }
-    }
+    });
 
-    if (manager.getPlugins().size() == 0) {
+    // Exporter Plugins
+    classpathScanner.matchClassesImplementing(ExporterPlugin.class, c -> {
+      try {
+        ExporterPlugin plugin = c.newInstance();
+        if (plugin.getName() == null || plugin.getName().isEmpty()) {
+          LOGGER.warning("Exporter plugin <" + c.getName() + "> failed to initialize: name is null or empty");
+          return;
+        }
+        exporterManager.addPlugin(plugin);
+      } catch (final Exception e) {
+        LOGGER.warning("Exporter plugin <" + c.getName() + "> failed to initialize: " + e.getMessage());
+      }
+    });
+
+    classpathScanner.scan();
+
+    if (authenticationManager.getPlugins().size() == 0) {
       System.out.println("no authentication plugins found");
-      // TODO
     }
 
     final String chain = GlobalProperties.getProperty("auth.chain");
     if (chain == null || chain.isEmpty()) {
-      manager.sort(new String[] { "tr-db" });
+      authenticationManager.sort(new String[]{DatabaseAuthentication.NAME});
     } else {
-      manager.sort(chain.split(","));
-    }
-  }
-
-  private void loadExporterPlugins() {
-    final ExporterManager manager = ExporterManager.getInstance();
-
-    final List<Class<ExporterPlugin>> plugins;
-    try {
-      plugins = RuntimeUtils.getClassesImplementing(pluginsPath, ExporterPlugin.class);
-    } catch (final IOException ioe) {
-      LOGGER.warning(ioe.getMessage());
-      return;
+      authenticationManager.sort(chain.split(","));
     }
 
-    ExporterPlugin plugin;
-    for (final Class<ExporterPlugin> clazz : plugins) {
-      try {
-        plugin = clazz.newInstance();
-        manager.addPlugin(plugin);
-      } catch (final Exception e) {
-        LOGGER.warning("Authentication plugin <" + clazz.getName() + "> failed to initialize: " + e.getMessage());
-      }
-    }
+    authenticationManager.initialize();
   }
 
   @Override

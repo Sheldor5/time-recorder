@@ -1,16 +1,21 @@
 package at.sheldor5.tr.persistence;
 
+import at.sheldor5.tr.api.utils.GlobalProperties;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.FlushModeType;
 import javax.persistence.Persistence;
+import java.util.HashMap;
+import java.util.Map;
 
 public class EntityManagerHelper {
 
   private static final String PERSISTENCE_UNIT_NAME = "time-recorder";
-
-  private static final EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
   private static final ThreadLocal<EntityManager> entityManagerThreadLocal = new ThreadLocal<>();
+
+  private static boolean setup = true;
+  private static EntityManagerFactory entityManagerFactory;
 
   public static EntityManager getEntityManager() {
     EntityManager em = entityManagerThreadLocal.get();
@@ -20,6 +25,41 @@ public class EntityManagerHelper {
       entityManagerThreadLocal.set(em);
     }
     return em;
+  }
+
+  public static void setupPersistenceXML() {
+    if (setup) {
+      setup = false;
+      entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
+    } else {
+      System.out.println("1");
+    }
+  }
+
+  public static void setupGlobalProperties() {
+    if (setup) {
+      final Map<String, String> properties = new HashMap<>();
+      properties.put("javax.persistence.jdbc.driver", GlobalProperties.getProperty("db.jdbc.class"));
+      properties.put("javax.persistence.jdbc.url", GlobalProperties.getProperty("db.jdbc.url"));
+      properties.put("javax.persistence.jdbc.user", GlobalProperties.getProperty("db.username"));
+      properties.put("javax.persistence.jdbc.password", GlobalProperties.getProperty("db.password"));
+
+      properties.put("hibernate.show_sql", "true");
+      properties.put("hibernate.hbm2ddl.auto", "update");
+      properties.put("current_session_context_class", "thread");
+      setup(properties);
+    } else {
+      System.out.println("1");
+    }
+  }
+
+  public static void setup(final Map properties) {
+    if (setup) {
+      setup = false;
+      entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME, properties);
+    } else {
+      System.out.println("2");
+    }
   }
 
   public static void closeEntityManager() {

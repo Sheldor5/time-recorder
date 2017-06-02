@@ -7,6 +7,7 @@ public class UserMapping {
   protected int id;
   protected UUID uuid;
   protected Role role;
+  protected User user;
 
   public UserMapping() {
     this(null);
@@ -48,6 +49,15 @@ public class UserMapping {
   public void setRole(Role role) {
     this.role = role;
   }
+
+  public User getUser() {
+    return user;
+  }
+
+  public void setUser(User user) {
+    this.user = user;
+  }
+
 
   @Override
   public boolean equals(final Object obj) {

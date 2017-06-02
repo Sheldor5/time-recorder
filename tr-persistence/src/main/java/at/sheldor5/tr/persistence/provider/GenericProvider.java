@@ -5,18 +5,22 @@ import at.sheldor5.tr.persistence.identifier.AbstractIdentifier;
 import at.sheldor5.tr.persistence.utils.QueryUtils;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import java.io.Closeable;
 
-public class GenericProvider<Entity, Identifier> implements EntityProvider<Entity, Identifier> {
+public class GenericProvider<Entity, Identifier> implements EntityProvider<Entity, Identifier>, Closeable {
 
+  @PersistenceContext(unitName = "time-recorder")
   protected final EntityManager entityManager;
+
   protected final AbstractIdentifier<Entity, Identifier> identifier;
 
-  public GenericProvider(AbstractIdentifier<Entity, Identifier> identifier) {
+  public GenericProvider(final AbstractIdentifier<Entity, Identifier> identifier) {
     this(EntityManagerHelper.getEntityManager(), identifier);
   }
 
-  public GenericProvider(EntityManager entityManager, AbstractIdentifier<Entity, Identifier> identifier) {
+  public GenericProvider(final EntityManager entityManager, AbstractIdentifier<Entity, Identifier> identifier) {
     this.entityManager = entityManager;
     this.identifier = identifier;
   }

@@ -15,11 +15,13 @@ import java.util.UUID;
 public class ProjectProviderTest {
 
   private static final String PROPERTIES = "test.properties";
-  private static final ProjectProvider PROJECT_PROVIDER = new ProjectProvider();
+  private static ProjectProvider projectProvider;
 
   @BeforeClass
   public static void setup() throws IOException, SQLException {
     GlobalProperties.load(new File(PROPERTIES));
+    EntityManagerHelper.setupGlobalProperties();
+    projectProvider = new ProjectProvider();
   }
 
   @Test
@@ -30,18 +32,18 @@ public class ProjectProviderTest {
     name = UUID.randomUUID().toString().replace("-", "");
     project = new Project(name);
 
-    PROJECT_PROVIDER.save(project);
+    projectProvider.save(project);
 
     Assert.assertNotNull(project.getId());
 
     name = UUID.randomUUID().toString().replace("-", "");
     project = new Project(name, project);
 
-    PROJECT_PROVIDER.save(project);
+    projectProvider.save(project);
 
     Assert.assertNotNull(project.getId());
 
-    final Project actual = PROJECT_PROVIDER.get(project.getId());
+    final Project actual = projectProvider.get(project.getId());
     final Project parent = actual.getParent();
 
     Assert.assertNotNull(actual);
@@ -55,11 +57,11 @@ public class ProjectProviderTest {
     final String name = UUID.randomUUID().toString().replace("-", "");
     final Project project = new Project(name);
 
-    PROJECT_PROVIDER.save(project);
+    projectProvider.save(project);
 
     Assert.assertTrue(project.getId() > 0);
 
-    final Project actual = PROJECT_PROVIDER.get(name);
+    final Project actual = projectProvider.get(name);
 
     Assert.assertNotNull(actual);
     Assert.assertEquals(project, actual);
@@ -67,6 +69,6 @@ public class ProjectProviderTest {
 
   @AfterClass
   public static void teardown() {
-    PROJECT_PROVIDER.close();
+    projectProvider.close();
   }
 }
