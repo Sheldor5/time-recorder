@@ -9,10 +9,7 @@ import javax.security.auth.Subject;
 import javax.security.auth.callback.*;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,7 +24,7 @@ public class LoginModuleImpl implements LoginModule {
 
   private static final AuthenticationManager AUTHENTICATION_MANAGER = AuthenticationManager.getInstance();
 
-  private static final Pattern SQL_INJECTION_PATTERN = Pattern.compile("(?i)\\bselect|create|insert|delete|drop|update|or|%.\\d\\b");
+  private static final Map<String, UserMapping> USER_MAPPING_MAP = new HashMap<>();
 
   private Subject subject;
   private CallbackHandler callbackHandler;
@@ -35,7 +32,7 @@ public class LoginModuleImpl implements LoginModule {
   private Map options;
   private UserPrincipal userPrincipal;
   private RolePrincipal rolePrincipal;
-  private String login;
+  private String username;
   private UserMapping userMapping;
   private List<Role> roles = new ArrayList<>();
 
@@ -66,37 +63,30 @@ public class LoginModuleImpl implements LoginModule {
       e.printStackTrace();
     }
 
-    final String username = ((NameCallback) callbacks[0]).getName();
+    username = ((NameCallback) callbacks[0]).getName();
     final String password = String.valueOf(((PasswordCallback) callbacks[1]).getPassword());
-
-    // detect attackers
-    final Matcher matcher = SQL_INJECTION_PATTERN.matcher(username);
-
-    if (matcher.find()) {
-      //someone tries to break into this application and should be tracked back
-      LOGGER.warning("SQL Injection attempt detected: username was altered to include SQL keyword: " + matcher.group());
-      return false;
-    }
-
-    login = username;
 
     // Perform credential realization and credential authentication
     userMapping = AUTHENTICATION_MANAGER.getUserMapping(username, password);
 
-    if (userMapping != null) {
-      final Role role = userMapping.getRole();
-      if (role != null) {
-        roles.add(role);
-        Collections.addAll(roles, role.getImplies());
-      }
+    if (userMapping == null) {
+      throw new LoginException("Authentication failed");
     }
 
-    return userMapping != null;
+    USER_MAPPING_MAP.put(username, userMapping);
+
+    final Role role = userMapping.getRole();
+    if (role != null) {
+      roles.add(role);
+      Collections.addAll(roles, role.getImplies());
+    }
+
+    return true;
   }
 
   @Override
   public boolean commit() throws LoginException {
-    userPrincipal = new UserPrincipal(login);
+    userPrincipal = new UserPrincipal(username);
     subject.getPrincipals().add(userPrincipal);
 
     if (roles.size() > 0) {
@@ -109,6 +99,10 @@ public class LoginModuleImpl implements LoginModule {
     return true;
   }
 
+  static UserMapping getAuthenticatedUserMapping(final String username) {
+    return USER_MAPPING_MAP.remove(username);
+  }
+
   @Override
   public boolean abort() throws LoginException {
     return false;
@@ -116,6 +110,8 @@ public class LoginModuleImpl implements LoginModule {
 
   @Override
   public boolean logout() throws LoginException {
-    return false;
+    subject.getPrincipals().remove(userPrincipal);
+    subject.getPrincipals().remove(rolePrincipal);
+    return true;
   }
 }

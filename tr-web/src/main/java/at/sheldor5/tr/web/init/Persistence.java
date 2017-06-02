@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Enumeration;
 import java.util.logging.Logger;
+import javax.persistence.EntityManager;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
@@ -20,26 +21,38 @@ public class Persistence implements ServletContextListener {
 
   private static final Logger LOGGER = Logger.getLogger(Persistence.class.getName());
 
+  private static final String ADMIN = "admin";
+  private static final String TESTUSER = "time-recorder";
+
   @Override
   public void contextInitialized(ServletContextEvent servletContextEvent) {
     EntityManagerHelper.setupGlobalProperties();
+    systemUsers();
+  }
+  private void systemUsers() {
+    final EntityManager entityManager = EntityManagerHelper.getEntityManager();
 
-    // admin user
-    User admin;
-    try (final UserProvider userProvider = new UserProvider()) {
-      admin = userProvider.get("admin");
-      if (admin == null) {
-        admin = new User("admin", BCrypt.hashpw("admin", BCrypt.gensalt()));
-        userProvider.save(admin);
+    final User admin = new User(ADMIN, BCrypt.hashpw(ADMIN, BCrypt.gensalt()), "Admin", "");
+    final User testuser = new User(TESTUSER, BCrypt.hashpw(TESTUSER, BCrypt.gensalt()), "time-recorder", "");
 
-        final UserMappingProvider userMappingProvider = new UserMappingProvider();
-        final UserMapping adminMapping = new UserMapping(admin.getUuid());
-        adminMapping.setRole(Role.ADMIN);
-        userMappingProvider.save(adminMapping);
-      }
-    }
+    user(admin, Role.ADMIN);
+    user(testuser, Role.USER);
+
+    entityManager.close();
   }
 
+  private void user(final User user, final Role role) {
+    final UserProvider userProvider = new UserProvider();
+    final UserMappingProvider userMappingProvider = new UserMappingProvider();
+
+    final User existing = userProvider.get(user.getUsername());
+    if (existing == null) {
+      userProvider.save(user);
+      final UserMapping adminMapping = new UserMapping(user.getUuid());
+      adminMapping.setRole(role);
+      userMappingProvider.save(adminMapping);
+    }
+  }
 
   @Override
   public void contextDestroyed(ServletContextEvent servletContextEvent) {

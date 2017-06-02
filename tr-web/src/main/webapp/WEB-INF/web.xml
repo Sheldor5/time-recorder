@@ -63,7 +63,7 @@
         <auth-method>FORM</auth-method>
         <form-login-config>
             <form-login-page>/login.xhtml</form-login-page>
-            <form-error-page>/home/home.xhtml</form-error-page>
+            <form-error-page>/login.xhtml</form-error-page>
         </form-login-config>
     </login-config>
 
@@ -77,28 +77,28 @@
     </security-role>
 
     <security-constraint>
-        <display-name>Users Security Constraint</display-name>
-        <web-resource-collection>
-            <web-resource-name>/home</web-resource-name>
-            <description/>
-            <url-pattern>/home/*</url-pattern>
-        </web-resource-collection>
-        <auth-constraint>
-            <description/>
-            <role-name>USER</role-name>
-        </auth-constraint>
-    </security-constraint>
-
-    <security-constraint>
         <display-name>Administrator Security Constraint</display-name>
         <web-resource-collection>
-            <web-resource-name>/admin</web-resource-name>
+            <web-resource-name>admin</web-resource-name>
             <description/>
             <url-pattern>/admin/*</url-pattern>
         </web-resource-collection>
         <auth-constraint>
             <description/>
             <role-name>ADMIN</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+    <security-constraint>
+        <display-name>User Security Constraint</display-name>
+        <web-resource-collection>
+            <web-resource-name>user</web-resource-name>
+            <description/>
+            <url-pattern>/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <description/>
+            <role-name>USER</role-name>
         </auth-constraint>
     </security-constraint>
 
