@@ -60,4 +60,20 @@
             <multiplier>1.5</multiplier>
         </effort>
     </rule>
+    <rule>
+        <name>Feiertag</name>
+        <key-date>1900-01-01</key-date>
+        <description>Feiertage werden mit 100% Zuschlag verg&#252;tet, mit Ausnahme des Sonntags</description>
+        <holiday>
+            <multiplier>2.0</multiplier>
+            <days>
+                <day>monday</day>
+                <day>tuesday</day>
+                <day>wednesday</day>
+                <day>thursday</day>
+                <day>friday</day>
+                <day>saturday</day>
+            </days>
+        </holiday>
+    </rule>
 </rules>
