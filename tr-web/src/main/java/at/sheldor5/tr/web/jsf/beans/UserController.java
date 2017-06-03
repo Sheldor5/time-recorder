@@ -12,4 +12,5 @@ import javax.faces.bean.SessionScoped;
 @ManagedBean(name = "user")
 @SessionScoped
 public class UserController extends User {
+
 }

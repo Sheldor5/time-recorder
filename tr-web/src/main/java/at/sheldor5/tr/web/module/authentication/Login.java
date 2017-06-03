@@ -1,7 +1,6 @@
 package at.sheldor5.tr.web.module.authentication;
 
-import at.sheldor5.tr.api.user.UserMapping;
-
+import at.sheldor5.tr.web.jsf.beans.UserMappingController;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -18,10 +17,10 @@ public class Login extends HttpServlet {
     final HttpSession session = request.getSession();
     if (session != null) {
       final String username = request.getUserPrincipal().getName();
-      final UserMapping userMapping = LoginModuleImpl.getAuthenticatedUserMapping(username);
-      if (userMapping != null) {
-        session.setAttribute("user", userMapping.getUser());
-        session.setAttribute("userMapping", userMapping);
+      final UserMappingController userMappingController = LoginModuleImpl.getAuthenticatedUserMapping(username);
+      if (userMappingController != null) {
+        session.setAttribute("user", userMappingController.getUser());
+        session.setAttribute("userMapping", userMappingController);
       }
     }
     response.sendRedirect(request.getContextPath() + "/time.xhtml");

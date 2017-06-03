@@ -4,6 +4,7 @@ import at.sheldor5.tr.api.user.Role;
 import at.sheldor5.tr.api.user.User;
 import at.sheldor5.tr.api.user.UserMapping;
 import at.sheldor5.tr.core.auth.AuthenticationManager;
+import at.sheldor5.tr.web.jsf.beans.UserMappingController;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.*;
@@ -24,7 +25,7 @@ public class LoginModuleImpl implements LoginModule {
 
   private static final AuthenticationManager AUTHENTICATION_MANAGER = AuthenticationManager.getInstance();
 
-  private static final Map<String, UserMapping> USER_MAPPING_MAP = new HashMap<>();
+  private static final Map<String, UserMappingController> USER_MAPPING_MAP = new HashMap<>();
 
   private Subject subject;
   private CallbackHandler callbackHandler;
@@ -33,7 +34,6 @@ public class LoginModuleImpl implements LoginModule {
   private UserPrincipal userPrincipal;
   private RolePrincipal rolePrincipal;
   private String username;
-  private UserMapping userMapping;
   private List<Role> roles = new ArrayList<>();
 
   public LoginModuleImpl() {
@@ -67,19 +67,20 @@ public class LoginModuleImpl implements LoginModule {
     final String password = String.valueOf(((PasswordCallback) callbacks[1]).getPassword());
 
     // Perform credential realization and credential authentication
-    userMapping = AUTHENTICATION_MANAGER.getUserMapping(username, password);
+    final UserMapping userMapping = AUTHENTICATION_MANAGER.getUserMapping(username, password);
 
     if (userMapping == null) {
       throw new LoginException("Authentication failed");
     }
-
-    USER_MAPPING_MAP.put(username, userMapping);
 
     final Role role = userMapping.getRole();
     if (role != null) {
       roles.add(role);
       Collections.addAll(roles, role.getImplies());
     }
+
+    final UserMappingController userMappingController = new UserMappingController(userMapping);
+    USER_MAPPING_MAP.put(username, userMappingController);
 
     return true;
   }
@@ -99,7 +100,7 @@ public class LoginModuleImpl implements LoginModule {
     return true;
   }
 
-  static UserMapping getAuthenticatedUserMapping(final String username) {
+  static UserMappingController getAuthenticatedUserMapping(final String username) {
     return USER_MAPPING_MAP.remove(username);
   }
 

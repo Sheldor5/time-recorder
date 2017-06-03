@@ -102,4 +102,13 @@
         </auth-constraint>
     </security-constraint>
 
+    <!-- Static Web Resources -->
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Resources</web-resource-name>
+            <url-pattern>/javax.faces.resource/*</url-pattern>
+        </web-resource-collection>
+        <!-- No Auth Constraint! -->
+    </security-constraint>
+
 </web-app>
