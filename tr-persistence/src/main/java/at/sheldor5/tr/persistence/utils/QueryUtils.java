@@ -1,8 +1,5 @@
 package at.sheldor5.tr.persistence.utils;
 
-import org.hibernate.Session;
-import org.hibernate.query.Query;
-
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -11,7 +8,6 @@ import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.List;
 
 /**
  * TODO.
@@ -88,6 +84,27 @@ public class QueryUtils {
     TypedQuery<E> query = entityManager.createQuery(criteriaQuery);
     query.setParameter(parameter1, field1Value);
     query.setParameter(parameter2, field2Value);
+
+    return query;
+  }
+
+  public static  <E, T> TypedQuery<Long> count(final EntityManager entityManager, Class<E> entityClass, String fieldName, Class<T> fieldType, T fieldValue) {
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+
+    // SELECT COUNT(Object) FROM ObjectTable
+    Root<E> entity = criteriaQuery.from(entityClass);
+    criteriaQuery.select(criteriaBuilder.count(entity));
+
+    // WHERE fieldName = fieldValue
+    ParameterExpression<T> parameter = criteriaBuilder.parameter(fieldType);
+    Path path = entity.get(fieldName);
+    Predicate predicate = criteriaBuilder.equal(path, parameter);
+
+    criteriaQuery.where(predicate);
+
+    TypedQuery<Long> query = entityManager.createQuery(criteriaQuery);
+    query.setParameter(parameter, fieldValue);
 
     return query;
   }

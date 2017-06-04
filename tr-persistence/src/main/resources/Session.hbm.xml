@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="at.sheldor5.tr.api.time">
+    <class name="Session" table="SESSIONS">
+        <id name="id" type="int" column="PK_SESSION_ID">
+            <generator class="native"/>
+        </id>
+        <many-to-one name="userMapping" column="FK_USER_MAPPING_ID" class="at.sheldor5.tr.api.user.UserMapping"/>
+        <many-to-one name="project" column="FK_PROJECT_ID" class="at.sheldor5.tr.api.project.Project" />
+        <property name="date" type="java.time.LocalDate" column="DATE" index="I_DATE"/>
+        <property name="start" type="java.time.LocalTime" column="START"/>
+        <property name="end" type="java.time.LocalTime" column="END"/>
+    </class>
+</hibernate-mapping>

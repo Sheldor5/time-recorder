@@ -1,14 +1,43 @@
-<!DOCTYPE web-app PUBLIC
- "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
- "http://java.sun.com/dtd/web-app_2_3.dtd" >
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         version="3.1">
 
-<web-app>
   <display-name>Archetype Created Web Application</display-name>
-    <description>
-        This is a simple web application with a source code organization
-        based on the recommendations of the Application Developer's Guide.
-    </description>
 
+    <description>?</description>
+
+    <welcome-file-list>
+        <welcome-file>index.xhtml</welcome-file>
+    </welcome-file-list>
+
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>/WEB-INF/applicationContext.xml</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>javax.faces.DEFAULT_SUFFIX</param-name>
+        <param-value>.xhtml</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>javax.faces.FACELETS_VIEW_MAPPINGS</param-name>
+        <param-value>*.xhtml</param-value>
+    </context-param>
+
+    <servlet>
+        <servlet-name>faces</servlet-name>
+        <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>faces</servlet-name>
+        <url-pattern>*.xhtml</url-pattern>
+    </servlet-mapping>
+
+    <!-- POST -->
     <listener>
         <listener-class>se.jiderhamn.classloader.leak.prevention.ClassLoaderLeakPreventionContainerInitializer</listener-class>
     </listener>
@@ -16,7 +45,7 @@
         <listener-class>at.sheldor5.tr.web.init.Configuration</listener-class>
     </listener>
     <listener>
-        <listener-class>at.sheldor5.tr.web.init.ConnectionPool</listener-class>
+        <listener-class>at.sheldor5.tr.web.init.Persistence</listener-class>
     </listener>
     <listener>
         <listener-class>at.sheldor5.tr.web.init.Plugins</listener-class>
@@ -24,5 +53,62 @@
     <listener>
         <listener-class>at.sheldor5.tr.web.init.Rules</listener-class>
     </listener>
+
+    <!-- Security -->
+    <listener>
+        <listener-class>at.sheldor5.tr.web.init.Security</listener-class>
+    </listener>
+
+    <login-config>
+        <auth-method>FORM</auth-method>
+        <form-login-config>
+            <form-login-page>/login.xhtml</form-login-page>
+            <form-error-page>/login.xhtml</form-error-page>
+        </form-login-config>
+    </login-config>
+
+    <security-role>
+        <description/>
+        <role-name>USER</role-name>
+    </security-role>
+    <security-role>
+        <description/>
+        <role-name>ADMIN</role-name>
+    </security-role>
+
+    <security-constraint>
+        <display-name>Administrator Security Constraint</display-name>
+        <web-resource-collection>
+            <web-resource-name>admin</web-resource-name>
+            <description/>
+            <url-pattern>/admin/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <description/>
+            <role-name>ADMIN</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+    <security-constraint>
+        <display-name>User Security Constraint</display-name>
+        <web-resource-collection>
+            <web-resource-name>user</web-resource-name>
+            <description/>
+            <url-pattern>/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <description/>
+            <role-name>USER</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+    <!-- Static Web Resources -->
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Resources</web-resource-name>
+            <url-pattern>/javax.faces.resource/*</url-pattern>
+        </web-resource-collection>
+        <!-- No Auth Constraint! -->
+    </security-constraint>
 
 </web-app>

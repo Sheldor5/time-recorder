@@ -1,8 +1,6 @@
 package utils;
 
 import at.sheldor5.tr.api.time.Day;
-import at.sheldor5.tr.api.time.Record;
-import at.sheldor5.tr.api.time.RecordType;
 import at.sheldor5.tr.api.time.Session;
 import at.sheldor5.tr.api.utils.GlobalConfiguration;
 
@@ -37,10 +35,10 @@ public class TestUtils {
    * @param date
    * @return
    */
-  public static Session getDefaultSessionAnteMeridiem(final LocalDate date) {
-    final Record start = new Record(date, LocalTime.of(8, 0), RecordType.CHECKIN);
-    final Record end = new Record(date, LocalTime.of(12, 0), RecordType.CHECKOUT);
-    return new Session(start, end);
+  public static Session getDefaultSessionAnteMeridian(final LocalDate date) {
+    final LocalTime startTime = LocalTime.of(8, 0);
+    final LocalTime endTime = LocalTime.of(12, 0);
+    return new Session(date, startTime, endTime);
   }
 
   /**
@@ -49,10 +47,10 @@ public class TestUtils {
    * @param date
    * @return
    */
-  public static Session getDefaultSessionPostMeridiem(final LocalDate date) {
-    final Record start = new Record(date, LocalTime.of(12, 30), RecordType.CHECKIN);
-    final Record end = new Record(date, LocalTime.of(16, 30), RecordType.CHECKOUT);
-    return new Session(start, end);
+  public static Session getDefaultSessionPostMeridian(final LocalDate date) {
+    final LocalTime startTime = LocalTime.of(12, 30);
+    final LocalTime endTime = LocalTime.of(16, 30);
+    return new Session(date, startTime, endTime);
   }
 
   /**
@@ -74,8 +72,8 @@ public class TestUtils {
   public static Day getDefaultDayOfWeek(final DayOfWeek dayOfWeek) {
     final LocalDate date = firstMondayOf2017.plusDays(dayOfWeek.getValue() - 1);
     final Day day = new Day(date);
-    day.addItem(getDefaultSessionAnteMeridiem(date));
-    day.addItem(getDefaultSessionPostMeridiem(date));
+    day.addItem(getDefaultSessionAnteMeridian(date));
+    day.addItem(getDefaultSessionPostMeridian(date));
     return day;
   }
 }

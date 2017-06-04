@@ -6,10 +6,11 @@
         version="2.1">
 
     <persistence-unit name="time-recorder">
-        <description>Persistence unit for Hibernate User Guide</description>
+        <description>Persistence unit for Hibernate</description>
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <mapping-file>UserMapping.hbm.xml</mapping-file>
-        <mapping-file>Record.hbm.xml</mapping-file>
+        <mapping-file>Project.hbm.xml</mapping-file>
+        <mapping-file>Session.hbm.xml</mapping-file>
         <mapping-file>Schedule.hbm.xml</mapping-file>
         <mapping-file>User.hbm.xml</mapping-file>
         <properties>
@@ -19,6 +20,7 @@
             <property name="javax.persistence.jdbc.password" value="sa"/>
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.hbm2ddl.auto" value="update"/>
+            <property name="current_session_context_class" value="thread" />
         </properties>
     </persistence-unit>
 </persistence>

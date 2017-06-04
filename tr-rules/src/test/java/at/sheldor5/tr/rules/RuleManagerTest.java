@@ -6,8 +6,6 @@ import java.time.LocalTime;
 import java.util.List;
 
 import at.sheldor5.tr.api.time.Day;
-import at.sheldor5.tr.api.time.Record;
-import at.sheldor5.tr.api.time.RecordType;
 import at.sheldor5.tr.api.time.Session;
 import org.junit.Assert;
 import org.junit.Before;
@@ -28,32 +26,32 @@ public class RuleManagerTest {
   public void test_apply_on_day() {
     final LocalDate monday = LocalDate.of(2017, 1, 2);
     final Day day = new Day(monday);
-    Record begin;
-    Record end;
+    LocalTime begin;
+    LocalTime end;
     Session session;
 
-    begin = new Record(monday, LocalTime.of(3, 0), RecordType.CHECKIN);
-    end = new Record(monday, LocalTime.of(4, 0), RecordType.CHECKOUT);
+    begin = LocalTime.of(3, 0);
+    end = LocalTime.of(4, 0);
     session = new Session(monday, begin, end);
     day.addItem(session);
 
-    begin = new Record(monday, LocalTime.of(4, 30), RecordType.CHECKIN);
-    end = new Record(monday, LocalTime.of(8, 0), RecordType.CHECKOUT);
+    begin = LocalTime.of(4, 30);
+    end = LocalTime.of(8, 0);
     session = new Session(monday, begin, end);
     day.addItem(session);
 
-    begin = new Record(monday, LocalTime.of(9, 0), RecordType.CHECKIN);
-    end = new Record(monday, LocalTime.of(16, 0), RecordType.CHECKOUT);
+    begin = LocalTime.of(9, 0);
+    end = LocalTime.of(16, 0);
     session = new Session(monday, begin, end);
     day.addItem(session);
 
-    begin = new Record(monday, LocalTime.of(17, 0), RecordType.CHECKIN);
-    end = new Record(monday, LocalTime.of(19, 1), RecordType.CHECKOUT);
+    begin = LocalTime.of(17, 0);
+    end = LocalTime.of(19, 1);
     session = new Session(monday, begin, end);
     day.addItem(session);
 
-    begin = new Record(monday, LocalTime.of(19, 16), RecordType.CHECKIN);
-    end = new Record(monday, LocalTime.of(22, 0), RecordType.CHECKOUT);
+    begin = LocalTime.of(19, 16);
+    end = LocalTime.of(22, 0);
     session = new Session(monday, begin, end);
     day.addItem(session);
 

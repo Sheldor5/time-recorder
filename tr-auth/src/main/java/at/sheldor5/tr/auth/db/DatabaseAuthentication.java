@@ -6,11 +6,13 @@ import static at.sheldor5.tr.persistence.EntityManagerHelper.*;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
+
+import at.sheldor5.tr.persistence.provider.UserProvider;
 import org.mindrot.jbcrypt.BCrypt;
 
 public class DatabaseAuthentication implements AuthenticationPlugin {
 
-  private static final String NAME = "tr-db";
+  public static final String NAME = "tr-db";
 
   @Override
   public String getName() {
@@ -28,39 +30,24 @@ public class DatabaseAuthentication implements AuthenticationPlugin {
       return;
     }
 
-    EntityManager entityManager = getEntityManager();
-    beginTransaction();
-
-    try {
-      entityManager.persist(user);
-      commit();
-    } catch (final EntityExistsException eee) {
-      try {
-        rollback();
-        beginTransaction();
-        entityManager.merge(user);
-        commit();
-      } catch (final Exception e) {
-        rollback();
-        eee.printStackTrace();
-        e.printStackTrace();
-      }
-    } catch (final Exception e) {
-      rollback();
+    try (final UserProvider userProvider = new UserProvider()) {
+      userProvider.save(user);
+    } catch (Exception e) {
       e.printStackTrace();
     }
-
-    closeEntityManager();
   }
 
   @Override
   public User getUser(final String username, final String plainTextPassword) {
-    EntityManager entityManager = getEntityManager();
-    beginTransaction();
+    System.out.println(username);
 
-    User user = entityManager.find(User.class, username);
+    User user = null;
 
-    commit();
+    try (final UserProvider userProvider = new UserProvider()) {
+      user = userProvider.get(username);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
 
     if (user == null || !BCrypt.checkpw(plainTextPassword, user.getPassword())) {
       return null;

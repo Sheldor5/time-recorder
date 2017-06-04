@@ -4,10 +4,12 @@
         "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping package="at.sheldor5.tr.api.user">
-    <class name="User" table="USER">
-        <id name="username" type="string" column="PK_USER" length="32"/>
+    <class name="User" table="USERS">
+        <id name="uuid" type="java.util.UUID" column="PK_USER_ID">
+            <generator class="uuid2" />
+        </id>
+        <property name="username" type="string" column="USERNAME" length="32"/>
         <property name="password" type="string" column="PASSWORD" length="60"/>
-        <property name="uuid" type="java.util.UUID" column="UUID" unique="true"/>
         <property name="forename" type="string" column="FORENAME"/>
         <property name="surname" type="string" column="SURNAME"/>
     </class>

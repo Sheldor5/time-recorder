@@ -1,12 +1,13 @@
 package at.sheldor5.tr.api.time;
 
+import at.sheldor5.tr.api.project.Project;
+import at.sheldor5.tr.api.user.User;
+import at.sheldor5.tr.api.user.UserMapping;
 import at.sheldor5.tr.api.utils.GlobalConfiguration;
 import at.sheldor5.tr.api.utils.TimeUtils;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * This class represents a period in the time line.
@@ -17,157 +18,118 @@ import java.util.List;
  * @author Michael Palata
  * @since 1.0.0
  */
-public class Session extends Container<Record> {
+public class Session implements Comparable<Session> {
 
-  protected Record start;
-  protected Record end;
+  protected int id;
+  protected Project project;
+  protected UserMapping userMapping;
+  protected LocalDate date;
+  protected LocalTime start;
+  protected LocalTime end;
+
   protected double multiplier = 1.0D;
 
-  /**
-   * Default Constructor.
-   *
-   * @param date The date on which this session took place.
-   */
-  public Session(final LocalDate date) {
-    super(date);
+  public Session() {
+
   }
 
-  /**
-   * Default Constructor.
-   *
-   * @param date The date on which this session took place.
-   */
-  public Session(final Record start, final Record end) {
-    super(neverNull(start));
-    setStart(start);
-    setEnd(end);
+  public Session(final LocalDate date, final LocalTime start, final LocalTime end) {
+    this.date = date;
+    this.start = start;
+    this.end = end;
   }
 
-  /**
-   * Default Constructor.
-   *
-   * @param date The date on which this session took place.
-   */
-  public Session(final Record start, final Record end, double multiplier) {
-    super(neverNull(start));
-    setStart(start);
-    setEnd(end);
-    setMultiplier(multiplier);
+  public int getId() {
+    return id;
   }
 
-  /**
-   * Constructor for given records.
-   *
-   * @param start The record on which this session starts.
-   * @param end   The record on which this session ends.
-   * @throws IllegalArgumentException If this session can not be built based on the given records.
-   */
-  public Session(final LocalDate date, final Record start, final Record end) throws IllegalArgumentException {
-    this(date, start, end, 1.0D);
+  public void setId(int id) {
+    this.id = id;
   }
 
-  /**
-   * Constructor for given records and multiplier.
-   *
-   * @param start      The record on which this session starts.
-   * @param end        The record on which this session ends.
-   * @param multiplier The multiplier to value this sessions duration.
-   * @throws IllegalArgumentException If this session can not be built based on the given records.
-   */
-  public Session(final LocalDate date, final Record start, final Record end, double multiplier)
-          throws IllegalArgumentException {
-    super(date);
-    if (end == null) {
-      throw new NullPointerException("Session has no start or end: null");
-    }
-    if (!start.date.equals(end.date)) {
-      throw new IllegalArgumentException("Session starts and ends on different days");
-    }
-    if (start.type == RecordType.CHECKOUT || end.type == RecordType.CHECKIN) {
-      throw new IllegalArgumentException("Session starts with CHECKOUT or ends with CHECKIN");
-    }
+  public Project getProject() {
+    return project;
+  }
 
-    setStart(start);
-    setEnd(end);
+  public void setProject(Project project) {
+    this.project = project;
+  }
 
-    long duration = start.time.until(end.time, GlobalConfiguration.MEASURE_UNIT);
+  public UserMapping getUserMapping() {
+    return userMapping;
+  }
 
-    if (duration == 0 || start.time.equals(end.time)) {
-      throw new IllegalArgumentException("Session starts and ends at the same time");
-    }
+  public void setUserMapping(UserMapping userMapping) {
+    this.userMapping = userMapping;
+  }
 
-    setMultiplier(multiplier);
+  public LocalDate getDate() {
+    return date;
+  }
+
+  public void setDate(LocalDate date) {
+    this.date = date;
+  }
+
+  public LocalTime getStart() {
+    return start;
+  }
+
+  public void setStart(LocalTime start) {
+    this.start = start;
+  }
+
+  public LocalTime getEnd() {
+    return end;
+  }
+
+  public void setEnd(LocalTime end) {
+    this.end = end;
   }
 
   public double getMultiplier() {
     return multiplier;
   }
 
-  /**
-   * Setter for the multiplier.
-   *
-   * @param multiplier The multiplier to value this sessions duration.
-   */
   public void setMultiplier(double multiplier) {
     this.multiplier = multiplier;
   }
 
   /**
-   * Getter for the multiplier.
+   * Get the duration between the start and end time of this session in the configured time unit.
    *
-   * @return The multiplier of this session.
+   * @return The duration of this session.
    */
-  public Record getStart() {
-    return start;
+  public long getSummary() {
+    if (start == null || end == null) {
+      return -1;
+    }
+    return start.until(end, GlobalConfiguration.MEASURE_UNIT);
   }
 
   /**
-   * Setter for the start time.
+   * Get the valued duration between the start and end time of this session in the configured time unit.
    *
-   * @param record The record on which this session starts.
-   * @throws IllegalArgumentException If the start time is after this session's end time.
+   * @return The valued duration of this session.
    */
-  public void setStart(final Record record) {
-    if (record == null || record.type == null || record.type == RecordType.CHECKOUT) {
-      throw new IllegalArgumentException("Invalid record");
-    }
-    if (date != null && !date.equals(record.date)) {
-      throw new IllegalArgumentException("Session starts on another day");
-    }
-    if (end == null || end.time.isBefore(record.time)) {
-      start = record;
-    } else {
-      throw new IllegalArgumentException("Session starts after its end");
-    }
+  public long getValuedSummary() {
+    return (long) (getSummary() * multiplier);
   }
 
   /**
-   * Getter for the start time.
+   * Compare this session to another object.
    *
-   * @return The time on which this session ends.
+   * @param other The session to compare.
+   * @return Negative if this session starts before the other session or the other session is null,
+   *         positive if this session starts after the other session, zero if
+   *         the sessions start at the same time.
    */
-  public Record getEnd() {
-    return end;
-  }
-
-  /**
-   * Setter for the end time.
-   *
-   * @param record The time on which this session ends.
-   * @throws IllegalArgumentException If the end time is before this session's start time.
-   */
-  public void setEnd(final Record record) {
-    if (record == null || record.type == null || record.type == RecordType.CHECKIN) {
-      throw new IllegalArgumentException("Invalid record");
+  @Override
+  public final int compareTo(final Session other) {
+    if (other == null || start == null) {
+      return -1;
     }
-    if (date != null && !date.equals(record.date)) {
-      throw new IllegalArgumentException("Session starts on another day");
-    }
-    if (start == null || start.time.isBefore(record.time)) {
-      end = record;
-    } else {
-      throw new IllegalArgumentException("Session ends before its start");
-    }
+    return  start.compareTo(other.start);
   }
 
   /**
@@ -178,66 +140,24 @@ public class Session extends Container<Record> {
    *         before this session's end time, false otherwise.
    */
   public boolean contains(final LocalTime time) {
-    return time != null && time.isAfter(start.time) && time.isBefore(end.time);
+    return time != null && time.isAfter(start) && time.isBefore(end);
   }
 
-  /**
-   * Split this session by the given time point.
-   * This will update this session to end at the given time and will return
-   * a new session starting at the given time and ending at this session's end.
-   *
-   * @param time The time point at which this session should be split.
-   * @return The following session which results at the split, or null if
-   *         the given time point is null or this session does not contain
-   *         ({@link Session#contains(LocalTime)}) the given time point.
-   */
   public Session split(final LocalTime time) {
     if (time == null || !contains(time)) {
       return null;
     }
     // create session for the second part of the split
-    final Record otherStart = new Record(date, time, RecordType.CHECKIN);
-    final Session session = new Session(date);
-    session.start = otherStart;
+    final Session session = new Session();
+    session.date = date;
+    session.start = time;
     session.end = end;
     session.multiplier = multiplier;
 
-    // update this object
-    final Record thisEnd = new Record(date, time, RecordType.CHECKOUT);
-    end = thisEnd;
+    this.end = time;
 
     // return following session
     return session;
-  }
-
-  /**
-   * Does nothing except throwing an {@link UnsupportedOperationException}.
-   * Also see {@link Container#addItem(Comparable)}.
-   *
-   * @param record Null.
-   */
-  @Override
-  public final void addItem(final Record record) {
-    throw new UnsupportedOperationException("Adding records to a session is not permitted, "
-            + "use the constructor instead to initialize a session");
-  }
-
-  /**
-   * See {@link Container#validateItem(Comparable)}.
-   */
-  @Override
-  protected boolean validateItem(final Record item) {
-    return true;
-  }
-
-  /**
-   * See {@link Container#getItems()}.
-   * Returns a list only containing 2 Records representing this sessions start and end.
-   * @return
-   */
-  @Override
-  public final List<Record> getItems() {
-    return Arrays.asList(start, end);
   }
 
   /**
@@ -248,71 +168,30 @@ public class Session extends Container<Record> {
   @Override
   public String toString() {
     return String.format("%s: %s - %s = %s (%d%% = %s)",
-            date,
-            start.time,
-            end.time,
-            TimeUtils.getHumanReadableSummary(getSummary()),
-            (long) (multiplier * 100),
-            TimeUtils.getHumanReadableSummary(getValuedSummary()));
+        date,
+        start,
+        end,
+        TimeUtils.getHumanReadableSummary(getSummary()),
+        (long) (multiplier * 100),
+        TimeUtils.getHumanReadableSummary(getValuedSummary()));
   }
-
   /**
-   * Get the duration between the start and end time of this session in the configured time unit.
+   * Indicates whether some other object is "equal to" this one.
    *
-   * @return The duration of this session.
+   * @param obj the object to compare to.
+   * @return    true if this record and the {@code other} record
+   *            have equal date, time and type, false otherwise.
    */
   @Override
-  public long getSummary() {
-    if (start == null || start.time == null || end == null || end.time == null) {
-      return -1;
+  public boolean equals(final Object obj) {
+    if (super.equals(obj)) {
+      return true;
     }
-    return start.time.until(end.time, GlobalConfiguration.MEASURE_UNIT);
+    if (obj == null || !(obj instanceof Session)) {
+      return false;
+    }
+    final Session session = (Session) obj;
+    return date.equals(session.date) && start.equals(session.start) && end.equals(session.end);
   }
 
-  /**
-   * Get the valued duration between the start and end time of this session in the configured time unit.
-   *
-   * @return The valued duration of this session.
-   */
-  @Override
-  public long getValuedSummary() {
-    if (start == null || start.time == null || end == null || end.time == null) {
-      return -1;
-    }
-    return (long) (multiplier * start.time.until(end.time, GlobalConfiguration.MEASURE_UNIT));
-  }
-
-  /**
-   * Compare this session to another object.
-   *
-   * @param other The container to compare.
-   * @return Negative if this session starts before the other session or the other session is null,
-   *         positive if this session starts after the other session, zero if
-   *         the sessions start at the same time.
-   */
-  @Override
-  public final int compareTo(final Container other) {
-    if (other == null) {
-      return -1;
-    }
-    if (other instanceof Session) {
-      return this.start.compareTo(((Session) other).start);
-    } else {
-      return super.compareTo(other);
-    }
-  }
-
-  /**
-   * Ensure that a record is not null, needed for super(record.date).
-   *
-   * @param record The record to test.
-   * @return The date of the given record.
-   * @throws NullPointerException If the record is null.
-   */
-  private static LocalDate neverNull(final Record record) {
-    if (record == null) {
-      throw new NullPointerException("Session has no start or end: null");
-    }
-    return record.date;
-  }
 }
