@@ -14,6 +14,10 @@
                 <h:commandButton value="suchen" action="#{projectSearch.search}"/>
             </h:form>
             <br/>
+            <form name="newProject" method="get" action="#{request.contextPath}/addProject">
+                <input type="text" name="name" placeholder="Projektname"/>
+                <input type="submit" value="Hinzufügen"/>
+            </form>
             <c:if test="#{projectSearch.hasProjects()}">
                 <h:dataTable value="#{projectSearch.projects}" var="project">
                     <h:column>
@@ -23,6 +27,13 @@
                     <h:column>
                         <f:facet name="header">Name</f:facet>
                         <h:outputLabel value="#{project.name}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Aktion</f:facet>
+                        <form name="removeProject" method="get" action="#{request.contextPath}/removeProject">
+                            <input type="hidden" name="id" value="#{project.id}"/>
+                            <input type="submit" value="Löschen"/>
+                        </form>
                     </h:column>
                 </h:dataTable>
             </c:if>
