@@ -10,6 +10,8 @@
             <h:outputLabel value="Hello, #{user.forename}"/>
             <h:outputLabel value="Superuser abilities activated!" rendered="#{userMapping.admin}"/>
             <h:outputLink value="#{request.contextPath}/logout">Logout</h:outputLink>
+            <h:outputLink value="#{request.contextPath}/logout">Logout</h:outputLink>
+            <h:link outcome="projects" value="Projektsuche"/>
         </ui:define>
 
     </ui:composition>
