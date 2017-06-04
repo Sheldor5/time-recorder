@@ -2,7 +2,9 @@ package at.sheldor5.tr.web.jsf.beans;
 
 import at.sheldor5.tr.api.project.Project;
 
-import javax.faces.bean.ManagedBean;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Named;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,8 +12,9 @@ import java.util.List;
  * @author Michael Palata
  * @date 04.06.2017
  */
-@ManagedBean(name = "projectSearch")
-public class ProjectSearchController {
+@Named(value = "projectSearch")
+@RequestScoped
+public class ProjectSearchController implements Serializable {
 
   private String name;
   private List<Project> projects = new ArrayList<>();

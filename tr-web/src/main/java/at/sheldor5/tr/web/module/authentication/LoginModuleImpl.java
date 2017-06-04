@@ -1,10 +1,8 @@
 package at.sheldor5.tr.web.module.authentication;
 
 import at.sheldor5.tr.api.user.Role;
-import at.sheldor5.tr.api.user.User;
 import at.sheldor5.tr.api.user.UserMapping;
 import at.sheldor5.tr.core.auth.AuthenticationManager;
-import at.sheldor5.tr.web.jsf.beans.UserMappingController;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.*;
@@ -12,8 +10,6 @@ import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 import java.util.*;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author Michael Palata
@@ -25,7 +21,7 @@ public class LoginModuleImpl implements LoginModule {
 
   private static final AuthenticationManager AUTHENTICATION_MANAGER = AuthenticationManager.getInstance();
 
-  private static final Map<String, UserMappingController> USER_MAPPING_MAP = new HashMap<>();
+  private static final Map<String, UserMapping> USER_MAPPING_MAP = new HashMap<>();
 
   private Subject subject;
   private CallbackHandler callbackHandler;
@@ -79,8 +75,7 @@ public class LoginModuleImpl implements LoginModule {
       Collections.addAll(roles, role.getImplies());
     }
 
-    final UserMappingController userMappingController = new UserMappingController(userMapping);
-    USER_MAPPING_MAP.put(username, userMappingController);
+    USER_MAPPING_MAP.put(username, userMapping);
 
     return true;
   }
@@ -100,7 +95,7 @@ public class LoginModuleImpl implements LoginModule {
     return true;
   }
 
-  static UserMappingController getAuthenticatedUserMapping(final String username) {
+  public static UserMapping getAuthenticatedUserMapping(final String username) {
     return USER_MAPPING_MAP.remove(username);
   }
 

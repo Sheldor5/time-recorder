@@ -11,17 +11,34 @@
     <title>Time Recorder</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 
-    <h:outputStylesheet library="skeleton" name="normalize.css"/>
-    <h:outputStylesheet library="skeleton" name="skeleton.css"/>
+    <h:outputScript library="js" name="jquery-3.2.1.min.js"/>
+    <h:outputStylesheet library="css" name="bootstrap.min.css"/>
+    <h:outputStylesheet library="css" name="bootstrap-theme.min.css"/>
+    <h:outputScript library="js" name="bootstrap.min.js"/>
     <h:outputStylesheet library="css" name="time-recorder.css"/>
 </h:head>
 <h:body>
-    <ui:insert name="content">
 
-        <!-- # # # # # # # # # # # # # # # # # -->
-        <!-- # # # # # C O N T E N T # # # # # -->
-        <!-- # # # # # # # # # # # # # # # # # -->
+    <div class="row">
+        <div class="col-md-3"/>
+        <div class="col-md-6">
+            <ul class="nav nav-tabs">
+                <li class="#{request.requestURI.endsWith('/') || request.requestURI.endsWith('index.xhtml') ? 'active' : ''}"><h:link value="Heute" outcome="index"/></li>
+                <li class="#{request.requestURI.endsWith('account.xhtml') ? 'active' : ''}"><h:link value="Gleitzeitkonto" outcome="account"/></li>
+                <li class="#{request.requestURI.endsWith('export.xhtml') ? 'active' : ''}"><h:link value="Report" outcome="export"/></li>
+                <li class="#{request.requestURI.endsWith('projects.xhtml') ? 'active' : ''}"><h:link value="Projectsuche" outcome="projects"/></li>
+                <li><h:link value="Logout" outcome="logout"/></li>
+            </ul>
+        </div>
+        <div class="col-md-3"/>
+    </div>
 
-    </ui:insert>
+    <div class="row">
+        <div class="col-md-3"/>
+        <div class="col-md-6">
+            <ui:insert name="content"/>
+        </div>
+        <div class="col-md-3"/>
+    </div>
 </h:body>
 </html>
