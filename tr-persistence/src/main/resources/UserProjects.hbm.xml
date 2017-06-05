@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="at.sheldor5.tr.persistence.mappings">
+    <class name="UserProjectMapping" table="USER_PROJECTS">
+        <id name="id" type="int" column="PK_USER_PROJECT_ID">
+            <generator class="native"/>
+        </id>
+        <many-to-one name="userMapping" column="FK_USER_MAPPING_ID" class="at.sheldor5.tr.api.user.UserMapping"/>
+        <many-to-one name="project" column="FK_PROJECT_ID" class="at.sheldor5.tr.api.project.Project" lazy="false"/>
+    </class>
+</hibernate-mapping>

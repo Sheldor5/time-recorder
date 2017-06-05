@@ -1,12 +1,16 @@
 package at.sheldor5.tr.persistence.provider;
 
 import at.sheldor5.tr.api.project.Project;
+import at.sheldor5.tr.api.user.UserMapping;
 import at.sheldor5.tr.persistence.EntityManagerHelper;
 import at.sheldor5.tr.persistence.identifier.AbstractIdentifier;
 import at.sheldor5.tr.persistence.utils.QueryUtils;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.persistence.TypedQuery;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProjectProvider extends GenericProvider<Project, Integer> {
 
@@ -23,33 +27,34 @@ public class ProjectProvider extends GenericProvider<Project, Integer> {
       };
 
   public ProjectProvider() {
-    this(EntityManagerHelper.getEntityManager());
+    this(EntityManagerHelper.createEntityManager());
   }
 
   public ProjectProvider(final EntityManager entityManager) {
     super(entityManager, IDENTIFIER);
   }
 
-  public Project get(final String name) {
-    if (name == null || name.isEmpty()) {
-      return null;
+  public List<Project> get(final String namePart) {
+    if (namePart == null || namePart.isEmpty()) {
+      return new ArrayList<>();
     }
 
-    EntityManagerHelper.beginTransaction();
+    List<Project> projects = new ArrayList<>();
 
-    Project user = null;
+    TypedQuery<Project> findByName = QueryUtils.findLikeField(entityManager,
+        Project.class, "name", namePart);
 
-    TypedQuery<Project> findByName = QueryUtils.findByField(entityManager,
-        Project.class, "name", String.class, name);
+    EntityTransaction transaction = entityManager.getTransaction();
+    transaction.begin();
 
     try {
-      user = findByName.getSingleResult();
-      EntityManagerHelper.commit();
+      projects = findByName.getResultList();
+      transaction.commit();
     } catch (final Exception e) {
-      EntityManagerHelper.rollback();
+      transaction.rollback();
       e.printStackTrace();
     }
 
-    return user;
+    return projects;
   }
 }

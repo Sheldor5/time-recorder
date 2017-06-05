@@ -6,6 +6,7 @@ import at.sheldor5.tr.persistence.identifier.AbstractIdentifier;
 import at.sheldor5.tr.persistence.utils.QueryUtils;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.UUID;
@@ -25,7 +26,7 @@ public class UserProvider extends GenericProvider<User, UUID> {
       };
 
   public UserProvider() {
-    this(EntityManagerHelper.getEntityManager());
+    this(EntityManagerHelper.createEntityManager());
   }
 
   public UserProvider(final EntityManager entityManager) {
@@ -37,7 +38,8 @@ public class UserProvider extends GenericProvider<User, UUID> {
       return null;
     }
 
-    EntityManagerHelper.beginTransaction();
+    EntityTransaction transaction = entityManager.getTransaction();
+    transaction.begin();
 
     User user = null;
 
@@ -49,9 +51,9 @@ public class UserProvider extends GenericProvider<User, UUID> {
       if (users.size() == 1) {
         user = users.get(0);
       }
-      EntityManagerHelper.commit();
+      transaction.commit();
     } catch (final Exception e) {
-      EntityManagerHelper.rollback();
+      transaction.rollback();
       e.printStackTrace();
     }
 

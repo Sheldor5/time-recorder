@@ -7,6 +7,7 @@ import at.sheldor5.tr.persistence.identifier.AbstractIdentifier;
 import at.sheldor5.tr.persistence.utils.QueryUtils;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.persistence.TypedQuery;
 import java.util.UUID;
 
@@ -25,7 +26,7 @@ public class UserMappingProvider extends GenericProvider<UserMapping, Integer> {
       };
 
   public UserMappingProvider() {
-    this(EntityManagerHelper.getEntityManager());
+    this(EntityManagerHelper.createEntityManager());
   }
 
   public UserMappingProvider(final EntityManager entityManager) {
@@ -36,7 +37,6 @@ public class UserMappingProvider extends GenericProvider<UserMapping, Integer> {
   public boolean exists(UserMapping userMapping) {
     long count = count("uuid", UUID.class, userMapping.getUuid());
     if (count != 0) {
-      EntityManagerHelper.rollback();
       throw new DuplicationException(userMapping.getUuid());
     }
     return false;
@@ -47,7 +47,8 @@ public class UserMappingProvider extends GenericProvider<UserMapping, Integer> {
       return null;
     }
 
-    EntityManagerHelper.beginTransaction();
+    EntityTransaction transaction = entityManager.getTransaction();
+    transaction.begin();
 
     UserMapping userMapping = null;
 
@@ -56,9 +57,9 @@ public class UserMappingProvider extends GenericProvider<UserMapping, Integer> {
 
     try {
       userMapping = findByUuid.getSingleResult();
-      EntityManagerHelper.commit();
+      transaction.commit();
     } catch (final Exception e) {
-      EntityManagerHelper.rollback();
+      transaction.rollback();
       e.printStackTrace();
     }
 

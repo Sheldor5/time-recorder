@@ -3,18 +3,13 @@ package at.sheldor5.tr.web.init;
 import at.sheldor5.tr.api.plugins.AuthenticationPlugin;
 import at.sheldor5.tr.api.plugins.ExporterPlugin;
 import at.sheldor5.tr.api.utils.GlobalProperties;
-import at.sheldor5.tr.auth.db.DatabaseAuthentication;
-import at.sheldor5.tr.core.auth.AuthenticationManager;
-import at.sheldor5.tr.core.utils.RuntimeUtils;
+import at.sheldor5.tr.web.module.authentication.AuthenticationManager;
 import at.sheldor5.tr.exporter.ExporterManager;
+import at.sheldor5.tr.web.module.authentication.InternalAuthentication;
 import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
-import io.github.lukehutch.fastclasspathscanner.matchprocessor.ImplementingClassMatchProcessor;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Logger;
 
 public class Plugins implements ServletContextListener {
@@ -72,7 +67,7 @@ public class Plugins implements ServletContextListener {
 
     final String chain = GlobalProperties.getProperty("auth.chain");
     if (chain == null || chain.isEmpty()) {
-      authenticationManager.sort(new String[]{DatabaseAuthentication.NAME});
+      authenticationManager.sort(new String[]{InternalAuthentication.NAME});
     } else {
       authenticationManager.sort(chain.split(","));
     }

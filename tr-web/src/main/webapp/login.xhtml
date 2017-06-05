@@ -12,6 +12,7 @@
     <h:outputStylesheet library="css" name="bootstrap-theme.min.css"/>
     <h:outputScript library="js" name="bootstrap.min.js"/>
     <h:outputStylesheet library="css" name="time-recorder.css"/>
+    <link rel="icon" href="data:;base64,iVBORw0KGgo="/>
 </h:head>
 <h:body>
     <br/>
@@ -28,13 +29,12 @@
                     <label for="username"><h:outputText value="#{msg['login.username']}"/></label>
                     <input id="username" type="text" class="form-control" name="j_username" placeholder="#{msg['login.username']}"/>
                 </div>
-
                 <div class="form-group">
                     <label for="password"><h:outputText value="#{msg['login.password']}"/></label>
                     <input id="password" type="password" class="form-control" name="j_password" placeholder="#{msg['login.password']}"/>
                 </div>
                 <input type="reset" class="btn btn-primary"/>
-                <input type="submit" class="btn btn-primary"/>
+                <input type="submit" class="btn btn-primary pull-right"/>
             </form>
         </div>
         <div class="col-md-5">

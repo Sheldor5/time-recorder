@@ -27,6 +27,12 @@ public class EntityManagerHelper {
     return em;
   }
 
+  public static EntityManager createEntityManager() {
+    EntityManager em = entityManagerFactory.createEntityManager();
+    em.setFlushMode(FlushModeType.COMMIT);
+    return em;
+  }
+
   public static void setupPersistenceXML() {
     if (setup) {
       setup = false;

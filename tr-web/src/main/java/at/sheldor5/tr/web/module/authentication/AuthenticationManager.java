@@ -1,20 +1,15 @@
-package at.sheldor5.tr.core.auth;
+package at.sheldor5.tr.web.module.authentication;
 
 import at.sheldor5.tr.api.plugins.AuthenticationPlugin;
 import at.sheldor5.tr.api.user.Role;
 import at.sheldor5.tr.api.user.User;
 import at.sheldor5.tr.api.plugins.PluginManager;
 import at.sheldor5.tr.api.user.UserMapping;
-import at.sheldor5.tr.api.utils.UuidUtils;
+import at.sheldor5.tr.persistence.EntityManagerHelper;
 import at.sheldor5.tr.persistence.provider.UserMappingProvider;
 
-import javax.sql.DataSource;
-import java.nio.ByteBuffer;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +33,9 @@ public class AuthenticationManager implements PluginManager<AuthenticationPlugin
   private final List<AuthenticationPlugin> plugins = new ArrayList<>();
 
   private boolean sorted = false;
+
+  @Inject
+  private EntityManager entityManager;
 
   @Override
   public void initialize() throws IllegalStateException {

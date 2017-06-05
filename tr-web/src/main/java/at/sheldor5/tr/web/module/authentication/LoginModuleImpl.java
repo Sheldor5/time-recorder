@@ -1,9 +1,12 @@
 package at.sheldor5.tr.web.module.authentication;
 
 import at.sheldor5.tr.api.user.Role;
+import at.sheldor5.tr.api.user.User;
 import at.sheldor5.tr.api.user.UserMapping;
-import at.sheldor5.tr.core.auth.AuthenticationManager;
+import at.sheldor5.tr.persistence.provider.UserMappingProvider;
 
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.*;
 import javax.security.auth.login.LoginException;

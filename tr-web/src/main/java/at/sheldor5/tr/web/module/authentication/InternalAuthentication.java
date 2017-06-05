@@ -1,16 +1,11 @@
-package at.sheldor5.tr.auth.db;
+package at.sheldor5.tr.web.module.authentication;
 
 import at.sheldor5.tr.api.plugins.AuthenticationPlugin;
 import at.sheldor5.tr.api.user.User;
-import static at.sheldor5.tr.persistence.EntityManagerHelper.*;
-
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityManager;
-
 import at.sheldor5.tr.persistence.provider.UserProvider;
 import org.mindrot.jbcrypt.BCrypt;
 
-public class DatabaseAuthentication implements AuthenticationPlugin {
+public class InternalAuthentication implements AuthenticationPlugin {
 
   public static final String NAME = "tr-db";
 
@@ -26,10 +21,6 @@ public class DatabaseAuthentication implements AuthenticationPlugin {
 
   @Override
   public void saveUser(final User user) throws UnsupportedOperationException {
-    if (!UserValidator.validate(user)) {
-      return;
-    }
-
     try (final UserProvider userProvider = new UserProvider()) {
       userProvider.save(user);
     } catch (Exception e) {

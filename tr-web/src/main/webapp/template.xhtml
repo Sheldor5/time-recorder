@@ -16,12 +16,14 @@
     <h:outputStylesheet library="css" name="bootstrap-theme.min.css"/>
     <h:outputScript library="js" name="bootstrap.min.js"/>
     <h:outputStylesheet library="css" name="time-recorder.css"/>
+    <link rel="icon" href="data:;base64,iVBORw0KGgo="/>
 </h:head>
 <h:body>
 
     <div class="row">
         <div class="col-md-3"/>
         <div class="col-md-6">
+            <br/>
             <ul class="nav nav-tabs">
                 <li class="#{request.requestURI.endsWith('/') || request.requestURI.endsWith('index.xhtml') ? 'active' : ''}"><h:link value="#{msg['menu.today']}" outcome="index"/></li>
                 <li class="#{request.requestURI.endsWith('account.xhtml') ? 'active' : ''}"><h:link value="#{msg['menu.account']}" outcome="account"/></li>
@@ -29,6 +31,8 @@
                 <li class="#{request.requestURI.endsWith('projects.xhtml') ? 'active' : ''}"><h:link value="#{msg['menu.projects']}" outcome="projects"/></li>
                 <li><h:link value="#{msg['menu.logout']}" outcome="logout"/></li>
             </ul>
+            <br/>
+            <br/>
         </div>
         <div class="col-md-3"/>
     </div>
@@ -40,5 +44,6 @@
         </div>
         <div class="col-md-3"/>
     </div>
+
 </h:body>
 </html>
