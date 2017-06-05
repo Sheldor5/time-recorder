@@ -37,6 +37,10 @@ public class UserMappingProvider extends GenericProvider<UserMapping, Integer> {
   public boolean exists(UserMapping userMapping) {
     long count = count("uuid", UUID.class, userMapping.getUuid());
     if (count != 0) {
+      EntityTransaction transaction = entityManager.getTransaction();
+      if (transaction.isActive()) {
+        entityManager.getTransaction().rollback();
+      }
       throw new DuplicationException(userMapping.getUuid());
     }
     return false;

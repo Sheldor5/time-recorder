@@ -25,7 +25,7 @@ public class DataProvider implements Serializable, AutoCloseable {
   private EntityManager entityManager;
 
   public DataProvider() {
-    
+
   }
 
   public DataProvider(final EntityManager entityManager) {
