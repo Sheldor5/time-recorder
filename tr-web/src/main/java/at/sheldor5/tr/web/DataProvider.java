@@ -12,6 +12,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
@@ -24,7 +25,7 @@ public class DataProvider implements Serializable, AutoCloseable {
   private EntityManager entityManager;
 
   public DataProvider() {
-
+    
   }
 
   public DataProvider(final EntityManager entityManager) {
@@ -33,20 +34,22 @@ public class DataProvider implements Serializable, AutoCloseable {
 
   public List<Project> getProjects(final UserMapping userMapping) {
     UserProjectMappingProvider userProjectMappingProvider = new UserProjectMappingProvider(entityManager);
-    List<Project> projects = userProjectMappingProvider.getProjects(userMapping);
-    return projects;
+    return userProjectMappingProvider.getProjects(userMapping);
+  }
+
+  public List<Project> getProjects() {
+    ProjectProvider projectProvider = new ProjectProvider(entityManager);
+    return projectProvider.get("");
   }
 
   public Project getProject(int id) {
     ProjectProvider projectProvider = new ProjectProvider(entityManager);
-    Project project = projectProvider.get(id);
-    return project;
+    return projectProvider.get(id);
   }
 
   public List<Project> getProjects(final String namePart) {
     ProjectProvider projectProvider = new ProjectProvider(entityManager);
-    List<Project> projects = projectProvider.get(namePart);
-    return projects;
+    return projectProvider.get(namePart);
   }
 
   public void save(final Session session) {
@@ -61,8 +64,7 @@ public class DataProvider implements Serializable, AutoCloseable {
 
   public List<Session> getSessions(final UserMapping userMapping, final LocalDate date) {
     SessionProvider sessionProvider = new SessionProvider(entityManager);
-    List<Session> sessions = sessionProvider.get(userMapping, date);
-    return sessions;
+    return sessionProvider.get(userMapping, date);
   }
 
   @Override

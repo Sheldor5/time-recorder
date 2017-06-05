@@ -5,34 +5,48 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:c="http://java.sun.com/jsp/jstl/core">
+      xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:p="http://java.sun.com/jsf/core">
 <f:view>
     <ui:composition template="template.xhtml">
         <ui:define name="content">
-            <h:form>
-                <h:inputText id="name" value="#{projectSearch.name}"/>
-                <h:commandButton value="suchen" action="#{projectSearch.search}"/>
-            </h:form>
             <br/>
-            <form name="newProject" method="get" action="#{request.contextPath}/addProject">
-                <input type="text" name="name" placeholder="Projektname"/>
-                <input type="submit" value="Hinzufügen"/>
-            </form>
-            <c:if test="#{projectSearch.hasProjects()}">
-                <h:dataTable value="#{projectSearch.projects}" var="project">
+            <table class="cellspacing">
+                <tbody>
+                <tr>
+                    <td style="padding:0 15px 0 15px">
+                        <form name="newProject" method="get" action="#{request.contextPath}/manageProject">
+                            <input type="hidden" name="cmd" value="add" />
+                            <input type="text" name="name" placeholder="#{msg['project.name.placeholder']}"/>
+                            <input type="submit" value="#{msg['project.add.button']}"/>
+                        </form>
+                    </td>
+                    <td>
+                        <h:form>
+                            <h:inputText id="name" value="#{projectSearch.name}"/>
+                            <h:commandButton value="#{msg['project.search.button']}" action="#{projectSearch.search}"/>
+                        </h:form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <br/>
+            <c:if test="#{projectSearch.hasProjects() ? true : true}">
+                <h:dataTable value="#{projectSearch.hasProjects() ? projectSearch.projects : projectList.projects}" var="project" styleClass="table">
                     <h:column>
-                        <f:facet name="header">ID</f:facet>
+                        <f:facet name="header">#{msg['project.id']}</f:facet>
                         <h:outputLabel value="#{project.id}"/>
                     </h:column>
                     <h:column>
-                        <f:facet name="header">Name</f:facet>
+                        <f:facet name="header">#{msg['project.name']}</f:facet>
                         <h:outputLabel value="#{project.name}"/>
                     </h:column>
                     <h:column>
-                        <f:facet name="header">Aktion</f:facet>
-                        <form name="removeProject" method="get" action="#{request.contextPath}/removeProject">
+                        <f:facet name="header">#{msg['project.action']}</f:facet>
+                        <form name="renameProject" method="get" action="#{request.contextPath}/manageProject">
+                            <input type="hidden" name="cmd" value="rename" />
                             <input type="hidden" name="id" value="#{project.id}"/>
-                            <input type="submit" value="Löschen"/>
+                            <input type="text" name="newName" placeholder="#{msg['project.name.placeholder']}"/>
+                            <input type="submit" value="#{msg['project.rename.button']}"/>
                         </form>
                     </h:column>
                 </h:dataTable>
