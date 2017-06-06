@@ -35,7 +35,7 @@ public class ProjectProvider extends GenericProvider<Project, Integer> {
   }
 
   public List<Project> get(final String namePart) {
-    if (namePart == null || namePart.isEmpty()) {
+    if (namePart == null) {
       return new ArrayList<>();
     }
 

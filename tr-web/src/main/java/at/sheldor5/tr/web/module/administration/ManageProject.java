@@ -2,7 +2,9 @@ package at.sheldor5.tr.web.module.administration;
 
 import at.sheldor5.tr.api.project.Project;
 import at.sheldor5.tr.web.DataProvider;
+import at.sheldor5.tr.web.jsf.beans.UserController;
 
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -20,10 +22,18 @@ public class ManageProject extends HttpServlet {
 
   private static final Logger LOGGER = Logger.getLogger(ManageProject.class.getName());
 
+  @Inject
   private DataProvider dataProvider;
+  @Inject
+  private UserController user;
 
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    if(!user.getAdmin()) {
+      LOGGER.warning("Non privileged user (" + user.getUsername() + ") tried to access manageProject WebServlet");
+      resp.sendRedirect(req.getContextPath() + "/index.xhtml");
+      return;
+    }
     final String command = req.getParameter("cmd");
     switch (command) {
       case "add":
@@ -42,6 +52,9 @@ public class ManageProject extends HttpServlet {
 
   private void addProject(HttpServletRequest req) {
     final String projectName = req.getParameter("name");
+    if(projectName == null || projectName.isEmpty()) {
+      return;
+    }
     Project project = new Project(projectName);
     dataProvider.save(project);
   }
@@ -56,6 +69,9 @@ public class ManageProject extends HttpServlet {
       return;
     }
     final String newName = req.getParameter("newName");
+    if(newName == null || newName.isEmpty()) {
+      return;
+    }
     final Project project = dataProvider.getProject(id);
     project.setName(newName);
     dataProvider.save(project);

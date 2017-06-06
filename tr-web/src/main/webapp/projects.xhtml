@@ -9,6 +9,7 @@
 <f:view>
     <ui:composition template="template.xhtml">
         <ui:define name="content">
+            <f:event type="preRenderView" listener="#{projectList.checkPermissions}" />
             <br/>
             <table class="cellspacing">
                 <tbody>

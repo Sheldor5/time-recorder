@@ -28,7 +28,7 @@
                 <li class="#{request.requestURI.endsWith('/') || request.requestURI.endsWith('index.xhtml') ? 'active' : ''}"><h:link value="#{msg['menu.today']}" outcome="index"/></li>
                 <li class="#{request.requestURI.endsWith('account.xhtml') ? 'active' : ''}"><h:link value="#{msg['menu.account']}" outcome="account"/></li>
                 <li class="#{request.requestURI.endsWith('export.xhtml') ? 'active' : ''}"><h:link value="#{msg['menu.export']}" outcome="export"/></li>
-                <li class="#{request.requestURI.endsWith('projects.xhtml') ? 'active' : ''}"><h:link value="#{msg['menu.projects']}" outcome="projects"/></li>
+                <li class="#{request.requestURI.endsWith('projects.xhtml') ? 'active' : ''}"><h:link value="#{msg['menu.projects']}" outcome="projects" rendered="#{user.admin}"/></li>
                 <li><h:link value="#{msg['menu.logout']}" outcome="logout"/></li>
             </ul>
             <br/>
