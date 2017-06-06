@@ -3,8 +3,6 @@ package at.sheldor5.tr.web.jsf.beans;
 import at.sheldor5.tr.api.user.User;
 import at.sheldor5.tr.web.DataProvider;
 import at.sheldor5.tr.web.utils.SessionUtils;
-import com.sun.javaws.exceptions.InvalidArgumentException;
-
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.context.FacesContext;
