@@ -2,11 +2,13 @@ package at.sheldor5.tr.web;
 
 import at.sheldor5.tr.api.project.Project;
 import at.sheldor5.tr.api.time.Session;
+import at.sheldor5.tr.api.user.User;
 import at.sheldor5.tr.api.user.UserMapping;
 import at.sheldor5.tr.persistence.EntityManagerHelper;
 import at.sheldor5.tr.persistence.provider.ProjectProvider;
 import at.sheldor5.tr.persistence.provider.SessionProvider;
 import at.sheldor5.tr.persistence.provider.UserProjectMappingProvider;
+import at.sheldor5.tr.persistence.provider.UserProvider;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -16,6 +18,7 @@ import javax.persistence.PersistenceContext;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @Named
 @RequestScoped
@@ -65,6 +68,21 @@ public class DataProvider implements Serializable, AutoCloseable {
   public List<Session> getSessions(final UserMapping userMapping, final LocalDate date) {
     SessionProvider sessionProvider = new SessionProvider(entityManager);
     return sessionProvider.get(userMapping, date);
+  }
+
+  public List<User> getUsers() {
+    UserProvider userProvider = new UserProvider(entityManager);
+    return userProvider.getList("");
+  }
+
+  public User getUser(UUID uuid) {
+    UserProvider userProvider = new UserProvider(entityManager);
+    return userProvider.get(uuid);
+  }
+
+  public void save(final User user) {
+    UserProvider userProvider = new UserProvider(entityManager);
+    userProvider.save(user);
   }
 
   @Override

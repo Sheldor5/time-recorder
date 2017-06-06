@@ -8,6 +8,7 @@ import at.sheldor5.tr.persistence.utils.QueryUtils;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.TypedQuery;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -58,5 +59,28 @@ public class UserProvider extends GenericProvider<User, UUID> {
     }
 
     return user;
+  }
+
+  public List<User> getList(final String username) {
+    if (username == null) {
+      return null;
+    }
+
+    EntityTransaction transaction = entityManager.getTransaction();
+    transaction.begin();
+
+    TypedQuery<User> findByUsername = QueryUtils.findLikeField(entityManager,
+            User.class, "username", username);
+
+    List<User> users = new ArrayList<>();
+    try {
+      users = findByUsername.getResultList();
+      transaction.commit();
+    } catch (final Exception e) {
+      transaction.rollback();
+      e.printStackTrace();
+    }
+
+    return users;
   }
 }

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:c="http://java.sun.com/jsp/jstl/core">
+<f:view>
+    <ui:composition template="template.xhtml">
+        <ui:define name="content">
+            <c:if test="#{editUser.hasPermission()}">
+                <form name="editUser" method="post" action="#{request.contextPath}/userManager" >
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <td><label for="username">#{msg['user.edit.username']}</label></td>
+                                <td><input name="username" id="username" value="#{editUser.username}"/></td>
+                            </tr>
+                            <tr>
+                                <td><label for="forename">#{msg['user.edit.forename']}</label></td>
+                                <td><input name="forename" id="forename" value="#{editUser.forename}"/></td>
+                            </tr>
+                            <tr>
+                                <td><label for="surname">#{msg['user.edit.surname']}</label></td>
+                                <td><input name="surname" id="surname" value="#{editUser.surname}"/></td>
+                            </tr>
+                            <tr>
+                                <td><label for="newPassword">#{msg['user.edit.password.new']}</label></td>
+                                <td><input name="newPassword" id="newPassword"/> </td>
+                            </tr>
+                            <tr>
+                                <td><label for="newPasswordRepeat">#{msg['user.edit.password.new.repeat']}</label></td>
+                                <td><input name="newPasswordRepeat" id="newPasswordRepeat"/> </td>
+                            </tr>
+                        </tbody>
+                        <tr>
+                            <td colspan="2"><input type="submit" value="#{msg['user.edit.submit.button']}"/></td>
+                        </tr>
+                    </table>
+                </form>
+            </c:if>
+        </ui:define>
+    </ui:composition>
+</f:view>
+</html>

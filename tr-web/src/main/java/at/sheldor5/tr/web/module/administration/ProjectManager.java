@@ -18,9 +18,9 @@ import java.util.logging.Logger;
  * @date 05.06.2017
  */
 @WebServlet(name = "mangeProject", urlPatterns = "/manageProject")
-public class ManageProject extends HttpServlet {
+public class ProjectManager extends HttpServlet {
 
-  private static final Logger LOGGER = Logger.getLogger(ManageProject.class.getName());
+  private static final Logger LOGGER = Logger.getLogger(ProjectManager.class.getName());
 
   @Inject
   private DataProvider dataProvider;
