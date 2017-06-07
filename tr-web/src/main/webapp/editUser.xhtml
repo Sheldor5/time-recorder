@@ -9,35 +9,49 @@
     <ui:composition template="template.xhtml">
         <ui:define name="content">
             <c:if test="#{editUser.hasPermission()}">
-                <form name="editUser" method="post" action="#{request.contextPath}/userManager" >
+                #{editUser.getUserData()}
+                <br/>
+                <c:if test="#{editUser.passwordRepeatWrongMsg}">
+                    <div class="alert alert-danger">
+                       #{msg['user.edit.password.repeat.wrong']}
+                    </div>
+                </c:if>
+                <c:if test="#{editUser.changeSuccessfulMsg}">
+                    <div class="alert alert-success">
+                        #{msg['user.edit.successful']}
+                    </div>
+                </c:if>
+                <h:form name="editUser" method="post" action="#{request.contextPath}/userManager" >
                     <table class="table">
                         <tbody>
                             <tr>
                                 <td><label for="username">#{msg['user.edit.username']}</label></td>
-                                <td><input name="username" id="username" value="#{editUser.username}"/></td>
+                                <td><h:inputText id="username" value="#{editUser.username}"/></td>
                             </tr>
                             <tr>
                                 <td><label for="forename">#{msg['user.edit.forename']}</label></td>
-                                <td><input name="forename" id="forename" value="#{editUser.forename}"/></td>
+                                <td><h:inputText id="forename" value="#{editUser.forename}"/></td>
                             </tr>
                             <tr>
                                 <td><label for="surname">#{msg['user.edit.surname']}</label></td>
-                                <td><input name="surname" id="surname" value="#{editUser.surname}"/></td>
+                                <td><h:inputText id="surname" value="#{editUser.surname}"/></td>
                             </tr>
                             <tr>
                                 <td><label for="newPassword">#{msg['user.edit.password.new']}</label></td>
-                                <td><input name="newPassword" id="newPassword"/> </td>
+                                <td><h:inputSecret id="newPassword" value="#{editUser.newPassword}"/> </td>
                             </tr>
                             <tr>
                                 <td><label for="newPasswordRepeat">#{msg['user.edit.password.new.repeat']}</label></td>
-                                <td><input name="newPasswordRepeat" id="newPasswordRepeat"/> </td>
+                                <td><h:inputSecret id="newPasswordRepeat" value="#{editUser.newPasswordRepeat}"/> </td>
                             </tr>
                         </tbody>
                         <tr>
-                            <td colspan="2"><input type="submit" value="#{msg['user.edit.submit.button']}"/></td>
+                            <td colspan="2"><h:commandButton value="#{msg['user.edit.submit.button']}" action="#{editUser.saveUser()}">
+                                <f:param name="uuid" value="#{editUser.getUuidFromRequest()}" />
+                            </h:commandButton> <!--<input type="submit" value="#{msg['user.edit.submit.button']}"/>--></td>
                         </tr>
                     </table>
-                </form>
+                </h:form>
             </c:if>
         </ui:define>
     </ui:composition>

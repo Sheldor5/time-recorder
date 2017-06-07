@@ -3,6 +3,8 @@ package at.sheldor5.tr.web.jsf.beans;
 import at.sheldor5.tr.api.user.User;
 import at.sheldor5.tr.web.DataProvider;
 import at.sheldor5.tr.web.utils.SessionUtils;
+import org.mindrot.jbcrypt.BCrypt;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.context.FacesContext;
@@ -32,12 +34,18 @@ public class UserEditController implements Serializable {
   private String username;
   private String forename;
   private String surname;
+  private String newPassword = "";
+  private String newPasswordRepeat = "";
   private boolean validUUID = true;
+  private boolean editOk = true;
+  private boolean passwordRepeatWrongMsg = false;
+  private boolean changeSuccessfulMsg = false;
 
   @PostConstruct
   private void init() {
     String uuid = ((HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest()).getParameter("uuid");
     if(uuid == null || uuid.isEmpty()){
+      validUUID = false;
       return;
     }
     try{
@@ -55,7 +63,6 @@ public class UserEditController implements Serializable {
     }
     try {
       redirectIfNotAuthorized();
-      getUserData();
       return true;
     } catch (IOException e) {
       LOGGER.warning("Redirect to index.xhtml failed");
@@ -63,11 +70,44 @@ public class UserEditController implements Serializable {
     }
   }
 
-  private void getUserData() {
+  public void getUserData() {
     User user  = dataProvider.getUser(uuidFromRequest);
     username = user.getUsername();
     forename = user.getForename();
     surname = user.getSurname();
+  }
+
+  public void saveUser() {
+    if(!hasPermission()) {
+      return;
+    }
+    User user = dataProvider.getUser(uuidFromRequest);
+    if(!username.isEmpty()) {
+      user.setUsername(username);
+    }
+    if(!forename.isEmpty()) {
+      user.setForename(forename);
+    }
+    if(!surname.isEmpty()) {
+      user.setSurname(surname);
+    }
+    if(!newPassword.isEmpty() || !newPasswordRepeat.isEmpty()) {
+      handlePassword(user);
+    }
+    if(editOk) {
+      changeSuccessfulMsg = true;
+      //dataProvider.save(user); // todo nicht notwendig?
+    }
+  }
+
+  private void handlePassword(User user) {
+    if(newPassword.equals(newPasswordRepeat)) {
+      user.setPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt()));
+    }
+    else {
+      passwordRepeatWrongMsg = true;
+      editOk = false;
+    }
   }
 
   private void redirectIfNotAuthorized() throws IOException {
@@ -106,5 +146,41 @@ public class UserEditController implements Serializable {
 
   public void setSurname(String surname) {
     this.surname = surname;
+  }
+
+  public UUID getUuidFromRequest() {
+    return uuidFromRequest;
+  }
+
+  public String getNewPassword() {
+    return newPassword;
+  }
+
+  public void setNewPassword(String newPassword) {
+    this.newPassword = newPassword;
+  }
+
+  public String getNewPasswordRepeat() {
+    return newPasswordRepeat;
+  }
+
+  public void setNewPasswordRepeat(String newPasswordRepeat) {
+    this.newPasswordRepeat = newPasswordRepeat;
+  }
+
+  public boolean isPasswordRepeatWrongMsg() {
+    return passwordRepeatWrongMsg;
+  }
+
+  public void setPasswordRepeatWrongMsg(boolean passwordRepeatWrongMsg) {
+    this.passwordRepeatWrongMsg = passwordRepeatWrongMsg;
+  }
+
+  public boolean isChangeSuccessfulMsg() {
+    return changeSuccessfulMsg;
+  }
+
+  public void setChangeSuccessfulMsg(boolean changeSuccessfulMsg) {
+    this.changeSuccessfulMsg = changeSuccessfulMsg;
   }
 }
