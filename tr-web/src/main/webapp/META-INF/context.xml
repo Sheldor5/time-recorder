@@ -1,6 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Context>
+
+    <!-- JAAS -->
     <Realm className="org.apache.catalina.realm.JAASRealm"
            appName="Login"
            userClassNames="at.sheldor5.tr.web.module.authentication.UserPrincipal"
            roleClassNames="at.sheldor5.tr.web.module.authentication.RolePrincipal" />
+
+    <!-- CDI -->
+    <Resource name="BeanManager"
+              auth="Container"
+              type="javax.enterprise.inject.spi.BeanManager"
+              factory="org.jboss.weld.resources.ManagerObjectFactory"/>
+
 </Context>

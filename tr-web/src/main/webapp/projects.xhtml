@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:p="http://java.sun.com/jsf/core">
+<f:view>
+    <ui:composition template="template.xhtml">
+        <ui:define name="content">
+            <f:event type="preRenderView" listener="#{adminPermissions.check}" />
+            <br/>
+            <table class="cellspacing">
+                <tbody>
+                <tr>
+                    <td style="padding:0 15px 0 15px">
+                        <form name="newProject" method="get" action="#{request.contextPath}/manageProject">
+                            <input type="hidden" name="cmd" value="add" />
+                            <input type="text" name="name" placeholder="#{msg['project.name.placeholder']}"/>
+                            <input type="submit" value="#{msg['project.add.button']}"/>
+                        </form>
+                    </td>
+                    <td>
+                        <h:form>
+                            <h:inputText id="name" value="#{projectSearch.name}"/>
+                            <h:commandButton value="#{msg['project.search.button']}" action="#{projectSearch.search}"/>
+                        </h:form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <br/>
+            <h:dataTable value="#{projectSearch.hasProjects() ? projectSearch.projects : projectList.projects}" var="project" styleClass="table">
+                <h:column>
+                    <f:facet name="header">#{msg['project.id']}</f:facet>
+                    <h:outputLabel value="#{project.id}"/>
+                </h:column>
+                <h:column>
+                    <f:facet name="header">#{msg['project.name']}</f:facet>
+                    <h:outputLabel value="#{project.name}"/>
+                </h:column>
+                <h:column>
+                    <f:facet name="header">#{msg['project.action']}</f:facet>
+                    <form name="renameProject" method="get" action="#{request.contextPath}/manageProject">
+                        <input type="hidden" name="cmd" value="rename" />
+                        <input type="hidden" name="id" value="#{project.id}"/>
+                        <input type="text" name="newName" placeholder="#{msg['project.name.placeholder']}"/>
+                        <input type="submit" value="#{msg['project.rename.button']}"/>
+                    </form>
+                </h:column>
+            </h:dataTable>
+        </ui:define>
+    </ui:composition>
+</f:view>
+</html>

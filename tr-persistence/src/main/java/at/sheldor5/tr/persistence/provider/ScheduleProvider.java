@@ -25,7 +25,7 @@ public class ScheduleProvider extends GenericProvider<Schedule, Integer> {
       };
 
   public ScheduleProvider() {
-    this(EntityManagerHelper.getEntityManager());
+    this(EntityManagerHelper.createEntityManager());
   }
 
   public ScheduleProvider(final EntityManager entityManager) {

@@ -2,30 +2,14 @@ package at.sheldor5.tr.persistence.utils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.ParameterExpression;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 
 /**
  * TODO.
  */
 public class QueryUtils {
 
-  /**
-   *
-   * @param entityManager
-   * @param entityClass
-   * @param fieldName
-   * @param fieldType
-   * @param fieldValue
-   * @param <E> Entity
-   * @param <T> Field Type
-   * @return
-   */
-  public static  <E, T> TypedQuery<E> findByField(final EntityManager entityManager, Class<E> entityClass, String fieldName, Class<T> fieldType, T fieldValue) {
+  public static <E, T> TypedQuery<E> findByField(final EntityManager entityManager, Class<E> entityClass, String fieldName, Class<T> fieldType, T fieldValue) {
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<E> criteriaQuery = criteriaBuilder.createQuery(entityClass);
 
@@ -46,11 +30,32 @@ public class QueryUtils {
     return query;
   }
 
-  public static  <E, F1, F2> TypedQuery<E> findByFields(
-          final EntityManager entityManager, final Class<E> entityClass,
-          final String field1Name, final Class<F1> field1Type, final F1 field1Value,
-          final String field2Name, final Class<F2> field2Type, final F2 field2Value,
-          boolean andRestriction) {
+  public static <E> TypedQuery<E> findLikeField(final EntityManager entityManager, Class<E> entityClass, String fieldName, String fieldPart) {
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<E> criteriaQuery = criteriaBuilder.createQuery(entityClass);
+
+    // SELECT Object FROM ObjectTable
+    Root<E> entity = criteriaQuery.from(entityClass);
+    criteriaQuery.select(entity);
+
+    // WHERE fieldName = fieldValue
+    ParameterExpression<String> parameter = criteriaBuilder.parameter(String.class);
+    Path<String> path = entity.get(fieldName);
+    Predicate predicate = criteriaBuilder.like(path, parameter);
+
+    criteriaQuery.where(predicate);
+
+    TypedQuery<E> query = entityManager.createQuery(criteriaQuery);
+    query.setParameter(parameter, String.format("%%%s%%", fieldPart));
+
+    return query;
+  }
+
+  public static <E, F1, F2> TypedQuery<E> findByFields(
+      final EntityManager entityManager, final Class<E> entityClass,
+      final String field1Name, final Class<F1> field1Type, final F1 field1Value,
+      final String field2Name, final Class<F2> field2Type, final F2 field2Value,
+      boolean andRestriction) {
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<E> criteriaQuery = criteriaBuilder.createQuery(entityClass);
 
@@ -88,7 +93,7 @@ public class QueryUtils {
     return query;
   }
 
-  public static  <E, T> TypedQuery<Long> count(final EntityManager entityManager, Class<E> entityClass, String fieldName, Class<T> fieldType, T fieldValue) {
+  public static <E, T> TypedQuery<Long> count(final EntityManager entityManager, Class<E> entityClass, String fieldName, Class<T> fieldType, T fieldValue) {
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
 
@@ -100,12 +105,35 @@ public class QueryUtils {
     ParameterExpression<T> parameter = criteriaBuilder.parameter(fieldType);
     Path path = entity.get(fieldName);
     Predicate predicate = criteriaBuilder.equal(path, parameter);
-
     criteriaQuery.where(predicate);
 
     TypedQuery<Long> query = entityManager.createQuery(criteriaQuery);
     query.setParameter(parameter, fieldValue);
 
     return query;
+  }
+
+  public static <E, J, T> TypedQuery<E> findByMapping(final EntityManager entityManager, final Class<E> entityClass,
+                                                   final Class<J> joinOnClass, final String joinOnFieldName,
+                                                   final String fieldName, final Class<T> fieldType, final T fieldValue) {
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<E> criteriaQuery = criteriaBuilder.createQuery(entityClass);
+
+    // SELECT Object FROM ObjectTable
+    Root<E> entity = criteriaQuery.from(entityClass);
+
+    // RIGHT JOIN X ON Y
+    Join<E, J> on = entity.join(joinOnFieldName);
+
+    // WHERE fieldName = fieldValue
+    ParameterExpression<T> parameter = criteriaBuilder.parameter(fieldType);
+    Path path = entity.get(fieldName);
+    Predicate predicate = criteriaBuilder.equal(path, parameter);
+    criteriaQuery.where(predicate);
+
+    TypedQuery<E> query = entityManager.createQuery(criteriaQuery);
+    query.setParameter(parameter, fieldValue);
+
+    return null;
   }
 }

@@ -5,20 +5,15 @@ import at.sheldor5.tr.persistence.identifier.AbstractIdentifier;
 import at.sheldor5.tr.persistence.utils.QueryUtils;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import javax.persistence.EntityTransaction;
 import javax.persistence.TypedQuery;
 import java.io.Closeable;
 
 public class GenericProvider<Entity, Identifier> implements EntityProvider<Entity, Identifier>, Closeable {
 
-  @PersistenceContext(unitName = "time-recorder")
-  protected final EntityManager entityManager;
+  final EntityManager entityManager;
 
-  protected final AbstractIdentifier<Entity, Identifier> identifier;
-
-  public GenericProvider(final AbstractIdentifier<Entity, Identifier> identifier) {
-    this(EntityManagerHelper.getEntityManager(), identifier);
-  }
+  private final AbstractIdentifier<Entity, Identifier> identifier;
 
   public GenericProvider(final EntityManager entityManager, AbstractIdentifier<Entity, Identifier> identifier) {
     this.entityManager = entityManager;
@@ -48,7 +43,8 @@ public class GenericProvider<Entity, Identifier> implements EntityProvider<Entit
       return null;
     }
 
-    EntityManagerHelper.beginTransaction();
+    EntityTransaction transaction = entityManager.getTransaction();
+    transaction.begin();
 
     Entity result = null;
 
@@ -56,21 +52,21 @@ public class GenericProvider<Entity, Identifier> implements EntityProvider<Entit
       // update
       try {
         entityManager.merge(entity);
-        EntityManagerHelper.commit();
+        transaction.commit();
         result = entity;
       } catch (final Exception e) {
-        EntityManagerHelper.rollback();
+        transaction.rollback();
         e.printStackTrace();
       }
     } else {
       // insert
       try {
         entityManager.persist(entity);
-        EntityManagerHelper.commit();
+        transaction.commit();
         result = entity;
       } catch (Exception e) {
         e.printStackTrace();
-        EntityManagerHelper.rollback();
+        transaction.rollback();
       }
     }
 
@@ -83,15 +79,16 @@ public class GenericProvider<Entity, Identifier> implements EntityProvider<Entit
       return null;
     }
 
-    EntityManagerHelper.beginTransaction();
-
     Entity entity = null;
+
+    EntityTransaction transaction = entityManager.getTransaction();
+    transaction.begin();
 
     try {
       entity = entityManager.find(identifier.getEntityClass(), id);
-      EntityManagerHelper.commit();
+      transaction.commit();
     } catch (final Exception e) {
-      EntityManagerHelper.rollback();
+      transaction.rollback();
       e.printStackTrace();
     }
 
@@ -104,18 +101,19 @@ public class GenericProvider<Entity, Identifier> implements EntityProvider<Entit
       return;
     }
 
-    EntityManagerHelper.beginTransaction();
+    EntityTransaction transaction = entityManager.getTransaction();
+    transaction.begin();
 
     try {
       entityManager.remove(entity);
-      EntityManagerHelper.commit();
+      transaction.commit();
     } catch (final Exception e) {
-      EntityManagerHelper.rollback();
+      transaction.rollback();
       e.printStackTrace();
     }
   }
 
   public void close() {
-    EntityManagerHelper.closeEntityManager();
+    entityManager.close();
   }
 }

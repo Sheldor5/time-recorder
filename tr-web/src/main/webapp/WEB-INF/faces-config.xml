@@ -5,6 +5,19 @@
               xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
               version="2.0">
 
+    <!-- Multilingual Support -->
+    <application>
+        <resource-bundle>
+            <base-name>i18n.messages</base-name>
+            <var>msg</var>
+        </resource-bundle>
+        <locale-config>
+            <default-locale>de</default-locale>
+            <supported-locale>en</supported-locale>
+        </locale-config>
+    </application>
+
+
     <!--
     <navigation-rule>
         <from-view-id>/index.xhtml</from-view-id>

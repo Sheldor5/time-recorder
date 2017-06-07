@@ -1,11 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:f="http://java.sun.com/jsf/core">
-<body>
-<f:metadata>
-    <f:event type="preRenderView" listener="#{login.forward}"/>
-</f:metadata>
-</body>
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+<f:view>
+    <ui:composition template="template.xhtml">
+        <ui:define name="content">
+            <h:outputLabel value="Hello #{user.forename}"/>
+            <h:outputLabel value=", you are an Administrator!" rendered="#{user.admin}"/>
+
+            <h:form id="stamp">
+                <h:inputHidden id="time" value="#{clock.time}" converter="at.sheldor5.tr.LocalTimeConverter"/>
+                <h:inputHidden id="date" value="#{clock.date}" converter="at.sheldor5.tr.LocalDateConverter"/>
+
+                <div class="panel panel-default">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div id="clock">00:00:00</div>
+                        </div>
+                        <div class="col-md-6">
+                            <h:commandButton value="#{clock.hasStarted() ? msg['clock.go'] : msg['clock.come']}"
+                                             action="#{clock.stamp}" styleClass="btn btn-primary"/>
+                        </div>
+                    </div>
+                </div>
+
+                <c:if test="#{clock.hasStarted()}">
+                    <div class="panel panel-default">
+                        <h:dataTable id="w" value="#{clock.projects}" var="project">
+                            <h:column>
+                                <h:outputLabel value="#{project.name}"/>
+                            </h:column>
+                            <h:column>
+                                <h:commandButton value="#{msg['clock.switch']}"
+                                                 action="#{clock.switchProject(project)}"
+                                                 styleClass="btn btn-primary btn-xs"/>
+                            </h:column>
+                        </h:dataTable>
+                    </div>
+                </c:if>
+            </h:form>
+
+            <div class="panel panel-default">
+                <h:dataTable value="#{clock.sessions}" var="s">
+                    <h:column>
+                        <f:facet name="header">#{msg['session.from']}</f:facet>
+                        <h:outputLabel value="#{s.start}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">#{msg['session.to']}</f:facet>
+                        <h:outputLabel value="#{s.end}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">#{msg['session.project']}</f:facet>
+                        <h:outputLabel value="#{s.project.name}"/>
+                    </h:column>
+                </h:dataTable>
+            </div>
+            <h:outputScript library="js" name="time.js"/>
+        </ui:define>
+    </ui:composition>
+</f:view>
 </html>

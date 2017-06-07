@@ -10,6 +10,7 @@
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <mapping-file>UserMapping.hbm.xml</mapping-file>
         <mapping-file>Project.hbm.xml</mapping-file>
+        <mapping-file>UserProjects.hbm.xml</mapping-file>
         <mapping-file>Session.hbm.xml</mapping-file>
         <mapping-file>Schedule.hbm.xml</mapping-file>
         <mapping-file>User.hbm.xml</mapping-file>

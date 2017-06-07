@@ -4,6 +4,7 @@ import at.sheldor5.tr.api.project.Project;
 import at.sheldor5.tr.persistence.provider.ProjectProvider;
 import org.junit.*;
 
+import java.util.List;
 import java.util.UUID;
 
 public class ProjectProviderTest extends TestFixture {
@@ -47,10 +48,19 @@ public class ProjectProviderTest extends TestFixture {
 
     Assert.assertTrue(project.getId() > 0);
 
-    final Project actual = projectProvider.get(name);
+    final List<Project> projects = projectProvider.get(name);
 
-    Assert.assertNotNull(actual);
-    Assert.assertEquals(project, actual);
+    Assert.assertNotNull(projects);
+    Assert.assertTrue(projects.size() > 0);
+
+    boolean found = false;
+    for (final Project p : projects) {
+      if (name.equals(p.getName())) {
+        found = true;
+        break;
+      }
+    }
+    Assert.assertTrue(found);
   }
 
   @AfterClass
