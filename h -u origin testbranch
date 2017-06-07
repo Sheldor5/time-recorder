@@ -1,0 +1,34 @@
+* [33med511be[m[33m ([m[1;36mHEAD -> [m[1;32mtestbranch[m[33m, [m[1;32mmaster[m[33m)[m Holiday check, sunday check, tests for both
+* [33ma3eaeac[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m switched from Hibernate API to JPA with Hibernate
+* [33me51d88b[m added record mapping, added many-to-one mapping
+* [33m89a5469[m added bcrypt lib
+* [33m4ae10bc[m Update README.md
+* [33mc03a9c4[m removed unused module
+* [33m3dcafec[m completed api, added user table to hibernate
+* [33ma56defc[m added hibernate and mapping for user mappings
+*   [33mb4d512b[m Merge branch 'master' of https://github.com/Sheldor5/wtr
+[32m|[m[33m\[m  
+[32m|[m * [33m8fef579[m fixed dependencies
+[32m|[m * [33m4a88c95[m fixed SQL SELECT
+* [33m|[m [33m26ae59b[m added schedule class and comments
+[33m|[m[33m/[m  
+* [33m86221b4[m added H2, separated modules for project
+* [33m79ba166[m added schedule, refactored engines and plugins for web integration
+* [33m04d1909[m refactoring for web integration
+* [33m4f4dbe6[m refactored plugins for web, switched logger, started web app
+* [33m9319a8e[m added managers for authentication, persistence and rules
+* [33m1e7cb50[m added authentication plugin, added LDAP support, split record database and user database, switched from user INT id to user 128 bit INT (UUID) id for ldap support
+* [33m08779be[m improved code coverage, implemented rule loader
+* [33m8d8953f[m improved test coverage, fixed session comparison and sorting
+* [33me4dff07[m split modules, added tests, refactored records engine, added sdk
+* [33mbeb8013[m started rule parser, switched from java.sql api to java.time api
+*   [33mfd526a2[m Merge branch 'master' of https://github.com/Sheldor5/wtr
+[34m|[m[35m\[m  
+[34m|[m * [33me44a733[m Update README.md
+* [35m|[m [33m87842d1[m continued working on time periods and their ability to be valued
+[35m|[m[35m/[m  
+* [33med81f9b[m added XSD, XML and java XML validation
+* [33m19b7aa4[m extenden or mapper, started implementation of rules
+* [33mf18e401[m added ORM and tests
+* [33m8b1558b[m interfaces, dummies, poc #1
+* [33m99454fa[m Initial commit

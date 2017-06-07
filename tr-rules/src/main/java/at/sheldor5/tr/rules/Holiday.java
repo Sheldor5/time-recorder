@@ -1,5 +1,6 @@
 package at.sheldor5.tr.rules;
 
+import at.sheldor5.tr.api.time.Session;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpTransport;
@@ -15,6 +16,7 @@ import java.security.GeneralSecurityException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -73,6 +75,31 @@ public class Holiday {
         return isHoliday();
     }
 
+    public boolean applies(Session session) throws GeneralSecurityException, IOException {
+        setNowFromLocalDate(session.getDate());
+        if(sundayRuleApplies()){
+            return false;
+        }
+        return isHoliday();
+    }
+
+    public HashMap<Session,Boolean> applies(List<Session> sessionList) throws GeneralSecurityException, IOException {
+        HashMap<Session,Boolean> evaluatedList=new HashMap<>();
+
+        for (Session session: sessionList) {
+
+            evaluatedList.put(session, convertbooleanToBoolean(applies(session)));
+        }
+
+        return evaluatedList;
+    }
+
+    private Boolean convertbooleanToBoolean(boolean value){
+        if(value){
+            return Boolean.TRUE;
+        }
+        return Boolean.FALSE;
+    }
     private boolean sundayRuleApplies(){
         Date date=new Date(nowinlong);
         Sunday sundaycheck = new Sunday(date);
@@ -106,8 +133,8 @@ public class Holiday {
         HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
         String client_id="1099400721753-k327qrlvue3dahmg5au24j7qbojn1sj9.apps.googleusercontent.com";
         String client_secret = "BJBPI1iS6fMpupK-2RLP9UvJ";
-        String access_token= "ya29.GlxVBOKCzkPnO8HhbR7770IqdL-5Mdko50k9KeUEtCwEnuAag5m9_urdgR8iQlLdFuNbgMhIjp6Eei6j4NtS98cXoLon1jgBQPY23vUnaiyi7u-6_CoNW_zQ14HZ3g";
-        String refresh_token="1/3wKjOlXwdyoOpeUJRtlnfvsjBw7xSXTzrUtYRT8jgy4";
+        String access_token= "ya29.GltfBFHHJXywCETc8O8YITObWeUJlRplfzi80jYwp-oUHrFnKBvDoKNDRu-RB3wymzseJP9eJyVAhL_5d-MG6gibetN9U5OyGiKYfAPwQaeKkkwhiI7wCqpMxaed";
+        String refresh_token="1/1ng7KrPBPdBB7dFrjVHjOVq_wQ8C3Mrcbv4H_DxpB6NNpLWPUsNrfZFi3ardXMMN";
 
         GoogleCredential credentials =
                 new GoogleCredential.Builder()
