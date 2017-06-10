@@ -78,8 +78,10 @@ public class Holiday {
     public boolean applies(Session session) throws GeneralSecurityException, IOException {
         setNowFromLocalDate(session.getDate());
         if(sundayRuleApplies()){
+            session.setMultiplier(2);
             return false;
         }
+        session.setMultiplier(2);
         return isHoliday();
     }
 

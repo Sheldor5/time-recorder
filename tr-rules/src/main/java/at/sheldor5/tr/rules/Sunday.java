@@ -1,11 +1,15 @@
 package at.sheldor5.tr.rules;
 
+import at.sheldor5.tr.api.time.Session;
+
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by Vanessa on 25.05.2017.
@@ -35,6 +39,32 @@ public class Sunday {
 
     public boolean applies() {
         return isSunday();
+    }
+
+    public boolean applies(Session session) throws GeneralSecurityException, IOException {
+        if(applies(session.getDate())){
+            session.setMultiplier(2);
+            return true;
+        };
+        return false;
+    }
+
+    public HashMap<Session,Boolean> applies(List<Session> sessionList) throws GeneralSecurityException, IOException {
+        HashMap<Session,Boolean> evaluatedList=new HashMap<>();
+
+        for (Session session: sessionList) {
+
+            evaluatedList.put(session, convertbooleanToBoolean(applies(session)));
+        }
+
+        return evaluatedList;
+    }
+
+    private Boolean convertbooleanToBoolean(boolean value){
+        if(value){
+            return Boolean.TRUE;
+        }
+        return Boolean.FALSE;
     }
 
     public boolean applies(LocalDate date) throws GeneralSecurityException, IOException {

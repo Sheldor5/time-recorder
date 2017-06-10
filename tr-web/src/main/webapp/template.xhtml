@@ -34,6 +34,7 @@
                                                                                                 <f:param name="uuid" value="#{user.userMapping.uuid}" />
                                                                                             </h:link></li>
                 <li><h:link value="#{msg['menu.logout']}" outcome="logout"/></li>
+                <li class="#{request.requestURI.endsWith('evaluation.xhtml') ? 'active' : ''}"><h:link value="#{msg['menu.evaluation']}" outcome="evaluation"/></li>
             </ul>
             <br/>
             <br/>
