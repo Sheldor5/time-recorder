@@ -4,9 +4,12 @@ import at.sheldor5.tr.api.plugins.ExporterPlugin;
 import at.sheldor5.tr.api.time.Day;
 import at.sheldor5.tr.api.time.Month;
 import at.sheldor5.tr.api.time.Year;
+import at.sheldor5.tr.api.user.User;
+
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.logging.Logger;
 
 public class PdfExporter implements ExporterPlugin {
@@ -26,6 +29,15 @@ public class PdfExporter implements ExporterPlugin {
     }
   }
 
+  private User user;
+  private OutputStream outputStream;
+
+  @Override
+  public void initialize(User user, OutputStream outputStream) {
+    this.user = user;
+    this.outputStream = outputStream;
+  }
+
   @Override
   public String displayNamePropertyIdentifier() {
     // time-recorder PDF
@@ -38,23 +50,23 @@ public class PdfExporter implements ExporterPlugin {
   }
 
   @Override
-  public InputStream export(Day day) {
-    return null;
+  public void export(Day day) {
+
   }
 
   @Override
-  public InputStream export(Month month) {
-    return null;
+  public void export(Month month) {
+
   }
 
   @Override
-  public InputStream export(Year year) {
-    return null;
+  public void export(Year year) {
+
   }
 
   @Override
-  public InputStream fullExport(Year year) {
-    return null;
+  public void fullExport(Year year) {
+
   }
 
   @Override

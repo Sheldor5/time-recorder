@@ -4,20 +4,38 @@ import at.sheldor5.tr.api.plugins.ExporterPlugin;
 import at.sheldor5.tr.api.time.Day;
 import at.sheldor5.tr.api.time.Month;
 import at.sheldor5.tr.api.time.Session;
+import at.sheldor5.tr.api.user.User;
+import at.sheldor5.tr.exporter.html.HtmlExporter;
 import at.sheldor5.tr.exporter.text.PlainTextExporter;
 import at.sheldor5.tr.exporter.utils.ExporterUtils;
 import at.sheldor5.tr.api.time.Year;
+
+import java.awt.*;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalTime;
+
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class PlainTextExporterTest {
 
-  private static final File OUTPUT = new File("target/export.txt");
+  private static final File FILE = new File("PlainTextExporter.html");
+  private static final User USER = new User("Sheldor5", "", "Michael", "Palata");
+
+  @BeforeClass
+  public static void setup() throws IOException {
+    if (!FILE.exists()) {
+      if (!FILE.createNewFile()) {
+        Assert.fail();
+      }
+    }
+  }
 
   @Test
   public void exporter_mime_type_should_return_plain_text() {
@@ -29,8 +47,14 @@ public class PlainTextExporterTest {
   public void testPlainTextExporter() throws IOException {
     Year year = getSimpleTestYear(2016);
     ExporterPlugin exporter = new PlainTextExporter();
-    InputStream inputStream = exporter.export(year);
-    ExporterUtils.toFile(inputStream, OUTPUT);
+    FileOutputStream fileOutputStream = new FileOutputStream(FILE);
+
+    exporter.initialize(USER, fileOutputStream);
+
+    exporter.export(year);
+
+    fileOutputStream.flush();
+    fileOutputStream.close();
   }
 
   public static Year getSimpleTestYear(int y) {
@@ -58,6 +82,11 @@ public class PlainTextExporterTest {
       year.addItem(month);
     }
     return year;
+  }
+
+  @AfterClass
+  public static void teardown() throws IOException {
+    Desktop.getDesktop().open(FILE);
   }
 
 }

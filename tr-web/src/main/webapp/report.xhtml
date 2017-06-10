@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+<f:view>
+    <ui:composition template="template.xhtml">
+        <ui:define name="content">
+            <div>
+                <form action="#{request.contextPath}/export" target="_blank">
+                    <div class="row">
+                        <div class="col-md-2"/>
+                        <div class="col-md-4">
+                            <select class="form-control" name="type">
+                            <option value="month">#{msg['exporter.type.month']}</option>
+                            <option value="year">#{msg['exporter.type.year']}</option>
+                        </select>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="month" name="date"/>
+                        </div>
+                        <div class="col-md-2"/>
+                    </div>
+                    <br/>
+                    <div class="row">
+                        <div class="col-md-2"/>
+                        <div class="col-md-4">
+                            <select class="form-control" name="exporter">
+                                <ui:repeat value="#{exporter.plugins}" var="p">
+                                    <option value="#{p.name}">#{msg[p.displayNamePropertyIdentifier()]}</option>
+                                </ui:repeat>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="submit" value="senden" class="btn btn-primary"/>
+                        </div>
+                        <div class="col-md-2"/>
+                    </div>
+                </form>
+            </div>
+        </ui:define>
+    </ui:composition>
+</f:view>
+</html>

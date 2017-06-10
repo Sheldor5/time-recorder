@@ -3,13 +3,15 @@ package at.sheldor5.tr.persistence.utils;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
+import java.time.LocalDate;
 
 /**
  * TODO.
  */
 public class QueryUtils {
 
-  public static <E, T> TypedQuery<E> findByField(final EntityManager entityManager, Class<E> entityClass, String fieldName, Class<T> fieldType, T fieldValue) {
+  public static <E, T> TypedQuery<E> findByField(EntityManager entityManager,
+                                                 Class<E> entityClass, String fieldName, Class<T> fieldType, T fieldValue) {
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<E> criteriaQuery = criteriaBuilder.createQuery(entityClass);
 
@@ -26,6 +28,36 @@ public class QueryUtils {
 
     TypedQuery<E> query = entityManager.createQuery(criteriaQuery);
     query.setParameter(parameter, fieldValue);
+
+    return query;
+  }
+
+  public static <E, T> TypedQuery<E> findByFields(EntityManager entityManager,
+                                                  Class<E> entityClass, String fieldName, Class<T> fieldType, T fieldValue,
+                                                  String dateFieldName, LocalDate from, LocalDate to) {
+
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<E> criteriaQuery = criteriaBuilder.createQuery(entityClass);
+
+    // SELECT Object FROM ObjectTable
+    Root<E> entity = criteriaQuery.from(entityClass);
+    criteriaQuery.select(entity);
+
+    // WHERE fieldName = fieldValue
+    ParameterExpression<T> parameter1 = criteriaBuilder.parameter(fieldType);
+    Path<T> path1 = entity.get(fieldName);
+    Predicate predicate1 = criteriaBuilder.equal(path1, parameter1);
+
+    // BETWEEN [from] AND [to]
+    Path<LocalDate> path2 = entity.get(dateFieldName);
+    Predicate predicate2 = criteriaBuilder.between(path2, from, to);
+
+    Predicate predicate = criteriaBuilder.and(predicate1, predicate2);
+
+    criteriaQuery.where(predicate);
+
+    TypedQuery<E> query = entityManager.createQuery(criteriaQuery);
+    query.setParameter(parameter1, fieldValue);
 
     return query;
   }

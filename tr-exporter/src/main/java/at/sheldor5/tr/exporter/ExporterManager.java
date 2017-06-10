@@ -41,7 +41,15 @@ public class ExporterManager implements PluginManager<ExporterPlugin> {
 
   @Override
   public ExporterPlugin getPlugin(final String name) {
-    return plugins.get(name);
+    ExporterPlugin plugin = plugins.get(name);
+    if (plugin != null) {
+      try {
+        plugin = plugin.getClass().newInstance();
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+    return plugin;
   }
 
   @Override

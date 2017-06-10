@@ -5,7 +5,6 @@ import at.sheldor5.tr.api.user.Role;
 import at.sheldor5.tr.api.user.User;
 import at.sheldor5.tr.api.plugins.PluginManager;
 import at.sheldor5.tr.api.user.UserMapping;
-import at.sheldor5.tr.persistence.EntityManagerHelper;
 import at.sheldor5.tr.persistence.provider.UserMappingProvider;
 
 import javax.inject.Inject;

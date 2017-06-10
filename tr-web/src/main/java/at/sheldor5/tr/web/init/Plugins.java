@@ -15,7 +15,6 @@ import java.util.logging.Logger;
 public class Plugins implements ServletContextListener {
 
   private static final Logger LOGGER = Logger.getLogger(Plugins.class.getName());
-  private static final String PLUGINS_PATH = "plugins";
 
   private final AuthenticationManager authenticationManager = AuthenticationManager.getInstance();
   private final ExporterManager exporterManager = ExporterManager.getInstance();

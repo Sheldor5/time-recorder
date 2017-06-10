@@ -1,37 +1,94 @@
 package at.sheldor5.tr.web.export;
 
+import at.sheldor5.tr.api.plugins.ExporterPlugin;
+import at.sheldor5.tr.api.time.Month;
+import at.sheldor5.tr.exporter.ExporterManager;
+import at.sheldor5.tr.web.DataProvider;
+import at.sheldor5.tr.web.jsf.beans.UserController;
+
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.time.DateTimeException;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @WebServlet(name = "export", urlPatterns = "/export")
 public class Exporter extends HttpServlet {
 
+  private static final List<String> TYPES = new ArrayList<>();
+
+  static {
+    TYPES.add("month");
+    TYPES.add("year");
+  }
+
+  @Inject
+  private DataProvider dataProvider;
+
+  @Inject
+  private UserController user;
+
   @Override
   public void doGet(final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
-    final HttpSession session = request.getSession();
-    final Object object = session.getAttribute("userMapping");
 
-    if (object == null) {
+    if (user == null || user.getUserMapping() == null) {
       response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
       return;
     }
 
-    response.setContentType("text/html");
+    String pluginName = request.getParameter("exporter");
+    String exportType = request.getParameter("type");
 
-    final PrintWriter writer = response.getWriter();
-    writer.println("<html>");
-    writer.println("<head>");
-    writer.println("<title>Sample Application Servlet Page</title>");
-    writer.println("</head>");
-    writer.println("<body bgcolor=white>");
-    writer.println("<p>under construction</p>");
-    writer.println("</body>");
-    writer.println("</html>");
+    if (!TYPES.contains(exportType)) {
+      response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED);
+      return;
+    }
+
+    String dateText = request.getParameter("date");
+    String parts[] = dateText.split("-");
+
+    if (parts.length != 2) {
+      response.setStatus(HttpServletResponse.SC_EXPECTATION_FAILED);
+      return;
+    }
+
+    LocalDate date;
+
+    try {
+      int year = Integer.parseInt(parts[0]);
+      int month = Integer.parseInt(parts[1]);
+      date = LocalDate.of(year, month, 1);
+    } catch (final NumberFormatException | DateTimeException e) {
+      e.printStackTrace();
+      response.setStatus(HttpServletResponse.SC_EXPECTATION_FAILED);
+      return;
+    }
+
+    ExporterPlugin plugin = ExporterManager.getInstance().getPlugin(pluginName);
+
+    if (plugin == null) {
+      response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+      return;
+    }
+
+    plugin.initialize(user.getUser(), response.getOutputStream());
+
+    response.setStatus(HttpServletResponse.SC_OK);
+    response.setContentType(plugin.getMimeType().toString());
+
+    switch (exportType) {
+      case "month":
+        Month month = dataProvider.getMonth(user.getUserMapping(), date);
+        plugin.export(month);
+        break;
+      case "year":
+        break;
+    }
   }
 }

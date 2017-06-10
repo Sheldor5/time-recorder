@@ -3,10 +3,19 @@ package at.sheldor5.tr.api.plugins;
 import at.sheldor5.tr.api.time.Day;
 import at.sheldor5.tr.api.time.Month;
 import at.sheldor5.tr.api.time.Year;
-import java.io.InputStream;
+import at.sheldor5.tr.api.user.User;
+
+import java.io.OutputStream;
 import javax.activation.MimeType;
 
 public interface ExporterPlugin extends Plugin {
+
+  /**
+   * Initialize the Plugin by passing it the {@link OutputStream} of the HTTP Response.
+   *
+   * @param outputStream the {@link OutputStream} of the HTTP Response to write to.
+   */
+  void initialize(User user, OutputStream outputStream);
 
   /**
    * The property identifier for the
@@ -31,7 +40,7 @@ public interface ExporterPlugin extends Plugin {
    * @param day The day to report.
    * @return The stream which holds the content of this exporter.
    */
-  InputStream export(final Day day);
+  void export(final Day day);
 
   /**
    * Export all records of a month in a human readable manner.
@@ -40,7 +49,7 @@ public interface ExporterPlugin extends Plugin {
    * @param month The month to report.
    * @return The stream which holds the content of this exporter.
    */
-  InputStream export(final Month month);
+  void export(final Month month);
 
   /**
    * Export all records of a year in a human readable manner.
@@ -49,7 +58,7 @@ public interface ExporterPlugin extends Plugin {
    * @param year The year to report.
    * @return The stream which holds the content of this exporter.
    */
-  InputStream export(final Year year);
+  void export(final Year year);
 
   /**
    * Export all records of a year in a human readable manner.
@@ -58,6 +67,6 @@ public interface ExporterPlugin extends Plugin {
    * @param year The year to report.
    * @return The stream which holds the content of this exporter.
    */
-  InputStream fullExport(final Year year);
+  void fullExport(final Year year);
 
 }

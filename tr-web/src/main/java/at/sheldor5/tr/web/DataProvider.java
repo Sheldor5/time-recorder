@@ -2,6 +2,7 @@ package at.sheldor5.tr.web;
 
 import at.sheldor5.tr.api.project.Project;
 import at.sheldor5.tr.api.time.Day;
+import at.sheldor5.tr.api.time.Month;
 import at.sheldor5.tr.api.time.Session;
 import at.sheldor5.tr.api.user.User;
 import at.sheldor5.tr.api.user.UserMapping;
@@ -18,6 +19,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -76,6 +78,45 @@ public class DataProvider implements Serializable, AutoCloseable {
     Day day = new Day(date);
     day.setItems(sessionProvider.get(userMapping, date));
     return day;
+  }
+
+  public Month getMonth(final UserMapping userMapping, final LocalDate date) {
+    SessionProvider sessionProvider = new SessionProvider(entityManager);
+    Month month = new Month(date);
+
+    int y = date.getYear();
+    int m = date.getMonthValue();
+
+    LocalDate from = LocalDate.of(y, m, 1);
+    LocalDate to = LocalDate.of(y, m, date.lengthOfMonth());
+
+    List<Session> sessions = sessionProvider.get(userMapping, from, to);
+
+    if (sessions.size() == 0) {
+      return month;
+    }
+
+    Collections.sort(sessions);
+
+    int d = 1;
+    LocalDate last = sessions.get(0).getDate();
+    Day day = new Day(LocalDate.of(y, m, last.getDayOfMonth()));
+    LocalDate current;
+    for (final Session session : sessions) {
+      current = session.getDate();
+      if (last.equals(current)) {
+        day.addItem(session);
+      } else {
+        d++;
+        month.addItem(day);
+        day = new Day(LocalDate.of(y, m, current.getDayOfMonth()));
+        day.addItem(session);
+      }
+      last = current;
+    }
+    month.addItem(day);
+
+    return month;
   }
 
   public List<User> getUsers() {

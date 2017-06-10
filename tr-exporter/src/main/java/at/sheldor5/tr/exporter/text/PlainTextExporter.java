@@ -4,6 +4,7 @@ import at.sheldor5.tr.api.plugins.ExporterPlugin;
 import at.sheldor5.tr.api.time.Day;
 import at.sheldor5.tr.api.time.Month;
 import at.sheldor5.tr.api.time.Year;
+import at.sheldor5.tr.api.user.User;
 import at.sheldor5.tr.api.utils.TimeUtils;
 import at.sheldor5.tr.exporter.pdf.PdfExporter;
 
@@ -30,6 +31,15 @@ public class PlainTextExporter implements ExporterPlugin {
     }
   }
 
+  private User user;
+  private OutputStream outputStream;
+
+  @Override
+  public void initialize(User user, OutputStream outputStream) {
+    this.user = user;
+    this.outputStream = outputStream;
+  }
+
   @Override
   public String displayNamePropertyIdentifier() {
     // time-recorder Text
@@ -42,17 +52,17 @@ public class PlainTextExporter implements ExporterPlugin {
   }
 
   @Override
-  public InputStream export(final Day day) {
-    return null;
+  public void export(final Day day) {
+
   }
 
   @Override
-  public InputStream export(final Month month) {
-    return null;
+  public void export(final Month month) {
+
   }
 
   @Override
-  public InputStream export(final Year year) {
+  public void export(final Year year) {
     final StringBuilder sb = new StringBuilder();
 
     sb.append("Report for ").append(year.getDate().getYear()).append("\n\n");
@@ -67,20 +77,19 @@ public class PlainTextExporter implements ExporterPlugin {
     sb.append(String.format("%-12s%s", "Summe", String.format("%25s", TimeUtils.getHumanReadableSummary(sum))));
 
     try {
-      return new ByteArrayInputStream(sb.toString().getBytes("UTF-8"));
-    } catch (final UnsupportedEncodingException e) {
+      outputStream.write(sb.toString().getBytes("UTF-8"));
+    } catch (final IOException e) {
       // TODO LOGGING
       e.printStackTrace();
-      return null;
     }
   }
 
   @Override
-  public InputStream fullExport(final Year year) {
-    return null;
+  public void fullExport(final Year year) {
+
   }
 
-  public static String getMonthString(int i) {
+  private static String getMonthString(int i) {
     switch (i) {
       case 1:
         return "Jänner";

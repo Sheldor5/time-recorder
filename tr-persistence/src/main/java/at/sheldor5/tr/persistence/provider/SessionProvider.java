@@ -35,20 +35,36 @@ public class SessionProvider extends GenericProvider<Session, Integer> {
     super(entityManager, IDENTIFIER);
   }
 
-  public List<Session> get(final LocalDate from, final LocalDate to) {
-    if (from == null || to == null) {
-      return null;
+  public List<Session> get(final UserMapping userMapping, final LocalDate from, final LocalDate to) {
+    List<Session> sessions = new ArrayList<>();
+
+    if (userMapping == null || from == null || to == null) {
+      return sessions;
     }
 
-    return null;
+    TypedQuery<Session> query = QueryUtils.findByFields(entityManager, Session.class,
+        "userMapping", UserMapping.class, userMapping, "date", from, to);
+
+    EntityTransaction transaction = entityManager.getTransaction();
+    transaction.begin();
+
+    try {
+      sessions = query.getResultList();
+      transaction.commit();
+    } catch (final Exception e) {
+      transaction.rollback();
+      e.printStackTrace();
+    }
+
+    return sessions;
   }
 
   public List<Session> get(final UserMapping userMapping, final LocalDate date) {
-    if (userMapping == null || date == null) {
-      return new ArrayList<>();
-    }
-
     List<Session> sessions = new ArrayList<>();
+
+    if (userMapping == null || date == null) {
+      return sessions;
+    }
 
     TypedQuery<Session> findByFields = QueryUtils.findByFields(entityManager, Session.class,
         "userMapping", UserMapping.class, userMapping, "date", LocalDate.class, date, true);
