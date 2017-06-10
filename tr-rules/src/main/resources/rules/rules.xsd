@@ -35,6 +35,7 @@
                 <xs:element name="before" type="trr:timeType" maxOccurs="unbounded"/>
                 <xs:element name="after" type="trr:timeType" maxOccurs="unbounded"/>
                 <xs:element name="effort" type="trr:effortType" maxOccurs="unbounded"/>
+                <xs:element name="holiday" type="trr:holidayType" maxOccurs="unbounded"/>
             </xs:choice>
         </xs:sequence>
     </xs:complexType>
@@ -71,6 +72,22 @@
                 <xs:simpleType>
                     <xs:restriction base="xs:double"/>
                 </xs:simpleType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="holidayType">
+        <xs:sequence>
+            <xs:element name="multiplier">
+                <xs:simpleType>
+                    <xs:restriction base="xs:double"/>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="days" type="trr:daysType">
+                <xs:unique name="holidayKey">
+                    <xs:selector xpath="trr:day"/>
+                    <xs:field xpath="."/>
+                </xs:unique>
             </xs:element>
         </xs:sequence>
     </xs:complexType>
