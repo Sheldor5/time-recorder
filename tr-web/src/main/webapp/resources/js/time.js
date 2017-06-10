@@ -1,6 +1,7 @@
 var dateParam = document.getElementById("stamp:date");
 var timeParam = document.getElementById("stamp:time");
-var clock = document.getElementById("clock");
+var clocks = document.getElementsByClassName("clock");
+var dates = document.getElementsByClassName("date");
 
 (function () {
     update();
@@ -8,12 +9,20 @@ var clock = document.getElementById("clock");
 })();
 
 function update() {
-    var d = new Date();
-    var date = getLocalDate(d);
-    var time = getLocalTime(d);
+    var now = new Date();
+    var date = getLocalDate(now);
+    var time = getLocalTime(now);
+
     dateParam.value = date;
     timeParam.value = time;
-    clock.innerHTML = time;
+
+    for (var index in clocks) {
+        clocks[index].innerHTML = time;
+    }
+
+    for (var index in dates) {
+        dates[index].innerHTML = date;
+    }
 }
 
 function getLocalDate(date) {

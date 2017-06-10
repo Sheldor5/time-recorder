@@ -1,6 +1,7 @@
 package at.sheldor5.tr.web;
 
 import at.sheldor5.tr.api.project.Project;
+import at.sheldor5.tr.api.time.Day;
 import at.sheldor5.tr.api.time.Session;
 import at.sheldor5.tr.api.user.User;
 import at.sheldor5.tr.api.user.UserMapping;
@@ -68,6 +69,13 @@ public class DataProvider implements Serializable, AutoCloseable {
   public List<Session> getSessions(final UserMapping userMapping, final LocalDate date) {
     SessionProvider sessionProvider = new SessionProvider(entityManager);
     return sessionProvider.get(userMapping, date);
+  }
+
+  public Day getDay(final UserMapping userMapping, final LocalDate date) {
+    SessionProvider sessionProvider = new SessionProvider(entityManager);
+    Day day = new Day(date);
+    day.setItems(sessionProvider.get(userMapping, date));
+    return day;
   }
 
   public List<User> getUsers() {

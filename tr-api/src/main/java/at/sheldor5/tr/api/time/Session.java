@@ -112,7 +112,7 @@ public class Session implements Comparable<Session> {
    */
   public long getSummary() {
     if (start == null || end == null) {
-      return -1;
+      return 0;
     }
     return start.until(end, GlobalConfiguration.MEASURE_UNIT);
   }

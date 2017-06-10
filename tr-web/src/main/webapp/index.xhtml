@@ -7,28 +7,50 @@
 <f:view>
     <ui:composition template="template.xhtml">
         <ui:define name="content">
-            <h:outputLabel value="Hello #{user.forename}"/>
-            <h:outputLabel value=", you are an Administrator!" rendered="#{user.admin}"/>
+            <!--<h:outputLabel value="Hello #{user.forename}"/>
+            <h:outputLabel value=", you are an Administrator!" rendered="#{user.admin}"/>-->
 
             <h:form id="stamp">
                 <h:inputHidden id="time" value="#{clock.time}" converter="at.sheldor5.tr.LocalTimeConverter"/>
                 <h:inputHidden id="date" value="#{clock.date}" converter="at.sheldor5.tr.LocalDateConverter"/>
 
                 <div class="panel panel-default">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div id="clock">00:00:00</div>
-                        </div>
-                        <div class="col-md-6">
-                            <h:commandButton value="#{clock.hasStarted() ? msg['clock.go'] : msg['clock.come']}"
-                                             action="#{clock.stamp}" styleClass="btn btn-primary"/>
+                    <div class="panel-heading">
+                        <div class="row vertical-align">
+                            <div class="col-md-4">
+                                <h2 class="clock"><span class="label label-danger">#{msg['system.error.javascript']}</span></h2>
+                            </div>
+                            <div class="col-md-4">
+                                <c:choose>
+                                    <c:when test="#{clock.hasStarted()}">
+                                        <h:outputLabel value="#{clock.project.name}"/>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <h:selectOneMenu value="#{clock.projectId}" styleClass="form-control">
+                                            <f:selectItems value="#{clock.projects}" var="p"
+                                                           itemLabel="#{p.name}" itemValue="#{p.id}" />
+                                        </h:selectOneMenu>
+                                    </c:otherwise>
+                                </c:choose>
+                            </div>
+                            <div class="col-md-2">
+                                <h:commandButton value="#{clock.hasStarted() ? msg['clock.go'] : msg['clock.come']}"
+                                                 action="#{clock.stamp}" styleClass="btn btn-primary"/>
+                            </div>
+                            <div class="col-md-2">
+                                <c:if test="#{!clock.isSynchronized}">
+                                    <h:commandButton value="#{msg['clock.sync']}" title="#{msg['clock.sync.tooltip']}"
+                                                     action="#{clock.sync}" styleClass="btn btn-primary btn-xs pull-right"/>
+                                </c:if>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <c:if test="#{clock.hasStarted()}">
                     <div class="panel panel-default">
-                        <h:dataTable id="w" value="#{clock.projects}" var="project">
+                        <div class="panel-heading"><h3>#{msg['clock.projects']}</h3></div>
+                        <h:dataTable id="w" value="#{clock.projects}" var="project" styleClass="table table-striped">
                             <h:column>
                                 <h:outputLabel value="#{project.name}"/>
                             </h:column>
@@ -43,18 +65,21 @@
             </h:form>
 
             <div class="panel panel-default">
-                <h:dataTable value="#{clock.sessions}" var="s">
+                <div class="panel-heading"><h3>#{msg['clock.today']}<span class="date"><span class="label label-danger">#{msg['system.error.javascript']}</span></span></h3></div>
+                <h:dataTable value="#{clock.today.items}" var="s" styleClass="table table-striped" columnClasses="col-md-3">
                     <h:column>
-                        <f:facet name="header">#{msg['session.from']}</f:facet>
-                        <h:outputLabel value="#{s.start}"/>
+                        <h:outputText value="#{s.start}"/>
                     </h:column>
                     <h:column>
-                        <f:facet name="header">#{msg['session.to']}</f:facet>
-                        <h:outputLabel value="#{s.end}"/>
+                        <div align="left"><h:outputText value="#{s.end}"/></div>
+                        <f:facet name="footer"><h:outputLabel value="#{msg['clock.today.summary']}"/></f:facet>
                     </h:column>
                     <h:column>
-                        <f:facet name="header">#{msg['session.project']}</f:facet>
-                        <h:outputLabel value="#{s.project.name}"/>
+                        <h:outputText value="#{clock.getHumanReadableSummary(s.summary)}"/>
+                        <f:facet name="footer"><h:outputLabel value="#{clock.getHumanReadableSummary(clock.today.summary)}"/></f:facet>
+                    </h:column>
+                    <h:column>
+                        <h:outputText value="#{s.project.name}"/>
                     </h:column>
                 </h:dataTable>
             </div>
