@@ -25,15 +25,32 @@
         <div class="col-md-6">
             <br/>
             <ul class="nav nav-tabs">
-                <li class="#{request.requestURI.endsWith('/') || request.requestURI.endsWith('index.xhtml') ? 'active' : ''}"><h:link value="#{msg['menu.today']}" outcome="index"/></li>
-                <li class="#{request.requestURI.endsWith('account.xhtml') ? 'active' : ''}"><h:link value="#{msg['menu.account']}" outcome="account"/></li>
-                <li class="#{request.requestURI.endsWith('report.xhtml') ? 'active' : ''}"><h:link value="#{msg['menu.export']}" outcome="report"/></li>
-                <li class="#{request.requestURI.endsWith('projects.xhtml') ? 'active' : ''}"><h:link value="#{msg['menu.projects']}" outcome="projects" rendered="#{user.admin}"/></li>
-                <li class="#{request.requestURI.endsWith('users.xhtml') ? 'active' : ''}"><h:link value="#{msg['menu.users']}" outcome="users" rendered="#{user.admin}"/></li>
-                <li class="#{request.requestURI.endsWith('editUser.xhtml') ? 'active' : ''}"><h:link value="#{msg['menu.profile']}" outcome="editUser" rendered="#{!user.admin}">
-                                                                                                <f:param name="uuid" value="#{user.userMapping.uuid}" />
-                                                                                            </h:link></li>
-                <li><h:link value="#{msg['menu.logout']}" outcome="logout"/></li>
+                <li class="#{request.requestURI.endsWith('/') || request.requestURI.endsWith('index.xhtml') ? 'active' : ''}">
+                    <h:link outcome="index" value="#{msg['menu.today']}"/>
+                </li>
+                <li class="#{request.requestURI.endsWith('account.xhtml') ? 'active' : ''}">
+                    <h:link outcome="account" value="#{msg['menu.account']}"/>
+                </li>
+                <li class="#{request.requestURI.endsWith('report.xhtml') ? 'active' : ''}">
+                    <h:link outcome="report" value="#{msg['menu.export']}"/>
+                </li>
+                <li class="#{request.requestURI.endsWith('projects.xhtml') ? 'active' : ''}">
+                    <h:link outcome="projects" value="#{msg['menu.projects']}" rendered="#{user.admin}"/>
+                </li>
+                <li class="#{request.requestURI.endsWith('users.xhtml') ? 'active' : ''}">
+                    <h:link outcome="users" value="#{msg['menu.users']}" rendered="#{user.admin}"/>
+                </li>
+                <li class="#{request.requestURI.endsWith('editUser.xhtml') ? 'active' : ''}">
+                    <h:link outcome="editUser" value="#{msg['menu.profile']}" rendered="#{!user.admin}">
+                        <f:param name="uuid" value="#{user.userMapping.uuid}" />
+                    </h:link>
+                </li>
+                <li class="#{request.requestURI.endsWith('schedule.xhtml') ? 'active' : ''}">
+                    <h:link outcome="schedule" value="#{msg['menu.schedule']}"/>
+                </li>
+                <li>
+                    <h:link outcome="logout" value="#{msg['menu.logout']}"/>
+                </li>
             </ul>
             <br/>
             <br/>
@@ -48,6 +65,8 @@
         </div>
         <div class="col-md-3"/>
     </div>
+
+    <h:outputScript library="js" name="time.js"/>
 
 </h:body>
 </html>

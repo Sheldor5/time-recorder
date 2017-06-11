@@ -191,7 +191,7 @@ public class Schedule {
     days[6] = LocalTime.MIN.until(this.sunday, GlobalConfiguration.MEASURE_UNIT);
   }
 
-  private LocalTime getTimeOfDayOfWeek(final DayOfWeek dayOfWeek) {
+  public LocalTime getTimeOfDayOfWeek(final DayOfWeek dayOfWeek) {
     switch (dayOfWeek) {
       case MONDAY:
         return this.monday;

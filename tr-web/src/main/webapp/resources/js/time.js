@@ -1,5 +1,6 @@
-var dateParam = document.getElementById("stamp:date");
-var timeParam = document.getElementById("stamp:time");
+var dateParam = document.getElementById("form:date");
+var timeParam = document.getElementById("form:time");
+
 var clocks = document.getElementsByClassName("clock");
 var dates = document.getElementsByClassName("date");
 
@@ -13,8 +14,12 @@ function update() {
     var date = getLocalDate(now);
     var time = getLocalTime(now);
 
-    dateParam.value = date;
-    timeParam.value = time;
+    if (dateParam != null) {
+        dateParam.value = date;
+    }
+    if (timeParam != null) {
+        timeParam.value = time;
+    }
 
     for (var index in clocks) {
         clocks[index].innerHTML = time;

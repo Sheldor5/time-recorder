@@ -4,13 +4,11 @@ import at.sheldor5.tr.api.project.Project;
 import at.sheldor5.tr.api.time.Day;
 import at.sheldor5.tr.api.time.Month;
 import at.sheldor5.tr.api.time.Session;
+import at.sheldor5.tr.api.user.Schedule;
 import at.sheldor5.tr.api.user.User;
 import at.sheldor5.tr.api.user.UserMapping;
 import at.sheldor5.tr.persistence.EntityManagerHelper;
-import at.sheldor5.tr.persistence.provider.ProjectProvider;
-import at.sheldor5.tr.persistence.provider.SessionProvider;
-import at.sheldor5.tr.persistence.provider.UserProjectMappingProvider;
-import at.sheldor5.tr.persistence.provider.UserProvider;
+import at.sheldor5.tr.persistence.provider.*;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -119,6 +117,16 @@ public class DataProvider implements Serializable, AutoCloseable {
     return month;
   }
 
+  public Schedule getSchedule(final UserMapping userMapping) {
+    ScheduleProvider scheduleProvider = new ScheduleProvider(entityManager);
+    return scheduleProvider.getLatest(userMapping);
+  }
+
+  public List<Schedule> getSchedules(final UserMapping userMapping) {
+    ScheduleProvider scheduleProvider = new ScheduleProvider(entityManager);
+    return scheduleProvider.get(userMapping);
+  }
+
   public List<User> getUsers() {
     UserProvider userProvider = new UserProvider(entityManager);
     return userProvider.getList("");
@@ -132,6 +140,11 @@ public class DataProvider implements Serializable, AutoCloseable {
   public void save(final User user) {
     UserProvider userProvider = new UserProvider(entityManager);
     userProvider.save(user);
+  }
+
+  public void save(final Schedule schedule) {
+    ScheduleProvider scheduleProvider = new ScheduleProvider(entityManager);
+    scheduleProvider.save(schedule);
   }
 
   @Override

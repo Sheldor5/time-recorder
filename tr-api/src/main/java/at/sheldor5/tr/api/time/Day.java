@@ -1,9 +1,15 @@
 package at.sheldor5.tr.api.time;
 
+import at.sheldor5.tr.api.user.Schedule;
+import at.sheldor5.tr.api.utils.GlobalConfiguration;
+
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 public class Day extends Container<Session> {
+
+  private Schedule schedule;
 
   public Day(final LocalDate date) {
     super(date);
@@ -23,6 +29,7 @@ public class Day extends Container<Session> {
     for (final Session session : sessions) {
       sum += session.getSummary();
     }
+    sum -= quota();
 
     return sum;
   }
@@ -40,4 +47,19 @@ public class Day extends Container<Session> {
     return sum;
   }
 
+  public Schedule getSchedule() {
+    return schedule;
+  }
+
+  public void setSchedule(Schedule schedule) {
+    this.schedule = schedule;
+  }
+
+  private long quota() {
+    if (schedule != null) {
+      LocalTime time = schedule.getTimeOfDayOfWeek(date.getDayOfWeek());
+      return LocalTime.MIN.until(time, GlobalConfiguration.MEASURE_UNIT);
+    }
+    return 0;
+  }
 }

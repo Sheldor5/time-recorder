@@ -15,9 +15,13 @@ import java.time.format.DateTimeFormatter;
 public class LocalTimeConverter implements Converter<LocalTime> {
 
   private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
+  private static final DateTimeFormatter TIME_FORMATTER_SHORT = DateTimeFormatter.ofPattern("HH:mm");
 
   @Override
   public LocalTime getAsObject(final FacesContext context, final UIComponent component, final String value) {
+    if (value.length() == 5) {
+        return LocalTime.parse(value, TIME_FORMATTER_SHORT);
+    }
     return LocalTime.parse(value, TIME_FORMATTER);
   }
 

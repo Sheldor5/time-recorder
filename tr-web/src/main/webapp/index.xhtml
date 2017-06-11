@@ -10,7 +10,7 @@
             <!--<h:outputLabel value="Hello #{user.forename}"/>
             <h:outputLabel value=", you are an Administrator!" rendered="#{user.admin}"/>-->
 
-            <h:form id="stamp">
+            <h:form id="form">
                 <h:inputHidden id="time" value="#{clock.time}" converter="at.sheldor5.tr.LocalTimeConverter"/>
                 <h:inputHidden id="date" value="#{clock.date}" converter="at.sheldor5.tr.LocalDateConverter"/>
 
@@ -83,7 +83,6 @@
                     </h:column>
                 </h:dataTable>
             </div>
-            <h:outputScript library="js" name="time.js"/>
         </ui:define>
     </ui:composition>
 </f:view>

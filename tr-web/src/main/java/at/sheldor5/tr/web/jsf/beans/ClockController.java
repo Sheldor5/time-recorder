@@ -3,6 +3,7 @@ package at.sheldor5.tr.web.jsf.beans;
 import at.sheldor5.tr.api.project.Project;
 import at.sheldor5.tr.api.time.Day;
 import at.sheldor5.tr.api.time.Session;
+import at.sheldor5.tr.api.user.Schedule;
 import at.sheldor5.tr.api.utils.TimeUtils;
 import at.sheldor5.tr.web.DataProvider;
 
@@ -54,6 +55,7 @@ public class ClockController implements Serializable {
     List<Session> sessions = today.getItems();
 
     if (sessions.size() > 0) {
+      today.setSchedule(user.getSchedule());
       Collections.sort(sessions);
       session = sessions.get(sessions.size() - 1);
       project = session.getProject();
@@ -124,6 +126,10 @@ public class ClockController implements Serializable {
     } else {
       LOGGER.info("null");
     }
+  }
+
+  public void setSchedule(final Schedule schedule) {
+    today.setSchedule(schedule);
   }
 
   public List<Project> getProjects() {

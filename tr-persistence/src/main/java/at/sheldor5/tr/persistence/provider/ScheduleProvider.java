@@ -1,10 +1,18 @@
 package at.sheldor5.tr.persistence.provider;
 
+import at.sheldor5.tr.api.time.Session;
 import at.sheldor5.tr.api.user.Schedule;
+import at.sheldor5.tr.api.user.UserMapping;
 import at.sheldor5.tr.persistence.EntityManagerHelper;
 import at.sheldor5.tr.persistence.identifier.AbstractIdentifier;
+import at.sheldor5.tr.persistence.utils.QueryUtils;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import javax.persistence.TypedQuery;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Michael Palata
@@ -30,5 +38,54 @@ public class ScheduleProvider extends GenericProvider<Schedule, Integer> {
 
   public ScheduleProvider(final EntityManager entityManager) {
     super(entityManager, IDENTIFIER);
+  }
+
+  public List<Schedule> get(final UserMapping userMapping) {
+    if (userMapping == null) {
+      return new ArrayList<>();
+    }
+
+    TypedQuery<Schedule> findByField = QueryUtils.findByFieldOrdered(entityManager, Schedule.class, "userMapping", UserMapping.class, userMapping, "dueDate", false);
+
+    List<Schedule> schedules;
+
+    EntityTransaction transaction = entityManager.getTransaction();
+    transaction.begin();
+
+    try {
+      schedules = findByField.getResultList();
+      transaction.commit();
+    } catch (final Exception e) {
+      transaction.rollback();
+      schedules = new ArrayList<>();
+      e.printStackTrace();
+    }
+
+    return schedules;
+  }
+
+  public Schedule getLatest(final UserMapping userMapping) {
+
+    if (userMapping == null) {
+      return new Schedule();
+    }
+
+    TypedQuery<Schedule> findByFields = QueryUtils.findByFieldOrdered(entityManager, Schedule.class, "userMapping", UserMapping.class, userMapping, "dueDate", false);
+    findByFields.setMaxResults(1);
+
+    Schedule schedule = null;
+
+    EntityTransaction transaction = entityManager.getTransaction();
+    transaction.begin();
+
+    try {
+      schedule = findByFields.getSingleResult();
+      transaction.commit();
+    } catch (final Exception e) {
+      transaction.rollback();
+      e.printStackTrace();
+    }
+
+    return schedule;
   }
 }
