@@ -139,7 +139,7 @@ public class RuleLoader {
             rule.timeOperations.add(getTimeOperation((Element) node));
             break;
           default:
-            LOGGER.info("Rule type \"" + node.getNodeName() + "\" is not implemented yet!");
+            LOGGER.info("RuleClass type \"" + node.getNodeName() + "\" is not implemented yet!");
             break;
         }
       }

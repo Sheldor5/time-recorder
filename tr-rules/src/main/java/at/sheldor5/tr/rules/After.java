@@ -8,7 +8,7 @@ public class After extends TimeOperation {
   public After(final LocalTime time, double multiplier, final Integer... days) {
     super(time, multiplier, days);
     if (LocalTime.MAX.equals(time)) {
-      throw new IllegalArgumentException("Rule never applies");
+      throw new IllegalArgumentException("RuleClass never applies");
     }
   }
 

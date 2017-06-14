@@ -112,13 +112,13 @@ public class RuleLoaderTest {
 
 
     for (final Rule rule : rules) {
-      Assert.assertTrue("Rule should apply", rule.applies(day));
+      Assert.assertTrue("RuleClass should apply", rule.applies(day));
       rule.apply(day);
     }
 
     final List<Session> sessions = day.getItems();
 
-    Assert.assertEquals("Rule should split session into 7 sessions", 7, sessions.size());
+    Assert.assertEquals("RuleClass should split session into 7 sessions", 7, sessions.size());
 
     Assert.assertEquals("Session summary should be 3600 seconds (1 hour)", 3600L, sessions.get(0).getSummary());
     Assert.assertEquals("Session valued summary should be 5400 seconds (1 hour, 30 minutes)", 5400L, sessions.get(0).getValuedSummary());

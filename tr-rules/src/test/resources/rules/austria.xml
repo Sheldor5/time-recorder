@@ -67,12 +67,7 @@
         <holiday>
             <multiplier>2.0</multiplier>
             <days>
-                <day>monday</day>
-                <day>tuesday</day>
-                <day>wednesday</day>
-                <day>thursday</day>
-                <day>friday</day>
-                <day>saturday</day>
+                <all></all>
             </days>
         </holiday>
     </rule>

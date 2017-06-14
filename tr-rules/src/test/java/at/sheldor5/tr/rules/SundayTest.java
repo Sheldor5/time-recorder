@@ -27,7 +27,7 @@ public class SundayTest {
     end = LocalTime.of(4, 0);
 
     session = new Session(nosundaydate, begin, end);
-    Assert.assertFalse("Rule should not apply", nosunday.applies(session.getDate()));
+    Assert.assertFalse("RuleClass should not apply", nosunday.applies(session.getDate()));
 
   }
 
@@ -40,7 +40,7 @@ public class SundayTest {
     begin = LocalTime.MIN;
     end = LocalTime.MAX;
     session = new Session(sundaydate, begin, end);
-    Assert.assertTrue("Rule should apply", sunday.applies(session.getDate()));
+    Assert.assertTrue("RuleClass should apply", sunday.applies(session.getDate()));
 
   }
 
@@ -60,32 +60,32 @@ public class SundayTest {
     begin =  LocalTime.MIN;
     end = LocalTime.MAX;
     session = new Session(monday, begin, end);
-    Assert.assertFalse("Rule should not apply", sunday.applies(session.getDate()));
+    Assert.assertFalse("RuleClass should not apply", sunday.applies(session.getDate()));
 
     begin =  LocalTime.MIN;
     end = LocalTime.MAX;
     session = new Session(tuesday, begin, end);
-    Assert.assertFalse("Rule should not apply", sunday.applies(session.getDate()));
+    Assert.assertFalse("RuleClass should not apply", sunday.applies(session.getDate()));
 
     begin =  LocalTime.MIN;
     end = LocalTime.MAX;
     session = new Session(wednesday, begin, end);
-    Assert.assertFalse("Rule should not apply", sunday.applies(session.getDate()));
+    Assert.assertFalse("RuleClass should not apply", sunday.applies(session.getDate()));
 
     begin =  LocalTime.MIN;
     end = LocalTime.MAX;
     session = new Session(thursday, begin, end);
-    Assert.assertFalse("Rule should not apply", sunday.applies(session.getDate()));
+    Assert.assertFalse("RuleClass should not apply", sunday.applies(session.getDate()));
 
     begin =  LocalTime.MIN;
     end = LocalTime.MAX;
     session = new Session(friday, begin, end);
-    Assert.assertFalse("Rule should not apply", sunday.applies(session.getDate()));
+    Assert.assertFalse("RuleClass should not apply", sunday.applies(session.getDate()));
 
     begin =  LocalTime.MIN;
     end = LocalTime.MAX;
     session = new Session(saturday, begin, end);
-    Assert.assertFalse("Rule should not apply", sunday.applies(session.getDate()));
+    Assert.assertFalse("RuleClass should not apply", sunday.applies(session.getDate()));
   }
 
   @Test
@@ -97,42 +97,42 @@ public class SundayTest {
     begin =  LocalTime.MIN;
     end = LocalTime.MAX;
     session = new Session(nosundaydate, begin, end);
-    Assert.assertFalse("Rule should not apply", nosunday.applies(session.getDate()));
+    Assert.assertFalse("RuleClass should not apply", nosunday.applies(session.getDate()));
 
     begin =  LocalTime.MIN;
     end =  LocalTime.of(12, 0);
     session = new Session(nosundaydate, begin, end);
-    Assert.assertFalse("Rule should not apply", nosunday.applies(session.getDate()));
+    Assert.assertFalse("RuleClass should not apply", nosunday.applies(session.getDate()));
 
     begin =  LocalTime.of(12,0);
     end = LocalTime.MAX;
     session = new Session(nosundaydate, begin, end);
-    Assert.assertFalse("Rule should not apply", nosunday.applies(session.getDate()));
+    Assert.assertFalse("RuleClass should not apply", nosunday.applies(session.getDate()));
 
     begin =  LocalTime.of(8,0);
     end =  LocalTime.of(12,0);
     session = new Session(nosundaydate, begin, end);
-    Assert.assertFalse("Rule should not apply", nosunday.applies(session.getDate()));
+    Assert.assertFalse("RuleClass should not apply", nosunday.applies(session.getDate()));
 
     begin =  LocalTime.MIN;
     end = LocalTime.MAX;
     session = new Session(sundaydate, begin, end);
-    Assert.assertTrue("Rule should apply", sunday.applies(session.getDate()));
+    Assert.assertTrue("RuleClass should apply", sunday.applies(session.getDate()));
 
     begin =  LocalTime.MIN;
     end = LocalTime.of(12,0);
     session = new Session(sundaydate, begin, end);
-    Assert.assertTrue("Rule should apply", sunday.applies(session.getDate()));
+    Assert.assertTrue("RuleClass should apply", sunday.applies(session.getDate()));
 
     begin =  LocalTime.of(12,0);
     end = LocalTime.MAX;
     session = new Session(sundaydate, begin, end);
-    Assert.assertTrue("Rule should apply", sunday.applies(session.getDate()));
+    Assert.assertTrue("RuleClass should apply", sunday.applies(session.getDate()));
 
     begin =  LocalTime.of(8,0);
     end = LocalTime.of(16,0);
     session = new Session(sundaydate, begin, end);
-    Assert.assertTrue("Rule should apply", sunday.applies(session.getDate()));
+    Assert.assertTrue("RuleClass should apply", sunday.applies(session.getDate()));
   }
 
 

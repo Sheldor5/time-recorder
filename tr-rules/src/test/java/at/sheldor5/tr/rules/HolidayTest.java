@@ -29,7 +29,7 @@ public class HolidayTest {
     begin = LocalTime.of(4, 0);
     end = LocalTime.of(5, 0);
     session = new Session(noholidaydate, begin, end);
-    Assert.assertFalse("Rule should not apply", noholiday.applies(session.getDate()));
+    Assert.assertFalse("RuleClass should not apply", noholiday.applies(session.getDate()));
 
   }
 
@@ -43,7 +43,7 @@ public class HolidayTest {
     begin =  LocalTime.MIN;
     end = LocalTime.MAX;
     session = new Session(holidaydate, begin, end);
-    Assert.assertTrue("Rule should apply", holiday.applies(session.getDate()));
+    Assert.assertTrue("RuleClass should apply", holiday.applies(session.getDate()));
 
   }
 
@@ -58,7 +58,7 @@ public class HolidayTest {
     begin =  LocalTime.MIN;
     end = LocalTime.MAX;
     session = new Session(sundayholiday, begin, end);
-    Assert.assertFalse("Rule should not apply", noholiday.applies(session.getDate()));
+    Assert.assertFalse("RuleClass should not apply", noholiday.applies(session.getDate()));
 
   }
 
@@ -74,22 +74,22 @@ public class HolidayTest {
     begin =  LocalTime.MIN;
     end = LocalTime.MAX;
     session = new Session(noholidaydate, begin, end);
-    Assert.assertFalse("Rule should not apply", noholiday.applies(session.getDate()));
+    Assert.assertFalse("RuleClass should not apply", noholiday.applies(session.getDate()));
 
     begin =  LocalTime.MIN;
     end = LocalTime.MAX;
     session = new Session(holidaydate, begin, end);
-    Assert.assertTrue("Rule should apply", holiday.applies(session.getDate()));
+    Assert.assertTrue("RuleClass should apply", holiday.applies(session.getDate()));
 
     begin =  LocalTime.MIN;
     end = LocalTime.MAX;
     session = new Session(americanholiday, begin, end);
-    Assert.assertFalse("Rule should not apply", noholiday.applies(session.getDate()));
+    Assert.assertFalse("RuleClass should not apply", noholiday.applies(session.getDate()));
 
     begin =  LocalTime.MIN;
     end = LocalTime.MAX;
     session = new Session(austrianholiday, begin, end);
-    Assert.assertTrue("Rule should apply", holiday.applies(session.getDate()));
+    Assert.assertTrue("RuleClass should apply", holiday.applies(session.getDate()));
   }
 
   @Test
@@ -139,16 +139,16 @@ public class HolidayTest {
     sessionList.add(session6);
     sessionList.add(session7);
 
-    Assert.assertNotNull("Rule should not apply", noholiday.applies(sessionList));
+    Assert.assertNotNull("RuleClass should not apply", noholiday.applies(sessionList));
 
-    Assert.assertFalse("Rule should not apply", noholiday.applies(sessionList).get(session));
-    Assert.assertFalse("Rule should not apply", noholiday.applies(sessionList).get(session1));
-    Assert.assertFalse("Rule should not apply", noholiday.applies(sessionList).get(session2));
-    Assert.assertFalse("Rule should not apply", noholiday.applies(sessionList).get(session3));
-    Assert.assertTrue("Rule should not apply", noholiday.applies(sessionList).get(session4));
-    Assert.assertTrue("Rule should not apply", noholiday.applies(sessionList).get(session5));
-    Assert.assertTrue("Rule should not apply", noholiday.applies(sessionList).get(session6));
-    Assert.assertTrue("Rule should not apply", noholiday.applies(sessionList).get(session7));
+    Assert.assertFalse("RuleClass should not apply", noholiday.applies(sessionList).get(session));
+    Assert.assertFalse("RuleClass should not apply", noholiday.applies(sessionList).get(session1));
+    Assert.assertFalse("RuleClass should not apply", noholiday.applies(sessionList).get(session2));
+    Assert.assertFalse("RuleClass should not apply", noholiday.applies(sessionList).get(session3));
+    Assert.assertTrue("RuleClass should not apply", noholiday.applies(sessionList).get(session4));
+    Assert.assertTrue("RuleClass should not apply", noholiday.applies(sessionList).get(session5));
+    Assert.assertTrue("RuleClass should not apply", noholiday.applies(sessionList).get(session6));
+    Assert.assertTrue("RuleClass should not apply", noholiday.applies(sessionList).get(session7));
 
 
 
@@ -163,42 +163,42 @@ public class HolidayTest {
     begin =  LocalTime.MIN;
     end = LocalTime.MAX;
     session = new Session(noholidaydate, begin, end);
-    Assert.assertFalse("Rule should not apply", noholiday.applies(session.getDate()));
+    Assert.assertFalse("RuleClass should not apply", noholiday.applies(session.getDate()));
 
     begin =  LocalTime.MIN;
     end =  LocalTime.of(12, 0);
     session = new Session(noholidaydate, begin, end);
-    Assert.assertFalse("Rule should not apply", noholiday.applies(session.getDate()));
+    Assert.assertFalse("RuleClass should not apply", noholiday.applies(session.getDate()));
 
     begin = LocalTime.of(12,0);
     end = LocalTime.MAX;
     session = new Session(noholidaydate, begin, end);
-    Assert.assertFalse("Rule should not apply", noholiday.applies(session.getDate()));
+    Assert.assertFalse("RuleClass should not apply", noholiday.applies(session.getDate()));
 
     begin = LocalTime.of(8,0);
     end =  LocalTime.of(12,0);
     session = new Session(noholidaydate, begin, end);
-    Assert.assertFalse("Rule should not apply", noholiday.applies(session.getDate()));
+    Assert.assertFalse("RuleClass should not apply", noholiday.applies(session.getDate()));
 
     begin =  LocalTime.MIN;
     end =  LocalTime.MAX;
     session = new Session(holidaydate, begin, end);
-    Assert.assertTrue("Rule should apply", holiday.applies(session.getDate()));
+    Assert.assertTrue("RuleClass should apply", holiday.applies(session.getDate()));
 
     begin =  LocalTime.MIN;
     end =  LocalTime.of(12, 0);
     session = new Session(holidaydate, begin, end);
-    Assert.assertTrue("Rule should apply", holiday.applies(session.getDate()));
+    Assert.assertTrue("RuleClass should apply", holiday.applies(session.getDate()));
 
     begin =  LocalTime.of(12,0);
     end = LocalTime.MAX;
     session = new Session(holidaydate, begin, end);
-    Assert.assertTrue("Rule should apply", holiday.applies(session.getDate()));
+    Assert.assertTrue("RuleClass should apply", holiday.applies(session.getDate()));
 
     begin = LocalTime.of(8,0);
     end = LocalTime.of(16,0);
     session = new Session(holidaydate, begin, end);
-    Assert.assertTrue("Rule should apply", holiday.applies(session.getDate()));
+    Assert.assertTrue("RuleClass should apply", holiday.applies(session.getDate()));
   }
 
 
