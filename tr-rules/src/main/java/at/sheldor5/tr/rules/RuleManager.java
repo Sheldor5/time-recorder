@@ -21,11 +21,16 @@ public class RuleManager {
     return instance;
   }
 
-  private final List<Rule> rules = new ArrayList<>();
+  private final List<IRule> rules = new ArrayList<>();
 
   private RuleManager() {
 
   }
+
+
+  public void addRule(IRule rule){
+    rules.add(rule);
+ }
 
   public void load(final File rulePath) throws Exception {
     if (rulePath == null) {
@@ -40,7 +45,7 @@ public class RuleManager {
 
     final File xsd = new File(this.getClass().getResource("/rules/rules.xsd").toURI());
     if (!xsd.exists()) {
-      LOGGER.severe("Rule XSD file not found");
+      LOGGER.severe("RuleClass XSD file not found");
       throw new FileNotFoundException("/rules/rules.xsd");
     }
 
@@ -52,14 +57,13 @@ public class RuleManager {
           LOGGER.fine("Loading rules from: " + xml.getName());
           rules.addAll(loader.getRules(xml));
         } else {
-          LOGGER.warning("Rule file is not valid: " + xml.getName());
+          LOGGER.warning("RuleClass file is not valid: " + xml.getName());
         }
       }
     }
   }
-
   public boolean applies(final Day day) {
-    for (final Rule rule : rules) {
+    for (final IRule rule : rules) {
       if (rule.applies(day)) {
         return true;
       }
@@ -68,7 +72,7 @@ public class RuleManager {
   }
 
   public void apply(final Day day) {
-    for (final Rule rule : rules) {
+    for (final IRule rule : rules) {
       rule.apply(day);
     }
   }

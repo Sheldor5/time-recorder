@@ -19,11 +19,20 @@ import java.util.Collection;
 @RequestScoped
 public class UserListController implements Serializable {
 
+  private BusinessLayer businessLayer;
+
   private Collection<User> users;
 
+  public UserListController() {
+    // CDI
+  }
+
+  public UserListController(final BusinessLayer businessLayer) {
+    this.businessLayer = businessLayer;
+  }
+
   @PostConstruct
-  @Inject
-  private void init(final BusinessLayer businessLayer) {
+  private void init() {
     users = businessLayer.getUsers();
   }
 

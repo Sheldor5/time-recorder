@@ -17,8 +17,6 @@ public class RegistrationController {
 
   private PropertyResourceBundle msg;
 
-  private DataAccessLayer dataAccessLayer;
-
   private String username;
   private String password;
   private String forename;
@@ -27,8 +25,12 @@ public class RegistrationController {
 
   private boolean successful;
 
+  public RegistrationController() {
+    // CDI
+  }
+
   @Inject
-  public void init(final PropertyResourceBundle msg) {
+  public RegistrationController(final PropertyResourceBundle msg) {
     this.msg = msg;
   }
 

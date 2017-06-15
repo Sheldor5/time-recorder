@@ -22,6 +22,8 @@
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.hbm2ddl.auto" value="update"/>
             <property name="current_session_context_class" value="thread" />
+            <!-- tell hibernate to put table and column names between double quotes -->
+            <property name="hibernate.globally_quoted_identifiers" value="true"/>
         </properties>
     </persistence-unit>
 </persistence>

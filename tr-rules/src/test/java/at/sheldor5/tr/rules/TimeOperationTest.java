@@ -64,10 +64,10 @@ public class TimeOperationTest {
     final TestTimeOperation rule = new TestTimeOperation(time, 1.5D, 1, 2, 3, 4, 5, 6);
 
     final Day monday = new Day(LocalDate.of(2017, 1, 2));
-    Assert.assertTrue("Rule should apply", rule.applies(monday));
+    Assert.assertTrue("RuleClass should apply", rule.applies(monday));
 
     final Day sunday = new Day(LocalDate.of(2017, 1, 1));
-    Assert.assertFalse("Rule should not apply", rule.applies(sunday));
+    Assert.assertFalse("RuleClass should not apply", rule.applies(sunday));
   }
 
   @Test

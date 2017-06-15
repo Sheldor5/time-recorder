@@ -40,11 +40,17 @@ public class UserEditController implements Serializable {
   private boolean passwordRepeatWrongMsg = false;
   private boolean changeSuccessfulMsg = false;
 
-  @PostConstruct
-  @Inject
-  private void init(final BusinessLayer businessLayer) {
-    this.businessLayer = businessLayer;
+  public UserEditController() {
+    // CDI
+  }
 
+  @Inject
+  public UserEditController(final BusinessLayer businessLayer) {
+    this.businessLayer = businessLayer;
+  }
+
+  @PostConstruct
+  private void init() {
     String uuid = ((HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest()).getParameter("uuid");
     if(uuid == null || uuid.isEmpty()){
       validUUID = false;

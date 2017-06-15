@@ -42,17 +42,21 @@ public class ClockController implements Serializable {
   private Day today;
   private int obfuscator;
 
-  @PostConstruct
-  @Inject
-  public void init(final BusinessLayer businessLayer) {
-    this.businessLayer = businessLayer;
+  public ClockController() {
+    // CDI
+  }
 
+  @Inject
+  public ClockController(final BusinessLayer businessLayer) {
+    this.businessLayer = businessLayer;
     if (businessLayer == null) {
       throw new NullPointerException("@Inject BusinessLayer");
     }
+  }
 
+  @PostConstruct
+  public void init() {
     obfuscator = (int) (OBFUSCATOR_MAX * SECURE_RANDOM.nextDouble());
-
     setup();
   }
 

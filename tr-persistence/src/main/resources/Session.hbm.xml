@@ -8,8 +8,8 @@
         <id name="id" type="int" column="PK_SESSION_ID">
             <generator class="native"/>
         </id>
-        <many-to-one name="userMapping" column="FK_USER_MAPPING_ID" class="at.sheldor5.tr.api.user.UserMapping"/>
-        <many-to-one name="project" column="FK_PROJECT_ID" class="at.sheldor5.tr.api.project.Project" />
+        <many-to-one name="userMapping" column="FK_USER_MAPPING_ID" class="at.sheldor5.tr.api.user.UserMapping" cascade="none"/>
+        <many-to-one name="project" column="FK_PROJECT_ID" class="at.sheldor5.tr.api.project.Project" cascade="none"/>
         <property name="date" type="java.time.LocalDate" column="DATE" index="I_DATE"/>
         <property name="start" type="java.time.LocalTime" column="START"/>
         <property name="end" type="java.time.LocalTime" column="END"/>

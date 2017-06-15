@@ -1,6 +1,7 @@
 package at.sheldor5.tr.web.jsf.beans;
 
 import at.sheldor5.tr.api.project.Project;
+import at.sheldor5.tr.web.BusinessLayer;
 import at.sheldor5.tr.web.DataAccessLayer;
 
 import javax.annotation.PostConstruct;
@@ -20,15 +21,22 @@ import java.util.logging.Logger;
 @RequestScoped
 public class ProjectListController implements Serializable {
 
-  @Inject
-  private DataAccessLayer dataAccessLayer;
+  private BusinessLayer businessLayer;
+
+  public ProjectListController() {
+    // CDI
+  }
+
+  public ProjectListController(final BusinessLayer businessLayer) {
+    this.businessLayer = businessLayer;
+  }
 
   private Collection<Project> projects = new ArrayList<>();
   private static final Logger LOGGER = Logger.getLogger(ProjectListController.class.getName());
 
   @PostConstruct
-  private void init() {
-    projects = dataAccessLayer.getProjects();
+  public void init() {
+    projects = businessLayer.getProjects();
   }
 
   public Collection<Project> getProjects() {

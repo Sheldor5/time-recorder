@@ -9,6 +9,6 @@
             <generator class="native"/>
         </id>
         <property name="name" type="string" column="NAME" />
-        <many-to-one name="parent" column="FK_PROJECT_ID" class="Project"/>
+        <!--<many-to-one name="parent" column="FK_PARENT_PROJECT_ID" class="Project" cascade="none"/>-->
     </class>
 </hibernate-mapping>

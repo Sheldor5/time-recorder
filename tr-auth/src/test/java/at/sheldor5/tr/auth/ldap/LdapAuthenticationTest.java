@@ -5,6 +5,7 @@ import at.sheldor5.tr.api.user.User;
 import at.sheldor5.tr.api.utils.GlobalProperties;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.UUID;
@@ -27,7 +28,7 @@ public class LdapAuthenticationTest {
 
   @Before
   public void init() throws IOException {
-    GlobalProperties.load(PROPERTIES);
+    GlobalProperties.load(new FileInputStream(PROPERTIES));
     LDAP.initialize();
   }
 

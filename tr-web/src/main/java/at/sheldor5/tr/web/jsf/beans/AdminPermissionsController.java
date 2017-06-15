@@ -27,7 +27,7 @@ public class AdminPermissionsController implements Serializable {
 
   @Inject
   public AdminPermissionsController(final BusinessLayer businessLayer) {
-
+    this.businessLayer = businessLayer;
   }
 
   private static final Logger LOGGER = Logger.getLogger(AdminPermissionsController.class.getName());

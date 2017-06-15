@@ -26,32 +26,32 @@ public class AfterTest {
     begin = LocalTime.MIN;
     end = LocalTime.of(18, 59, 59, 999999999);
     session = new Session(date, begin, end);
-    Assert.assertFalse("Rule should not apply", before.applies(session));
+    Assert.assertFalse("RuleClass should not apply", before.applies(session));
 
     begin = LocalTime.MIN;
     end = LocalTime.of(19, 0);
     session = new Session(date, begin, end);
-    Assert.assertFalse("Rule should not apply", before.applies(session));
+    Assert.assertFalse("RuleClass should not apply", before.applies(session));
 
     begin = LocalTime.MIN;
     end = LocalTime.of(19, 0, 0, 1);
     session = new Session(date, begin, end);
-    Assert.assertTrue("Rule should apply", before.applies(session));
+    Assert.assertTrue("RuleClass should apply", before.applies(session));
 
     begin = LocalTime.of(19, 0);
     end = LocalTime.of(20, 0);
     session = new Session(date, begin, end);
-    Assert.assertTrue("Rule should apply", before.applies(session));
+    Assert.assertTrue("RuleClass should apply", before.applies(session));
 
     begin = LocalTime.of(20, 0);
     end = LocalTime.of(21, 0);
     session = new Session(date, begin, end);
-    Assert.assertTrue("Rule should apply", before.applies(session));
+    Assert.assertTrue("RuleClass should apply", before.applies(session));
 
     begin = LocalTime.of(20, 0);
     end = LocalTime.MAX;
     session = new Session(date, begin, end);
-    Assert.assertTrue("Rule should apply", before.applies(session));
+    Assert.assertTrue("RuleClass should apply", before.applies(session));
   }
 
   @Test

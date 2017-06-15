@@ -1,6 +1,7 @@
 package at.sheldor5.tr.web.jsf.beans;
 
 import at.sheldor5.tr.api.user.Schedule;
+import at.sheldor5.tr.persistence.provider.ScheduleProvider;
 import at.sheldor5.tr.web.BusinessLayer;
 
 import javax.annotation.PostConstruct;
@@ -29,10 +30,17 @@ public class ScheduleController implements Serializable {
 
   private List<Schedule> schedules;
 
-  @PostConstruct
+  public ScheduleController() {
+    // CDI
+  }
+
   @Inject
-  public void init(final BusinessLayer businessLayer) {
+  public ScheduleController(final BusinessLayer businessLayer) {
     this.businessLayer = businessLayer;
+  }
+
+  @PostConstruct
+  public void init() {
     schedules = businessLayer.getSchedules();
     if (schedules.size() > 0) {
       schedule = schedules.get(schedules.size() - 1);

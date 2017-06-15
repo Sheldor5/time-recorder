@@ -49,13 +49,11 @@ public class EntityManagerHelper {
       properties.put("javax.persistence.jdbc.url", GlobalProperties.getProperty("db.jdbc.url"));
       properties.put("javax.persistence.jdbc.user", GlobalProperties.getProperty("db.username"));
       properties.put("javax.persistence.jdbc.password", GlobalProperties.getProperty("db.password"));
-
-      properties.put("hibernate.show_sql", "true");
-      properties.put("hibernate.hbm2ddl.auto", "update");
+      properties.put("hibernate.show_sql", GlobalProperties.getProperty("hibernate.show_sql"));
+      properties.put("hibernate.hbm2ddl.auto", GlobalProperties.getProperty("hibernate.hbm2ddl.auto"));
       properties.put("current_session_context_class", "thread");
+      properties.put("hibernate.globally_quoted_identifiers", "true");
       setup(properties);
-    } else {
-      System.out.println("1");
     }
   }
 

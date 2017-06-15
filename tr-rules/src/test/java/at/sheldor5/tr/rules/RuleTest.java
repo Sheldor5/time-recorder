@@ -16,7 +16,7 @@ public class RuleTest {
 
   @Test
   public void test_apply_session() {
-    final Rule rule = new Rule("Test Rule", LocalDate.of(1900, 01, 01));
+    final Rule rule = new Rule("Test RuleClass", LocalDate.of(1900, 01, 01));
     final Before before = new Before(LocalTime.of(5, 0), 1.5D, workingDays);
     final After after = new After(LocalTime.of(19, 0), 1.5D, workingDays);
     rule.timeOperations.add(before);
@@ -28,17 +28,17 @@ public class RuleTest {
 
     final Session session = new Session(monday, begin, end);
 
-    Assert.assertTrue("Rule should apply", rule.applies(session));
+    Assert.assertTrue("RuleClass should apply", rule.applies(session));
 
     final List<Session> sessions = rule.applyIncluding(session);
 
-    Assert.assertNotNull("Rule should return list", session);
-    Assert.assertEquals("Rule should split session into 3 sessions", 3, sessions.size());
+    Assert.assertNotNull("RuleClass should return list", session);
+    Assert.assertEquals("RuleClass should split session into 3 sessions", 3, sessions.size());
   }
 
   @Test
   public void test_apply_day() {
-    final Rule rule = new Rule("Test Rule", LocalDate.of(1900, 01, 01));
+    final Rule rule = new Rule("Test RuleClass", LocalDate.of(1900, 01, 01));
     final Before before = new Before(LocalTime.of(5, 0), 1.5D, workingDays);
     final After after = new After(LocalTime.of(19, 0), 1.5D, workingDays);
     rule.timeOperations.add(before);
@@ -74,12 +74,12 @@ public class RuleTest {
     session = new Session(monday, begin, end);
     day.addItem(session);
 
-    Assert.assertTrue("Rule should apply", rule.applies(day));
+    Assert.assertTrue("RuleClass should apply", rule.applies(day));
 
     rule.apply(day);
     final List<Session> sessions = day.getItems();
 
-    Assert.assertEquals("Rule should split session into 7 sessions", 7, sessions.size());
+    Assert.assertEquals("RuleClass should split session into 7 sessions", 7, sessions.size());
 
     Assert.assertEquals("Session summary should be 3600 seconds (1 hour)", 3600L, sessions.get(0).getSummary());
     Assert.assertEquals("Session valued summary should be 5400 seconds (1 hour, 30 minutes)", 5400L, sessions.get(0).getValuedSummary());

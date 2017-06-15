@@ -24,14 +24,24 @@ import java.io.Serializable;
 @SessionScoped
 public class UserController implements Serializable {
 
+  private DataAccessLayer dataAccessLayer;
+
   private UserMapping userMapping;
   private User user;
   private Schedule schedule;
   private boolean admin;
 
-  @PostConstruct
+  public UserController() {
+    // CDI
+  }
+
   @Inject
-  public void init(final DataAccessLayer dataAccessLayer) {
+  public UserController(final DataAccessLayer dataAccessLayer) {
+    this.dataAccessLayer = dataAccessLayer;
+  }
+
+  @PostConstruct
+  public void init() {
     final String username = ((HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest()).getUserPrincipal().getName();
     userMapping = LoginModuleImpl.getAuthenticatedUserMapping(username);
     user = userMapping.getUser();

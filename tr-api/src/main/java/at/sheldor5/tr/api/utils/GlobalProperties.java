@@ -31,22 +31,12 @@ public class GlobalProperties {
    *
    * @param file The file to load.
    */
-  public static void load(final File file) throws IOException {
-    InputStream is;
-    if (!file.exists()) {
-      is = GlobalProperties.class.getResourceAsStream( "/" + file.getName());
-    } else {
-      is = new FileInputStream(file);
+  public static void load(final InputStream inputStream) throws IOException {
+    if (inputStream == null) {
+      return;
     }
-    if (is == null) {
-      final String executionPath = new File("").getAbsolutePath();
-      final String errorMsg = "File \"" + file.getName() + "\" does not exist in: "+ executionPath;
-      LOGGER.severe(errorMsg);
-      throw new IOException(errorMsg);
-    }
-    properties.load(is);
-    is.close();
-    LOGGER.fine("Loaded file: " + file.getName());
+    properties.load(inputStream);
+    inputStream.close();
   }
 
   /**
@@ -57,6 +47,14 @@ public class GlobalProperties {
    */
   public static String getProperty(final String key) {
     return properties.getProperty(key);
+  }
+
+  public static int getInteger(final String key) {
+    return Integer.parseInt(properties.getProperty(key));
+  }
+
+  public static boolean getBoolean(final String key) {
+    return "true".equals(properties.getProperty(key));
   }
 
   /**

@@ -86,7 +86,7 @@ public class PlainTextExporterTest {
 
   @AfterClass
   public static void teardown() throws IOException {
-    Desktop.getDesktop().open(FILE);
+    //Desktop.getDesktop().open(FILE);
   }
 
 }

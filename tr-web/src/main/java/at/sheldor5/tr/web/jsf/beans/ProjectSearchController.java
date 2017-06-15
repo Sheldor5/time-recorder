@@ -1,6 +1,7 @@
 package at.sheldor5.tr.web.jsf.beans;
 
 import at.sheldor5.tr.api.project.Project;
+import at.sheldor5.tr.web.BusinessLayer;
 import at.sheldor5.tr.web.DataAccessLayer;
 
 import javax.enterprise.context.RequestScoped;
@@ -18,8 +19,16 @@ import java.util.List;
 @RequestScoped
 public class ProjectSearchController implements Serializable {
 
+  private BusinessLayer businessLayer;
+
+  public ProjectSearchController() {
+    // CDI
+  }
+
   @Inject
-  private DataAccessLayer dataAccessLayer;
+  public ProjectSearchController(final BusinessLayer businessLayer) {
+    this.businessLayer = businessLayer;
+  }
 
   private String name;
   private List<Project> projects = new ArrayList<>();
@@ -37,7 +46,7 @@ public class ProjectSearchController implements Serializable {
   }
 
   public void search() {
-    projects = dataAccessLayer.getProjects(name);
+    projects = businessLayer.getProjects(name);
   }
 
   public boolean hasProjects() {
