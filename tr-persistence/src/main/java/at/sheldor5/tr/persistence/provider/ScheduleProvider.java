@@ -9,6 +9,7 @@ import at.sheldor5.tr.persistence.utils.QueryUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -81,9 +82,12 @@ public class ScheduleProvider extends GenericProvider<Schedule, Integer> {
     try {
       schedule = findByFields.getSingleResult();
       transaction.commit();
+    } catch (final NoResultException nre) {
+      // SELECT returns no Entity
     } catch (final Exception e) {
-      transaction.rollback();
       e.printStackTrace();
+    } finally {
+      transaction.commit();
     }
 
     return schedule;

@@ -1,5 +1,6 @@
 package at.sheldor5.tr.web.jsf.beans;
 
+import at.sheldor5.tr.web.BusinessLayer;
 import at.sheldor5.tr.web.utils.SessionUtils;
 
 import javax.enterprise.context.RequestScoped;
@@ -18,14 +19,22 @@ import java.util.logging.Logger;
 @RequestScoped
 public class AdminPermissionsController implements Serializable {
 
+  private BusinessLayer businessLayer;
+
+  private AdminPermissionsController() {
+
+  }
+
   @Inject
-  private UserController userController;
+  public AdminPermissionsController(final BusinessLayer businessLayer) {
+
+  }
 
   private static final Logger LOGGER = Logger.getLogger(AdminPermissionsController.class.getName());
 
   public void check(ComponentSystemEvent event) {
-    if(!userController.getAdmin()) {
-      LOGGER.warning("Non privileged user (" + userController.getUsername() + ") tried to access a forbidden site");
+    if(!businessLayer.isAdmin()) {
+      LOGGER.warning("Non privileged user (" + businessLayer.getUser().getUsername() + ") tried to access a forbidden site");
       try {
         SessionUtils.getResponse().sendRedirect(SessionUtils.getRequest().getContextPath() + "/index.xhtml");
       } catch (IOException e) {

@@ -5,10 +5,9 @@ import at.sheldor5.tr.api.time.Day;
 import at.sheldor5.tr.api.time.Session;
 import at.sheldor5.tr.api.user.Schedule;
 import at.sheldor5.tr.api.utils.TimeUtils;
-import at.sheldor5.tr.web.DataProvider;
+import at.sheldor5.tr.web.BusinessLayer;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -30,18 +29,13 @@ public class ClockController implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  @Inject
-  @RequestScoped
-  private DataProvider dataProvider;
+  private BusinessLayer businessLayer;
 
-  @Inject
-  private UserController user;
+  private Project project;
 
-  protected Project project;
-
-  protected Session session;
-  protected LocalTime time;
-  protected LocalDate date;
+  private Session session;
+  private LocalTime time;
+  private LocalDate date;
 
   private boolean isSynchronized = false;
   private List<Project> projects;
@@ -49,13 +43,26 @@ public class ClockController implements Serializable {
   private int obfuscator;
 
   @PostConstruct
-  public void init() {
-    projects = dataProvider.getProjects(user.getUserMapping());
-    today = dataProvider.getDay(user.getUserMapping(), date == null ? LocalDate.now() : date);
+  @Inject
+  public void init(final BusinessLayer businessLayer) {
+    this.businessLayer = businessLayer;
+
+    if (businessLayer == null) {
+      throw new NullPointerException("@Inject BusinessLayer");
+    }
+
+    obfuscator = (int) (OBFUSCATOR_MAX * SECURE_RANDOM.nextDouble());
+
+    setup();
+  }
+
+  private void setup() {
+    projects = businessLayer.getProjects();
+    today = businessLayer.getDay(date == null ? LocalDate.now() : date);
     List<Session> sessions = today.getItems();
 
     if (sessions.size() > 0) {
-      today.setSchedule(user.getSchedule());
+      today.setSchedule(businessLayer.getSchedule());
       Collections.sort(sessions);
       session = sessions.get(sessions.size() - 1);
       project = session.getProject();
@@ -68,11 +75,9 @@ public class ClockController implements Serializable {
       if (projects.size() > 0) {
         project = projects.get(0);
       } else {
-        project = dataProvider.getProject(1);
+        project = businessLayer.getProject(1);
       }
     }
-
-    obfuscator = (int) (OBFUSCATOR_MAX * SECURE_RANDOM.nextDouble());
   }
 
   public Project getProject() {
@@ -113,14 +118,14 @@ public class ClockController implements Serializable {
     isSynchronized = true;
     if (time != null) {
       if (session == null) {
-        session = new Session(project, user.getUserMapping(), date, time);
+        session = new Session(project, date, time);
         session.setDate(LocalDate.now());
         session.setStart(time);
-        dataProvider.save(session);
+        businessLayer.save(session);
         today.addItem(session);
       } else {
         session.setEnd(time);
-        dataProvider.save(session);
+        businessLayer.save(session);
         session = null;
       }
     } else {
@@ -142,8 +147,6 @@ public class ClockController implements Serializable {
       this.project = project;
       stamp();
     }
-    LOGGER.info(project.getName());
-    LOGGER.info("" + user);
   }
 
   public boolean hasStarted() {
@@ -159,12 +162,16 @@ public class ClockController implements Serializable {
   }
 
   public void sync() {
-    init();
+    setup();
     isSynchronized = true;
   }
 
   public boolean getIsSynchronized() {
     return isSynchronized;
+  }
+
+  public void update() {
+    System.out.println("Clocl#update()");
   }
 
 }

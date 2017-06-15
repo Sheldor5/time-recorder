@@ -22,6 +22,7 @@ public class InternalAuthentication implements AuthenticationPlugin {
   @Override
   public void saveUser(final User user) throws UnsupportedOperationException {
     try (final UserProvider userProvider = new UserProvider()) {
+      user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
       userProvider.save(user);
     } catch (Exception e) {
       e.printStackTrace();
@@ -30,8 +31,6 @@ public class InternalAuthentication implements AuthenticationPlugin {
 
   @Override
   public User getUser(final String username, final String plainTextPassword) {
-    System.out.println(username);
-
     User user = null;
 
     try (final UserProvider userProvider = new UserProvider()) {

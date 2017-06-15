@@ -69,6 +69,7 @@ public class LoginModuleImpl implements LoginModule {
     final UserMapping userMapping = AUTHENTICATION_MANAGER.getUserMapping(username, password);
 
     if (userMapping == null) {
+      //return false;
       throw new LoginException("Authentication failed");
     }
 

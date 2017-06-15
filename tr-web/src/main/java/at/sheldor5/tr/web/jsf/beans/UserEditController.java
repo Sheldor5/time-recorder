@@ -1,7 +1,8 @@
 package at.sheldor5.tr.web.jsf.beans;
 
 import at.sheldor5.tr.api.user.User;
-import at.sheldor5.tr.web.DataProvider;
+import at.sheldor5.tr.web.BusinessLayer;
+import at.sheldor5.tr.web.DataAccessLayer;
 import at.sheldor5.tr.web.utils.SessionUtils;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -24,12 +25,10 @@ import java.util.logging.Logger;
 @RequestScoped
 public class UserEditController implements Serializable {
 
-  @Inject
-  private UserController userController;
-  @Inject
-  private DataProvider dataProvider;
-
   private static final Logger LOGGER = Logger.getLogger(UserEditController.class.getName());
+
+  private BusinessLayer businessLayer;
+
   private UUID uuidFromRequest;
   private String username;
   private String forename;
@@ -42,7 +41,10 @@ public class UserEditController implements Serializable {
   private boolean changeSuccessfulMsg = false;
 
   @PostConstruct
-  private void init() {
+  @Inject
+  private void init(final BusinessLayer businessLayer) {
+    this.businessLayer = businessLayer;
+
     String uuid = ((HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest()).getParameter("uuid");
     if(uuid == null || uuid.isEmpty()){
       validUUID = false;
@@ -71,7 +73,7 @@ public class UserEditController implements Serializable {
   }
 
   public void getUserData() {
-    User user  = dataProvider.getUser(uuidFromRequest);
+    User user  = businessLayer.getUser(uuidFromRequest);
     username = user.getUsername();
     forename = user.getForename();
     surname = user.getSurname();
@@ -81,7 +83,7 @@ public class UserEditController implements Serializable {
     if(!hasPermission()) {
       return;
     }
-    User user = dataProvider.getUser(uuidFromRequest);
+    User user = businessLayer.getUser(uuidFromRequest);
     if(!username.isEmpty()) {
       user.setUsername(username);
     }
@@ -112,9 +114,9 @@ public class UserEditController implements Serializable {
 
   private void redirectIfNotAuthorized() throws IOException {
     UUID uuidFromUserToBeEdited = uuidFromRequest;
-    UUID uuidFromAuthenticatedUser = userController.getUserMapping().getUuid();
+    UUID uuidFromAuthenticatedUser = businessLayer.getUser().getUuid();
     // admin can edit all users, a normal user can only edit himself
-    if(!uuidFromUserToBeEdited.equals(uuidFromAuthenticatedUser) && !userController.getAdmin()) {
+    if(!uuidFromUserToBeEdited.equals(uuidFromAuthenticatedUser) && !businessLayer.isAdmin()) {
       redirect();
     }
   }

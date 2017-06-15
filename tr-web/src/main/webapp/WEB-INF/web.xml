@@ -59,6 +59,24 @@
         <listener-class>at.sheldor5.tr.web.init.Security</listener-class>
     </listener>
 
+    <!-- Static Web Resources -->
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Resources</web-resource-name>
+            <url-pattern>/javax.faces.resource/*</url-pattern>
+        </web-resource-collection>
+        <!-- No Auth Constraint! -->
+    </security-constraint>
+
+    <!-- Registration Page -->
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Resources</web-resource-name>
+            <url-pattern>/register.xhtml</url-pattern>
+        </web-resource-collection>
+        <!-- No Auth Constraint! -->
+    </security-constraint>
+
     <login-config>
         <auth-method>FORM</auth-method>
         <form-login-config>
@@ -100,15 +118,6 @@
             <description/>
             <role-name>USER</role-name>
         </auth-constraint>
-    </security-constraint>
-
-    <!-- Static Web Resources -->
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Resources</web-resource-name>
-            <url-pattern>/javax.faces.resource/*</url-pattern>
-        </web-resource-collection>
-        <!-- No Auth Constraint! -->
     </security-constraint>
 
 </web-app>

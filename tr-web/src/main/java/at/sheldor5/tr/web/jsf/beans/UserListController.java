@@ -1,7 +1,8 @@
 package at.sheldor5.tr.web.jsf.beans;
 
 import at.sheldor5.tr.api.user.User;
-import at.sheldor5.tr.web.DataProvider;
+import at.sheldor5.tr.web.BusinessLayer;
+import at.sheldor5.tr.web.DataAccessLayer;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
@@ -9,7 +10,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.UUID;
 
 /**
  * @author Consti
@@ -19,13 +19,12 @@ import java.util.UUID;
 @RequestScoped
 public class UserListController implements Serializable {
 
-  @Inject
-  private DataProvider dataProvider;
   private Collection<User> users;
 
   @PostConstruct
-  private void init() {
-    users = dataProvider.getUsers();
+  @Inject
+  private void init(final BusinessLayer businessLayer) {
+    users = businessLayer.getUsers();
   }
 
   public Collection<User> getUsers() {

@@ -37,6 +37,10 @@ public class Session implements Comparable<Session> {
     this(null, null, date, start, end);
   }
 
+  public Session(final Project project, final LocalDate date, final LocalTime start) {
+    this(project, null, date, start, null);
+  }
+
   public Session(final Project project, final UserMapping userMapping, final LocalDate date, final LocalTime start) {
     this(project, userMapping, date, start, null);
   }

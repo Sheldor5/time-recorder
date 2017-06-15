@@ -1,7 +1,7 @@
 package at.sheldor5.tr.web.jsf.beans;
 
 import at.sheldor5.tr.api.project.Project;
-import at.sheldor5.tr.web.DataProvider;
+import at.sheldor5.tr.web.DataAccessLayer;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -19,7 +19,7 @@ import java.util.List;
 public class ProjectSearchController implements Serializable {
 
   @Inject
-  private DataProvider dataProvider;
+  private DataAccessLayer dataAccessLayer;
 
   private String name;
   private List<Project> projects = new ArrayList<>();
@@ -37,7 +37,7 @@ public class ProjectSearchController implements Serializable {
   }
 
   public void search() {
-    projects = dataProvider.getProjects(name);
+    projects = dataAccessLayer.getProjects(name);
   }
 
   public boolean hasProjects() {

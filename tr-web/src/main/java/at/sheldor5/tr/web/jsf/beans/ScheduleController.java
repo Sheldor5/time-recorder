@@ -1,7 +1,7 @@
 package at.sheldor5.tr.web.jsf.beans;
 
 import at.sheldor5.tr.api.user.Schedule;
-import at.sheldor5.tr.web.DataProvider;
+import at.sheldor5.tr.web.BusinessLayer;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
@@ -21,14 +21,7 @@ public class ScheduleController implements Serializable {
 
   private static final long serialVersionUID = 42L;
 
-  @Inject
-  private UserController user;
-
-  @Inject
-  private DataProvider dataProvider;
-
-  @Inject
-  private ClockController clock;
+  private BusinessLayer businessLayer;
 
   private Schedule schedule;
 
@@ -37,8 +30,10 @@ public class ScheduleController implements Serializable {
   private List<Schedule> schedules;
 
   @PostConstruct
-  public void init() {
-    schedules = dataProvider.getSchedules(user.getUserMapping());
+  @Inject
+  public void init(final BusinessLayer businessLayer) {
+    this.businessLayer = businessLayer;
+    schedules = businessLayer.getSchedules();
     if (schedules.size() > 0) {
       schedule = schedules.get(schedules.size() - 1);
     } else {
@@ -67,11 +62,10 @@ public class ScheduleController implements Serializable {
   }
 
   public void save() {
-    schedule.setUserMapping(user.getUserMapping());
     schedule.setDueDate(date);
-    dataProvider.save(schedule);
+    businessLayer.save(schedule);
+    //businessLayer.updateClock();
     schedules.add(schedule);
-    clock.setSchedule(schedule);
     schedule = new Schedule();
   }
 }

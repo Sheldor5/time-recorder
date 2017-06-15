@@ -3,8 +3,7 @@ package at.sheldor5.tr.web.export;
 import at.sheldor5.tr.api.plugins.ExporterPlugin;
 import at.sheldor5.tr.api.time.Month;
 import at.sheldor5.tr.exporter.ExporterManager;
-import at.sheldor5.tr.web.DataProvider;
-import at.sheldor5.tr.web.jsf.beans.UserController;
+import at.sheldor5.tr.web.BusinessLayer;
 
 import javax.inject.Inject;
 import javax.servlet.ServletException;
@@ -29,15 +28,12 @@ public class Exporter extends HttpServlet {
   }
 
   @Inject
-  private DataProvider dataProvider;
-
-  @Inject
-  private UserController user;
+  private BusinessLayer businessLayer;
 
   @Override
   public void doGet(final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
 
-    if (user == null || user.getUserMapping() == null) {
+    if (businessLayer == null || businessLayer.getUser() == null) {
       response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
       return;
     }
@@ -77,14 +73,14 @@ public class Exporter extends HttpServlet {
       return;
     }
 
-    plugin.initialize(user.getUser(), response.getOutputStream());
+    plugin.initialize(businessLayer.getUserCopy(), response.getOutputStream());
 
     response.setStatus(HttpServletResponse.SC_OK);
     response.setContentType(plugin.getMimeType().toString());
 
     switch (exportType) {
       case "month":
-        Month month = dataProvider.getMonth(user.getUserMapping(), date);
+        Month month = businessLayer.getMonth(date);
         plugin.export(month);
         break;
       case "year":

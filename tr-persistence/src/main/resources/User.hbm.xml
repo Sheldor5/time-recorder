@@ -10,7 +10,7 @@
         </id>
         <property name="username" type="string" column="USERNAME" length="32"/>
         <property name="password" type="string" column="PASSWORD" length="60"/>
-        <property name="forename" type="string" column="FORENAME"/>
-        <property name="surname" type="string" column="SURNAME"/>
+        <property name="forename" type="string" column="FORENAME" length="32"/>
+        <property name="surname" type="string" column="SURNAME" length="48"/>
     </class>
 </hibernate-mapping>

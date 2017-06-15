@@ -4,7 +4,7 @@ import at.sheldor5.tr.api.user.Role;
 import at.sheldor5.tr.api.user.Schedule;
 import at.sheldor5.tr.api.user.User;
 import at.sheldor5.tr.api.user.UserMapping;
-import at.sheldor5.tr.web.DataProvider;
+import at.sheldor5.tr.web.DataAccessLayer;
 import at.sheldor5.tr.web.module.authentication.LoginModuleImpl;
 
 import javax.annotation.PostConstruct;
@@ -24,21 +24,19 @@ import java.io.Serializable;
 @SessionScoped
 public class UserController implements Serializable {
 
-  @Inject
-  private DataProvider dataProvider;
-
   private UserMapping userMapping;
   private User user;
   private Schedule schedule;
   private boolean admin;
 
   @PostConstruct
-  public void init() {
+  @Inject
+  public void init(final DataAccessLayer dataAccessLayer) {
     final String username = ((HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest()).getUserPrincipal().getName();
     userMapping = LoginModuleImpl.getAuthenticatedUserMapping(username);
     user = userMapping.getUser();
     admin = userMapping.getRole() == Role.ADMIN;
-    schedule = dataProvider.getSchedule(userMapping);
+    schedule = dataAccessLayer.getSchedule(userMapping);
   }
 
   public UserMapping getUserMapping() {
