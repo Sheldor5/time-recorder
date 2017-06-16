@@ -7,9 +7,6 @@
 <f:view>
     <ui:composition template="template.xhtml">
         <ui:define name="content">
-            <!--<h:outputLabel value="Hello #{user.forename}"/>
-            <h:outputLabel value=", you are an Administrator!" rendered="#{user.admin}"/>-->
-
             <h:form id="form">
                 <h:inputHidden id="time" value="#{clock.time}" converter="at.sheldor5.tr.LocalTimeConverter"/>
                 <h:inputHidden id="date" value="#{clock.date}" converter="at.sheldor5.tr.LocalDateConverter"/>
@@ -28,7 +25,7 @@
                                     <c:otherwise>
                                         <h:selectOneMenu value="#{clock.projectId}" styleClass="form-control">
                                             <f:selectItems value="#{clock.projects}" var="p"
-                                                           itemLabel="#{p.name}" itemValue="#{p.id}" />
+                                                           itemLabel="#{p.name}" itemValue="#{clock.obfuscateProjectId(p)}" />
                                         </h:selectOneMenu>
                                     </c:otherwise>
                                 </c:choose>

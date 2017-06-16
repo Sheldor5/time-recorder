@@ -39,6 +39,15 @@ public class UserProjectMappingProvider extends GenericProvider<UserProjectMappi
     super(entityManager, IDENTIFIER);
   }
 
+  @Override
+  public boolean exists(UserProjectMapping entity) {
+    TypedQuery<Long> countQuery =
+        QueryUtils.countByFields(entityManager, UserProjectMapping.class,
+            "project", Project.class, entity.getProject(),
+            "userMapping", UserMapping.class, entity.getUserMapping(), true);
+    return countQuery.getSingleResult() > 0;
+  }
+
   public List<Project> getProjects(final UserMapping userMapping) {
     if (userMapping == null) {
       return new ArrayList<>();

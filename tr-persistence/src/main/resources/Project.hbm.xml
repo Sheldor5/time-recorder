@@ -8,7 +8,7 @@
         <id name="id" type="int" column="PK_PROJECT_ID">
             <generator class="native"/>
         </id>
-        <property name="name" type="string" column="NAME" />
+        <property name="name" type="string" column="NAME" unique="true" not-null="true"/>
         <!--<many-to-one name="parent" column="FK_PARENT_PROJECT_ID" class="Project" cascade="none"/>-->
     </class>
 </hibernate-mapping>

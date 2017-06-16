@@ -1,17 +1,15 @@
-package at.sheldor5.tr.persistence;
+package at.sheldor5.tr.persistence.provider;
 
 import at.sheldor5.tr.api.time.Session;
 import at.sheldor5.tr.api.user.UserMapping;
-import at.sheldor5.tr.api.utils.GlobalProperties;
-import java.io.File;
+
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.UUID;
 
-import at.sheldor5.tr.persistence.provider.SessionProvider;
-import at.sheldor5.tr.persistence.provider.UserMappingProvider;
+import at.sheldor5.tr.persistence.TestFixture;
 import org.junit.*;
 
 public class SessionProviderTest extends TestFixture {

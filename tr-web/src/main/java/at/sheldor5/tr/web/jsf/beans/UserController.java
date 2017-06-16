@@ -9,6 +9,7 @@ import at.sheldor5.tr.web.module.authentication.LoginModuleImpl;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -86,8 +87,8 @@ public class UserController implements Serializable {
   }
 
   public void logout() throws IOException {
-    FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
-    FacesContext.getCurrentInstance().getExternalContext().redirect("/");
+    final ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
+    context.invalidateSession();
+    context.redirect(context.getRequestContextPath() + "/");
   }
-
 }

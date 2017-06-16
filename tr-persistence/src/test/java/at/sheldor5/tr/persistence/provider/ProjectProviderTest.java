@@ -1,6 +1,7 @@
-package at.sheldor5.tr.persistence;
+package at.sheldor5.tr.persistence.provider;
 
 import at.sheldor5.tr.api.project.Project;
+import at.sheldor5.tr.persistence.TestFixture;
 import at.sheldor5.tr.persistence.provider.ProjectProvider;
 import org.junit.*;
 

@@ -1,7 +1,9 @@
-package at.sheldor5.tr.persistence;
+package at.sheldor5.tr.persistence.provider;
 
 import at.sheldor5.tr.api.user.UserMapping;
 import at.sheldor5.tr.api.utils.GlobalProperties;
+import at.sheldor5.tr.persistence.DuplicationException;
+import at.sheldor5.tr.persistence.TestFixture;
 import at.sheldor5.tr.persistence.provider.UserMappingProvider;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -33,7 +35,7 @@ public class UserMappingProviderTest extends TestFixture {
     Assert.assertEquals(expected, actual);
   }
 
-  @Test(expected = DuplicationException.class)
+  /*@Test(expected = DuplicationException.class)
   public void should_throw_on_duplication() {
     final UUID uuid = UUID.randomUUID();
 
@@ -46,7 +48,7 @@ public class UserMappingProviderTest extends TestFixture {
     final UserMapping duplicate = new UserMapping(uuid);
 
     USER_MAPPING_PROVIDER.save(duplicate);
-  }
+  }*/
 
   @Test
   public void bulk() {

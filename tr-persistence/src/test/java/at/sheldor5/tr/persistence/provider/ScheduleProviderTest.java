@@ -1,15 +1,11 @@
-package at.sheldor5.tr.persistence;
+package at.sheldor5.tr.persistence.provider;
 
 import at.sheldor5.tr.api.user.Schedule;
 import at.sheldor5.tr.api.user.User;
 import at.sheldor5.tr.api.user.UserMapping;
-import at.sheldor5.tr.api.utils.GlobalProperties;
-import at.sheldor5.tr.persistence.provider.ScheduleProvider;
-import at.sheldor5.tr.persistence.provider.UserMappingProvider;
-import at.sheldor5.tr.persistence.provider.UserProvider;
+import at.sheldor5.tr.persistence.TestFixture;
 import org.junit.*;
 
-import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.DayOfWeek;

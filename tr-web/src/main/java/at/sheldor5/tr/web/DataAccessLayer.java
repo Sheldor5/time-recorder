@@ -6,6 +6,7 @@ import at.sheldor5.tr.api.time.Session;
 import at.sheldor5.tr.api.user.Schedule;
 import at.sheldor5.tr.api.user.User;
 import at.sheldor5.tr.api.user.UserMapping;
+import at.sheldor5.tr.persistence.mappings.UserProjectMapping;
 import at.sheldor5.tr.persistence.provider.*;
 
 import javax.annotation.PreDestroy;
@@ -15,8 +16,6 @@ import javax.inject.Named;
 import javax.persistence.EntityManager;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,12 +32,16 @@ public class DataAccessLayer implements Serializable, AutoCloseable {
   @Inject
   public DataAccessLayer(final EntityManager entityManager) {
     this.entityManager = entityManager;
-    System.out.println("EntityManager@" + entityManager.hashCode() + "#open()");
   }
 
   public List<Project> getProjects(final UserMapping userMapping) {
     UserProjectMappingProvider userProjectMappingProvider = new UserProjectMappingProvider(entityManager);
     return userProjectMappingProvider.getProjects(userMapping);
+  }
+
+  public void save(final UserProjectMapping userProjectMapping) {
+    UserProjectMappingProvider userProjectMappingProvider = new UserProjectMappingProvider(entityManager);
+    userProjectMappingProvider.save(userProjectMapping);
   }
 
   public List<Project> getProjects() {
@@ -51,6 +54,11 @@ public class DataAccessLayer implements Serializable, AutoCloseable {
     return projectProvider.get(id);
   }
 
+  public Project getProject(final String name) {
+    ProjectProvider projectProvider = new ProjectProvider(entityManager);
+    return projectProvider.getProject(name);
+  }
+
   public List<Project> getProjects(final String namePart) {
     ProjectProvider projectProvider = new ProjectProvider(entityManager);
     return projectProvider.get(namePart);
@@ -59,6 +67,11 @@ public class DataAccessLayer implements Serializable, AutoCloseable {
   public void save(final Session session) {
     SessionProvider sessionProvider = new SessionProvider(entityManager);
     sessionProvider.save(session);
+  }
+
+  public void save(final UserMapping userMapping) {
+    UserMappingProvider userMappingProvider = new UserMappingProvider(entityManager);
+    userMappingProvider.save(userMapping);
   }
 
   public void save(final Project project) {
@@ -120,8 +133,8 @@ public class DataAccessLayer implements Serializable, AutoCloseable {
 
   @Override
   public void close() {
-    System.out.println("EntityManager@" + entityManager.hashCode() + "#close()");
     entityManager.close();
+    entityManager = null;
   }
 
   @PreDestroy

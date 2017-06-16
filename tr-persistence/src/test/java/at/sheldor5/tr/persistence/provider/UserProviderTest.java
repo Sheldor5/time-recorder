@@ -1,7 +1,8 @@
-package at.sheldor5.tr.persistence;
+package at.sheldor5.tr.persistence.provider;
 
 import at.sheldor5.tr.api.user.User;
 import at.sheldor5.tr.api.utils.GlobalProperties;
+import at.sheldor5.tr.persistence.TestFixture;
 import at.sheldor5.tr.persistence.provider.UserProvider;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -35,6 +36,8 @@ public class UserProviderTest extends TestFixture {
     USER_PROVIDER.save(user);
 
     Assert.assertNotNull(user.getUuid());
+
+    Assert.assertTrue(USER_PROVIDER.getEntityManager().contains(user));
 
     final User actual = USER_PROVIDER.get(username);
 

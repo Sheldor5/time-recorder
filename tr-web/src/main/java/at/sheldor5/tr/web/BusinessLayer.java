@@ -6,7 +6,6 @@ import at.sheldor5.tr.api.time.Month;
 import at.sheldor5.tr.api.time.Session;
 import at.sheldor5.tr.api.user.Schedule;
 import at.sheldor5.tr.api.user.User;
-import at.sheldor5.tr.web.jsf.beans.ClockController;
 import at.sheldor5.tr.web.jsf.beans.UserController;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -16,12 +15,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import javax.enterprise.context.SessionScoped;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.enterprise.inject.spi.CDI;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 
 /**
  * @author Michael Palata

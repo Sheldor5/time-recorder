@@ -1,6 +1,5 @@
 package at.sheldor5.tr.persistence.provider;
 
-import at.sheldor5.tr.persistence.EntityManagerHelper;
 import at.sheldor5.tr.persistence.identifier.AbstractIdentifier;
 import at.sheldor5.tr.persistence.utils.QueryUtils;
 
@@ -20,10 +19,14 @@ public class GenericProvider<Entity, Identifier> implements EntityProvider<Entit
     this.identifier = identifier;
   }
 
+  public EntityManager getEntityManager() {
+    return entityManager;
+  }
+
   @Override
   public <T> long count(String fieldName, Class<T> fieldType, T fieldValue) {
     TypedQuery<Long> countQuery =
-        QueryUtils.count(entityManager,
+        QueryUtils.countByField(entityManager,
             identifier.getEntityClass(),
             fieldName,
             fieldType,

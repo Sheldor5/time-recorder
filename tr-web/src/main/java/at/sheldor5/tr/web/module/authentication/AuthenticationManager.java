@@ -43,7 +43,7 @@ public class AuthenticationManager implements PluginManager<AuthenticationPlugin
     }
   }
 
-  public void saveUser(final User user) {
+  public UserMapping saveUser(final User user) {
     for (final AuthenticationPlugin plugin : plugins) {
       try {
         plugin.saveUser(user);
@@ -51,6 +51,21 @@ public class AuthenticationManager implements PluginManager<AuthenticationPlugin
         // ignore
       }
     }
+    final UserMappingProvider userMappingProvider = new UserMappingProvider();
+    UserMapping userMapping;
+    if (user.getUuid() != null) {
+      userMapping = new UserMapping(user.getUuid());
+      userMapping.setRole(Role.USER);
+      if (!userMappingProvider.exists(userMapping)) {
+        userMappingProvider.save(userMapping);
+      } else {
+        userMapping = userMappingProvider.get(userMapping.getUuid());
+      }
+      return userMapping;
+    } else {
+      userMapping = userMappingProvider.get(user.getUuid());
+    }
+    return userMapping;
   }
 
   public UserMapping getUserMapping(final String username, final String password) {

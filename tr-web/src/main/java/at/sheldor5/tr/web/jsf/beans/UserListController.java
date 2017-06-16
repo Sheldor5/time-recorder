@@ -27,12 +27,13 @@ public class UserListController implements Serializable {
     // CDI
   }
 
+  @Inject
   public UserListController(final BusinessLayer businessLayer) {
     this.businessLayer = businessLayer;
   }
 
   @PostConstruct
-  private void init() {
+  public void init() {
     users = businessLayer.getUsers();
   }
 

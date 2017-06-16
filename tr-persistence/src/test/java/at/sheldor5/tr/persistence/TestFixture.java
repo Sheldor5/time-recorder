@@ -9,12 +9,18 @@ import java.io.IOException;
 
 public class TestFixture {
 
+  private static boolean loaded = false;
+
   private static final String PROPERTIES = "/test.properties";
 
   @BeforeClass
   public static void init() throws IOException {
+    if (loaded) {
+      return;
+    }
     GlobalProperties.load(TestFixture.class.getResourceAsStream(PROPERTIES));
     EntityManagerHelper.setupGlobalProperties();
+    loaded = true;
   }
 
 }

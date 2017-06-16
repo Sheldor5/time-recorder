@@ -1,7 +1,11 @@
 package at.sheldor5.tr.web.jsf.beans;
 
+import at.sheldor5.tr.api.project.Project;
 import at.sheldor5.tr.api.user.User;
+import at.sheldor5.tr.api.user.UserMapping;
+import at.sheldor5.tr.persistence.mappings.UserProjectMapping;
 import at.sheldor5.tr.persistence.provider.UserProvider;
+import at.sheldor5.tr.web.BusinessLayer;
 import at.sheldor5.tr.web.DataAccessLayer;
 import at.sheldor5.tr.web.module.authentication.AuthenticationManager;
 import java.util.PropertyResourceBundle;
@@ -15,7 +19,8 @@ import javax.inject.Named;
 @Named("registration")
 public class RegistrationController {
 
-  private PropertyResourceBundle msg;
+  private final PropertyResourceBundle msg;
+  private final DataAccessLayer dataAccessLayer;
 
   private String username;
   private String password;
@@ -27,11 +32,14 @@ public class RegistrationController {
 
   public RegistrationController() {
     // CDI
+    this.msg = null;
+    this.dataAccessLayer = null;
   }
 
   @Inject
-  public RegistrationController(final PropertyResourceBundle msg) {
+  public RegistrationController(final PropertyResourceBundle msg, final DataAccessLayer dataAccessLayer) {
     this.msg = msg;
+    this.dataAccessLayer = dataAccessLayer;
   }
 
   public String getUsername() {
@@ -89,7 +97,10 @@ public class RegistrationController {
     }
 
     final User user = new User(username, password, forename, surname);
-    AuthenticationManager.getInstance().saveUser(user);
+    final UserMapping userMapping = AuthenticationManager.getInstance().saveUser(user);
+    final Project project = dataAccessLayer.getProject("time-recorder");
+    final UserProjectMapping userProjectMapping = new UserProjectMapping(userMapping, project);
+    dataAccessLayer.save(userProjectMapping);
     successful = true;
   }
 

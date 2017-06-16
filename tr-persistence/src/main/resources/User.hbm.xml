@@ -8,7 +8,7 @@
         <id name="uuid" type="java.util.UUID" column="PK_USER_ID">
             <generator class="uuid2" />
         </id>
-        <property name="username" type="string" column="USERNAME" length="32"/>
+        <property name="username" type="string" column="USERNAME" length="32" unique="true" not-null="true"/>
         <property name="password" type="string" column="PASSWORD" length="60"/>
         <property name="forename" type="string" column="FORENAME" length="32"/>
         <property name="surname" type="string" column="SURNAME" length="48"/>

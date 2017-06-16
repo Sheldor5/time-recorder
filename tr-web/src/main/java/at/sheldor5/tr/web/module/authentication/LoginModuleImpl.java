@@ -70,7 +70,9 @@ public class LoginModuleImpl implements LoginModule {
 
     if (userMapping == null) {
       //return false;
-      throw new LoginException("Authentication failed");
+      final String error = String.format("Authentication failed for username: %s", username);
+      LOGGER.info(error);
+      throw new LoginException(error);
     }
 
     final Role role = userMapping.getRole();

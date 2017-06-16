@@ -21,18 +21,20 @@ import java.util.logging.Logger;
 @RequestScoped
 public class ProjectListController implements Serializable {
 
+  private static final Logger LOGGER = Logger.getLogger(ProjectListController.class.getName());
+
   private BusinessLayer businessLayer;
+
+  private Collection<Project> projects = new ArrayList<>();
 
   public ProjectListController() {
     // CDI
   }
 
+  @Inject
   public ProjectListController(final BusinessLayer businessLayer) {
     this.businessLayer = businessLayer;
   }
-
-  private Collection<Project> projects = new ArrayList<>();
-  private static final Logger LOGGER = Logger.getLogger(ProjectListController.class.getName());
 
   @PostConstruct
   public void init() {

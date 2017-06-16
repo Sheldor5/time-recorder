@@ -26,8 +26,6 @@
             <c:choose>
                 <c:when test="#{registration.successful}">
                     <h2><h:outputText value="#{msg['register.successful']}"/></h2>
-                    <h:link outcome="index">&raquo; <h:outputText value="#{msg['register.login']}"/></h:link>
-                    <h:link outcome="login">&raquo; <h:outputText value="#{msg['register.login']}"/></h:link>
                 </c:when>
                 <c:otherwise>
                     <h2><h:outputText value="#{msg['register.register']}"/></h2>

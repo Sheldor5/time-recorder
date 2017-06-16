@@ -9,6 +9,7 @@ import at.sheldor5.tr.persistence.utils.QueryUtils;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.TypedQuery;
+import java.util.List;
 import java.util.UUID;
 
 public class UserMappingProvider extends GenericProvider<UserMapping, Integer> {
@@ -37,11 +38,12 @@ public class UserMappingProvider extends GenericProvider<UserMapping, Integer> {
   public boolean exists(UserMapping userMapping) {
     long count = count("uuid", UUID.class, userMapping.getUuid());
     if (count != 0) {
-      EntityTransaction transaction = entityManager.getTransaction();
+      /*EntityTransaction transaction = entityManager.getTransaction();
       if (transaction.isActive()) {
         entityManager.getTransaction().rollback();
-      }
-      throw new DuplicationException(userMapping.getUuid());
+      }*/
+      return true;
+      //throw new DuplicationException(userMapping.getUuid());
     }
     return false;
   }
@@ -58,9 +60,13 @@ public class UserMappingProvider extends GenericProvider<UserMapping, Integer> {
 
     TypedQuery<UserMapping> findByUuid = QueryUtils.findByField(entityManager,
         UserMapping.class, "uuid", UUID.class, uuid);
+    findByUuid.setMaxResults(1);
 
     try {
-      userMapping = findByUuid.getSingleResult();
+      final List<UserMapping> resultList = findByUuid.getResultList();
+      if (resultList.size() > 0) {
+        userMapping = resultList.get(0);
+      }
       transaction.commit();
     } catch (final Exception e) {
       transaction.rollback();

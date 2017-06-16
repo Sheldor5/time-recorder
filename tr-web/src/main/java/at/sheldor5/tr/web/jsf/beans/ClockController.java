@@ -67,7 +67,7 @@ public class ClockController implements Serializable {
 
     if (sessions.size() > 0) {
       today.setSchedule(businessLayer.getSchedule());
-      Collections.sort(sessions);
+      //Collections.sort(sessions);
       session = sessions.get(sessions.size() - 1);
       project = session.getProject();
       if (session.getEnd() != null) {
@@ -86,6 +86,14 @@ public class ClockController implements Serializable {
 
   public Project getProject() {
     return project;
+  }
+
+  public List<Project> getProjects() {
+    return projects;
+  }
+
+  public int obfuscateProjectId(final Project project) {
+    return obfuscator + (project == null ? 0 : project.getId());
   }
 
   public int getProjectId() {
@@ -122,9 +130,7 @@ public class ClockController implements Serializable {
     isSynchronized = true;
     if (time != null) {
       if (session == null) {
-        session = new Session(project, date, time);
-        session.setDate(LocalDate.now());
-        session.setStart(time);
+        session = new Session(project, date == null ? LocalDate.now() : date, time);
         businessLayer.save(session);
         today.addItem(session);
       } else {
@@ -139,10 +145,6 @@ public class ClockController implements Serializable {
 
   public void setSchedule(final Schedule schedule) {
     today.setSchedule(schedule);
-  }
-
-  public List<Project> getProjects() {
-    return projects;
   }
 
   public void switchProject(final Project project) {
@@ -175,7 +177,7 @@ public class ClockController implements Serializable {
   }
 
   public void update() {
-    System.out.println("Clocl#update()");
+    System.out.println("Clock#update()");
   }
 
 }
