@@ -40,7 +40,7 @@ public class UserProjectMappingProvider extends GenericProvider<UserProjectMappi
   }
 
   @Override
-  public boolean exists(UserProjectMapping entity) {
+  public boolean exists(final UserProjectMapping entity) {
     TypedQuery<Long> countQuery =
         QueryUtils.countByFields(entityManager, UserProjectMapping.class,
             "project", Project.class, entity.getProject(),

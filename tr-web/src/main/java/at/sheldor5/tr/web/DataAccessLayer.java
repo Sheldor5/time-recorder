@@ -1,6 +1,7 @@
 package at.sheldor5.tr.web;
 
 import at.sheldor5.tr.api.project.Project;
+import at.sheldor5.tr.api.time.Account;
 import at.sheldor5.tr.api.time.Day;
 import at.sheldor5.tr.api.time.Session;
 import at.sheldor5.tr.api.user.Schedule;
@@ -18,123 +19,138 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 @Named("dataAccessLayer")
 @RequestScoped
 public class DataAccessLayer implements Serializable, AutoCloseable {
 
-  private EntityManager entityManager;
+  private static final Logger LOGGER = Logger.getLogger(DataAccessLayer.class.getName());
+
+  private final EntityManager entityManager;
+
+  private final UserProvider userProvider;
+  private final UserMappingProvider userMappingProvider;
+  private final ProjectProvider projectProvider;
+  private final UserProjectMappingProvider userProjectMappingProvider;
+  private final SessionProvider sessionProvider;
+  private final ScheduleProvider scheduleProvider;
+  private final AccountProvider accountProvider;
 
   protected DataAccessLayer() {
     // CDI
+    this(null);
   }
 
   @Inject
   public DataAccessLayer(final EntityManager entityManager) {
     this.entityManager = entityManager;
+    this.userProvider = new UserProvider(entityManager);
+    this.userMappingProvider = new UserMappingProvider(entityManager);
+    this.projectProvider = new ProjectProvider(entityManager);
+    this.userProjectMappingProvider = new UserProjectMappingProvider(entityManager);
+    this.sessionProvider = new SessionProvider(entityManager);
+    this.scheduleProvider = new ScheduleProvider(entityManager);
+    this.accountProvider = new AccountProvider(entityManager);
   }
 
   public List<Project> getProjects(final UserMapping userMapping) {
-    UserProjectMappingProvider userProjectMappingProvider = new UserProjectMappingProvider(entityManager);
     return userProjectMappingProvider.getProjects(userMapping);
   }
 
   public void save(final UserProjectMapping userProjectMapping) {
-    UserProjectMappingProvider userProjectMappingProvider = new UserProjectMappingProvider(entityManager);
     userProjectMappingProvider.save(userProjectMapping);
   }
 
   public List<Project> getProjects() {
-    ProjectProvider projectProvider = new ProjectProvider(entityManager);
     return projectProvider.get("");
   }
 
   public Project getProject(int id) {
-    ProjectProvider projectProvider = new ProjectProvider(entityManager);
     return projectProvider.get(id);
   }
 
   public Project getProject(final String name) {
-    ProjectProvider projectProvider = new ProjectProvider(entityManager);
     return projectProvider.getProject(name);
   }
 
   public List<Project> getProjects(final String namePart) {
-    ProjectProvider projectProvider = new ProjectProvider(entityManager);
     return projectProvider.get(namePart);
   }
 
   public void save(final Session session) {
-    SessionProvider sessionProvider = new SessionProvider(entityManager);
     sessionProvider.save(session);
   }
 
   public void save(final UserMapping userMapping) {
-    UserMappingProvider userMappingProvider = new UserMappingProvider(entityManager);
     userMappingProvider.save(userMapping);
   }
 
   public void save(final Project project) {
-    ProjectProvider projectProvider = new ProjectProvider(entityManager);
     projectProvider.save(project);
   }
 
   public List<Session> getSessions(final UserMapping userMapping, final LocalDate date) {
-    SessionProvider sessionProvider = new SessionProvider(entityManager);
     return sessionProvider.get(userMapping, date);
   }
 
   public Day getDay(final UserMapping userMapping, final LocalDate date) {
-    SessionProvider sessionProvider = new SessionProvider(entityManager);
     Day day = new Day(date);
     day.setItems(sessionProvider.get(userMapping, date));
     return day;
   }
 
   public List<Session> getSessions(final UserMapping userMapping, final LocalDate from, final LocalDate to) {
-    SessionProvider sessionProvider = new SessionProvider(entityManager);
     return sessionProvider.get(userMapping, from, to);
   }
 
   public Schedule getSchedule(final UserMapping userMapping) {
-    ScheduleProvider scheduleProvider = new ScheduleProvider(entityManager);
     return scheduleProvider.getLatest(userMapping);
   }
 
   public List<Schedule> getSchedules(final UserMapping userMapping) {
-    ScheduleProvider scheduleProvider = new ScheduleProvider(entityManager);
     return scheduleProvider.get(userMapping);
   }
 
   public List<User> getUsers() {
-    UserProvider userProvider = new UserProvider(entityManager);
     return userProvider.getList("");
   }
 
   public User getUser(String username) {
-    UserProvider userProvider = new UserProvider(entityManager);
     return userProvider.get(username);
   }
 
+  public Account getAccount(final UserMapping userMapping, final LocalDate date) {
+    return accountProvider.get(userMapping, date);
+  }
+
+  public List<Account> getAccounts(final UserMapping userMapping, final LocalDate from, final LocalDate to) {
+    return accountProvider.get(userMapping, from, to);
+  }
+
+  public void save(final Account account) {
+    accountProvider.save(account);
+  }
+
   public User getUser(UUID uuid) {
-    UserProvider userProvider = new UserProvider(entityManager);
     return userProvider.get(uuid);
   }
 
   public void save(final User user) {
-    UserProvider userProvider = new UserProvider(entityManager);
     userProvider.save(user);
   }
 
   public void save(final Schedule schedule) {
-    ScheduleProvider scheduleProvider = new ScheduleProvider(entityManager);
     scheduleProvider.save(schedule);
   }
 
   @Override
   public void close() {
-    entityManager.close();
-    entityManager = null;
+    try {
+      entityManager.close();
+    } catch (final Exception e) {
+      LOGGER.warning(String.format("Error closing EntityManager: %s", e.getMessage()));
+    }
   }
 
   @PreDestroy

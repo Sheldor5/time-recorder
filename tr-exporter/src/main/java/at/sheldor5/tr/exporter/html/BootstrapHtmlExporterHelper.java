@@ -84,6 +84,7 @@ public class BootstrapHtmlExporterHelper {
     for (final Day day : month.getItems()) {
       day(writer, day, false);
     }
+
     writer.write("</br>");
     writer.write("<div class=\"row\">");
     writer.write("<div class=\"col-md-2 bg-primary\"><label>Gesamt:</label></div>");
@@ -102,7 +103,7 @@ public class BootstrapHtmlExporterHelper {
     writer.write("<div class=\"col-md-1 bg-primary\"><label>bis</label></div>");
     writer.write("<div class=\"col-md-1 bg-primary\"><label>Zeit</label></div>");
     writer.write("<div class=\"col-md-2 bg-primary\"><label>Projekt</label></div>");
-    writer.write("<div class=\"col-md-1 bg-primary\"><label>gewichtet</label></div>");
+    writer.write("<div class=\"col-md-1 bg-primary\"><label>Zeitplan</label></div>");
     writer.write("<div class=\"col-md-5\">&nbsp;</div>");
     writer.write("</div>");
     writer.write("</br>");
@@ -123,11 +124,11 @@ public class BootstrapHtmlExporterHelper {
   private static String getMonthString(int i) {
     switch (i) {
       case 1:
-        return "Jänner";
+        return "J&auml;nner";
       case 2:
         return "Februar";
       case 3:
-        return "März";
+        return "M&auml;rz";
       case 4:
         return "April";
       case 5:

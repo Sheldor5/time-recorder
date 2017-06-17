@@ -43,7 +43,7 @@ public class PlainTextExporter implements ExporterPlugin {
   @Override
   public String displayNamePropertyIdentifier() {
     // time-recorder Text
-    return  "tr.exporter.text";
+    return  "plugin.exporter.tr.text";
   }
 
   @Override

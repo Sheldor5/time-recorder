@@ -1,17 +1,15 @@
 package at.sheldor5.tr.web.module.administration;
 
 import at.sheldor5.tr.api.project.Project;
-import at.sheldor5.tr.web.DataAccessLayer;
-import at.sheldor5.tr.web.jsf.beans.UserController;
-
+import at.sheldor5.tr.web.BusinessLayer;
+import java.io.IOException;
+import java.util.logging.Logger;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.logging.Logger;
 
 /**
  * @author constantin
@@ -23,14 +21,12 @@ public class ProjectManager extends HttpServlet {
   private static final Logger LOGGER = Logger.getLogger(ProjectManager.class.getName());
 
   @Inject
-  private DataAccessLayer dataAccessLayer;
-  @Inject
-  private UserController user;
+  private BusinessLayer businessLayer;
 
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    if(!user.getAdmin()) {
-      LOGGER.warning("Non privileged user (" + user.getUsername() + ") tried to access manageProject WebServlet");
+    if(!businessLayer.isAdmin()) {
+      LOGGER.warning("Non privileged user (" + businessLayer.getUser().getUsername() + ") tried to access manageProject WebServlet");
       resp.sendRedirect(req.getContextPath() + "/index.xhtml");
       return;
     }
@@ -56,7 +52,7 @@ public class ProjectManager extends HttpServlet {
       return;
     }
     Project project = new Project(projectName);
-    dataAccessLayer.save(project);
+    businessLayer.save(project);
   }
 
   private void renameProject(HttpServletRequest req) {
@@ -72,9 +68,9 @@ public class ProjectManager extends HttpServlet {
     if(newName == null || newName.isEmpty()) {
       return;
     }
-    final Project project = dataAccessLayer.getProject(id);
+    final Project project = businessLayer.getProject(id);
     project.setName(newName);
-    dataAccessLayer.save(project);
+    businessLayer.save(project);
   }
 
 }

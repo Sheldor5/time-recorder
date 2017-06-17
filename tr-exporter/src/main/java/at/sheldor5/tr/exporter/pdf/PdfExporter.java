@@ -41,7 +41,7 @@ public class PdfExporter implements ExporterPlugin {
   @Override
   public String displayNamePropertyIdentifier() {
     // time-recorder PDF
-    return  "tr.exporter.pdf";
+    return  "plugin.exporter.tr.pdf";
   }
 
   @Override

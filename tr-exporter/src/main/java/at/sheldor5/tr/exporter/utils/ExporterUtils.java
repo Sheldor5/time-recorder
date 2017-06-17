@@ -30,11 +30,13 @@ public class ExporterUtils {
   }
 
   public static void fillYear(final Year year) {
+    Month month;
+    LocalDate date;
     for (int m = 1; m < 13; m++) {
-      Month month = new Month(LocalDate.of(2017, m, 1));
-      for (int d = 1; d < 32; d++) {
-        Day day = new Day(LocalDate.of(2017, m, d));
-        month.addItem(day);
+      date = LocalDate.of(year.getDate().getYear(), m, 1);
+      month = new Month(date);
+      for (int d = 1; d <= date.lengthOfMonth(); d++) {
+        month.addItem(new Day(LocalDate.of(year.getDate().getYear(), m, d)));
       }
       year.addItem(month);
     }

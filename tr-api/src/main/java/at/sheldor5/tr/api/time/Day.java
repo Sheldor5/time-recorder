@@ -21,7 +21,7 @@ public class Day extends Container<Session> {
   }
 
   @Override
-  public final synchronized long getSummary() {
+  public final long getSummary() {
     final List<Session> sessions = this.getItems();
 
     long sum = 0;
@@ -29,13 +29,12 @@ public class Day extends Container<Session> {
     for (final Session session : sessions) {
       sum += session.getSummary();
     }
-    sum -= quota();
 
     return sum;
   }
 
   @Override
-  public final synchronized long getValuedSummary() {
+  public final long getValuedSummary() {
     final List<Session> sessions = this.getItems();
 
     long sum = 0;
@@ -43,6 +42,8 @@ public class Day extends Container<Session> {
     for (final Session session : sessions) {
       sum += session.getValuedSummary();
     }
+
+    sum -= quota();
 
     return sum;
   }
