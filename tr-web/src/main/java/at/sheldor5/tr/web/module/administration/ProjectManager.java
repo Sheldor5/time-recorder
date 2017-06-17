@@ -2,12 +2,9 @@ package at.sheldor5.tr.web.module.administration;
 
 import at.sheldor5.tr.api.project.Project;
 import at.sheldor5.tr.web.BusinessLayer;
-import at.sheldor5.tr.web.DataAccessLayer;
 import at.sheldor5.tr.web.jsf.beans.UserController;
-import at.sheldor5.tr.web.jsf.converter.ProjectConverter;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -28,12 +25,12 @@ public class ProjectManager extends HttpServlet {
   @Inject
   private BusinessLayer businessLayer;
   @Inject
-  private UserController user;
+  private UserController userController;
 
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    if(!user.getAdmin()) {
-      LOGGER.warning("Non privileged user (" + user.getUsername() + ") tried to access manageProject WebServlet");
+    if(!userController.getAdmin()) {
+      LOGGER.warning("Non privileged user (" + userController.getUsername() + ") tried to access manageProject WebServlet");
       resp.sendRedirect(req.getContextPath() + "/index.xhtml");
       return;
     }
