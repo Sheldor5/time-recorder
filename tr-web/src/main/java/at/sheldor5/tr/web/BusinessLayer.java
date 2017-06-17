@@ -143,10 +143,8 @@ public class BusinessLayer implements Serializable {
   }
 
   public User getUser(UUID uuid) {
-    if (user.getAdmin()) {
-      return dataAccessLayer.getUser(uuid);
-    }
-    return new User();
+    User user = dataAccessLayer.getUser(uuid);
+    return user == null ? new User() : user;
   }
 
   public User getUser() {

@@ -24,13 +24,11 @@ public class ProjectManager extends HttpServlet {
 
   @Inject
   private BusinessLayer businessLayer;
-  @Inject
-  private UserController userController;
 
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    if(!userController.getAdmin()) {
-      LOGGER.warning("Non privileged user (" + userController.getUsername() + ") tried to access manageProject WebServlet");
+    if(!businessLayer.isAdmin()) {
+      LOGGER.warning("Non privileged user (" + businessLayer.getUser().getUsername() + ") tried to access manageProject WebServlet");
       resp.sendRedirect(req.getContextPath() + "/index.xhtml");
       return;
     }
