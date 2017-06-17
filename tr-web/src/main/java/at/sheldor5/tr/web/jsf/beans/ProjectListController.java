@@ -38,7 +38,7 @@ public class ProjectListController implements Serializable {
 
   @PostConstruct
   public void init() {
-    projects = businessLayer.getProjects();
+    projects = businessLayer.getAllProjects();
   }
 
   public Collection<Project> getProjects() {

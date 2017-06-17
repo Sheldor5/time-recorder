@@ -20,14 +20,16 @@ import java.util.logging.Logger;
 public class AdminPermissionsController implements Serializable {
 
   private BusinessLayer businessLayer;
+  private UserController userController;
 
   private AdminPermissionsController() {
 
   }
 
   @Inject
-  public AdminPermissionsController(final BusinessLayer businessLayer) {
+  public AdminPermissionsController(final BusinessLayer businessLayer, final UserController userController) {
     this.businessLayer = businessLayer;
+    this.userController = userController;
   }
 
   private static final Logger LOGGER = Logger.getLogger(AdminPermissionsController.class.getName());
@@ -41,5 +43,9 @@ public class AdminPermissionsController implements Serializable {
         LOGGER.warning("Redirect to index.xhtml failed");
       }
     }
+  }
+
+  public boolean hasPermissions() {
+    return userController.getAdmin();
   }
 }

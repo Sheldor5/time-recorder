@@ -1,6 +1,9 @@
 package at.sheldor5.tr.web.jsf.beans;
 
+import at.sheldor5.tr.api.project.Project;
 import at.sheldor5.tr.api.user.User;
+import at.sheldor5.tr.api.user.UserMapping;
+import at.sheldor5.tr.persistence.provider.UserMappingProvider;
 import at.sheldor5.tr.web.BusinessLayer;
 import at.sheldor5.tr.web.DataAccessLayer;
 import at.sheldor5.tr.web.utils.SessionUtils;
@@ -14,7 +17,7 @@ import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Logger;
 
 /**
@@ -28,6 +31,7 @@ public class UserEditController implements Serializable {
   private static final Logger LOGGER = Logger.getLogger(UserEditController.class.getName());
 
   private BusinessLayer businessLayer;
+  private UserController userController;
 
   private UUID uuidFromRequest;
   private String username;
@@ -35,6 +39,9 @@ public class UserEditController implements Serializable {
   private String surname;
   private String newPassword = "";
   private String newPasswordRepeat = "";
+  private Map<String, Project> availableProjects = new HashMap<>();
+  private List<Project> selectedProjects;
+  private List<String> assignedProjects = new ArrayList<>();
   private boolean validUUID = true;
   private boolean editOk = true;
   private boolean passwordRepeatWrongMsg = false;
@@ -45,13 +52,20 @@ public class UserEditController implements Serializable {
   }
 
   @Inject
-  public UserEditController(final BusinessLayer businessLayer) {
+  public UserEditController(final BusinessLayer businessLayer, final UserController userController) {
     this.businessLayer = businessLayer;
+    this.userController = userController;
   }
 
   @PostConstruct
   private void init() {
-    String uuid = ((HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest()).getParameter("uuid");
+    HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+    String uuid = request.getParameter("uuid");
+    storeUuid(uuid);
+    initProjectData();
+  }
+
+  private void storeUuid(String uuid) {
     if(uuid == null || uuid.isEmpty()){
       validUUID = false;
       return;
@@ -63,6 +77,24 @@ public class UserEditController implements Serializable {
       LOGGER.info("Invalid UUID String");
       validUUID = false;
     }
+  }
+
+  private void initProjectData() {
+    assignedProjects.clear();
+    availableProjects.clear();
+    UserMapping userMapping = getUserMappingFromUUID(uuidFromRequest);
+    for(Project project : businessLayer.getProjects(userMapping)) {
+      assignedProjects.add(project.getName());
+    }
+    for(Project project : businessLayer.getAllProjects()) {
+      if(!assignedProjects.contains(project.getName())){
+        availableProjects.put(project.getName(), project);
+      }
+    }
+  }
+
+  private UserMapping getUserMappingFromUUID(UUID uuidFromRequest) {
+    return new UserMappingProvider().get(uuidFromRequest);
   }
 
   public boolean hasPermission() {
@@ -78,6 +110,15 @@ public class UserEditController implements Serializable {
     }
   }
 
+  private void redirectIfNotAuthorized() throws IOException {
+    UUID uuidFromUserToBeEdited = uuidFromRequest;
+    UUID uuidFromAuthenticatedUser = businessLayer.getUser().getUuid();
+    // admin can edit all users, a normal user can only edit himself
+    if(!uuidFromUserToBeEdited.equals(uuidFromAuthenticatedUser) && !businessLayer.isAdmin()) {
+      redirect();
+    }
+  }
+
   public void getUserData() {
     User user  = businessLayer.getUser(uuidFromRequest);
     username = user.getUsername();
@@ -86,6 +127,49 @@ public class UserEditController implements Serializable {
   }
 
   public void saveUser() {
+    LOGGER.info("save user");
+    if(!hasPermission()) {
+      return;
+    }
+    User user = businessLayer.getUser(uuidFromRequest);
+    handlePassword(user);
+    handleUserDetails(user);
+    handleProjects();
+    if(editOk) {
+      //dataProvider.save(user); //todo delete if not necessary
+      changeSuccessfulMsg = true;
+    }
+    initProjectData();
+  }
+
+  private void handlePassword(User user) {
+    // if the user hasn't entered any passwords, do nothing
+    if(!newPassword.isEmpty() || !newPasswordRepeat.isEmpty()) {
+      if(newPassword.equals(newPasswordRepeat)) {
+        user.setPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt()));
+      }
+      else {
+        passwordRepeatWrongMsg = true;
+        editOk = false;
+      }
+    }
+  }
+
+  private void handleUserDetails(User user) {
+    if(editOk) {
+      user.setUsername(username);
+      user.setForename(forename);
+      user.setSurname(surname);
+    }
+  }
+
+  private void handleProjects() {
+    if(userController.getAdmin()) {
+      businessLayer.addUserProjectMappings(getUserMappingFromUUID(uuidFromRequest), selectedProjects);
+    }
+  }
+
+  /*public void saveUser() {
     if(!hasPermission()) {
       return;
     }
@@ -106,26 +190,7 @@ public class UserEditController implements Serializable {
       changeSuccessfulMsg = true;
       //dataProvider.save(user); // todo nicht notwendig?
     }
-  }
-
-  private void handlePassword(User user) {
-    if(newPassword.equals(newPasswordRepeat)) {
-      user.setPassword(BCrypt.hashpw(newPassword, BCrypt.gensalt()));
-    }
-    else {
-      passwordRepeatWrongMsg = true;
-      editOk = false;
-    }
-  }
-
-  private void redirectIfNotAuthorized() throws IOException {
-    UUID uuidFromUserToBeEdited = uuidFromRequest;
-    UUID uuidFromAuthenticatedUser = businessLayer.getUser().getUuid();
-    // admin can edit all users, a normal user can only edit himself
-    if(!uuidFromUserToBeEdited.equals(uuidFromAuthenticatedUser) && !businessLayer.isAdmin()) {
-      redirect();
-    }
-  }
+  }*/
 
   private void redirect() throws IOException {
     SessionUtils.getResponse().sendRedirect(SessionUtils.getRequest().getContextPath() + "/index.xhtml");
@@ -190,5 +255,29 @@ public class UserEditController implements Serializable {
 
   public void setChangeSuccessfulMsg(boolean changeSuccessfulMsg) {
     this.changeSuccessfulMsg = changeSuccessfulMsg;
+  }
+
+  public Map<String, Project> getAvailableProjects() {
+    return availableProjects;
+  }
+
+  public void setAvailableProjects(Map<String, Project> availableProjects) {
+    this.availableProjects = availableProjects;
+  }
+
+  public List<Project> getSelectedProjects() {
+    return selectedProjects;
+  }
+
+  public void setSelectedProjects(List<Project> selectedProjects) {
+    this.selectedProjects = selectedProjects;
+  }
+
+  public List<String> getAssignedProjects() {
+    return assignedProjects;
+  }
+
+  public void setAssignedProjects(List<String> assignedProjects) {
+    this.assignedProjects = assignedProjects;
   }
 }
