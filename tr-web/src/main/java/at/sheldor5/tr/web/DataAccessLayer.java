@@ -3,6 +3,7 @@ package at.sheldor5.tr.web;
 import at.sheldor5.tr.api.project.Project;
 import at.sheldor5.tr.api.time.Day;
 import at.sheldor5.tr.api.time.Session;
+import at.sheldor5.tr.api.user.Role;
 import at.sheldor5.tr.api.user.Schedule;
 import at.sheldor5.tr.api.user.User;
 import at.sheldor5.tr.api.user.UserMapping;
@@ -124,6 +125,37 @@ public class DataAccessLayer implements Serializable, AutoCloseable {
   public void save(final User user) {
     UserProvider userProvider = new UserProvider(entityManager);
     userProvider.save(user);
+  }
+
+  public void save(final User user, Role role, List<Project> projects) {
+    UserMapping usermapping = createUserMapping(user, role);
+    addUserProjectMappings(usermapping, projects);
+    save(user);
+  }
+
+  private UserMapping createUserMapping(User user, Role role) {
+    final UserProvider userProvider = new UserProvider();
+    final UserMappingProvider userMappingProvider = new UserMappingProvider();
+    final UserMapping userMapping = new UserMapping();
+
+    final User existing = userProvider.get(user.getUsername());
+    if (existing == null) {
+      userProvider.save(user);
+      userMapping.setUuid(user.getUuid());
+      userMapping.setRole(role);
+      userMappingProvider.save(userMapping);
+    }
+    return userMapping;
+  }
+
+  public void addUserProjectMappings(UserMapping usermapping, List<Project> projects) {
+    if(projects.size() > 0) {
+      UserProjectMappingProvider userProjectMappingProvider = new UserProjectMappingProvider(entityManager);
+      for(Project project : projects) {
+        userProjectMappingProvider.save(new UserProjectMapping(usermapping, project));
+
+      }
+    }
   }
 
   public void save(final Schedule schedule) {

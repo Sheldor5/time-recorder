@@ -4,8 +4,10 @@ import at.sheldor5.tr.api.project.Project;
 import at.sheldor5.tr.api.time.Day;
 import at.sheldor5.tr.api.time.Month;
 import at.sheldor5.tr.api.time.Session;
+import at.sheldor5.tr.api.user.Role;
 import at.sheldor5.tr.api.user.Schedule;
 import at.sheldor5.tr.api.user.User;
+import at.sheldor5.tr.api.user.UserMapping;
 import at.sheldor5.tr.web.jsf.beans.UserController;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -43,6 +45,10 @@ public class BusinessLayer implements Serializable {
     return dataAccessLayer.getProjects(user.getUserMapping());
   }
 
+  public List<Project> getProjects(final UserMapping userMapping) {
+    return dataAccessLayer.getProjects(userMapping);
+  }
+
   public List<Project> getAllProjects() {
     return dataAccessLayer.getProjects();
   }
@@ -53,6 +59,10 @@ public class BusinessLayer implements Serializable {
 
   public List<Project> getProjects(final String namePart) {
     return dataAccessLayer.getProjects(namePart);
+  }
+
+  public void addUserProjectMappings(UserMapping usermapping, List<Project> projects) {
+    dataAccessLayer.addUserProjectMappings(usermapping, projects);
   }
 
   public void save(final Session session) {
@@ -149,6 +159,10 @@ public class BusinessLayer implements Serializable {
 
   public void saveUser() {
     dataAccessLayer.save(user.getUser());
+  }
+
+  public void save(final User user, Role role, List<Project> projects) {
+    dataAccessLayer.save(user, role, projects);
   }
 
   public void save(final Schedule schedule) {
