@@ -1,10 +1,13 @@
 package at.sheldor5.tr.web.module.administration;
 
 import at.sheldor5.tr.api.project.Project;
+import at.sheldor5.tr.web.BusinessLayer;
 import at.sheldor5.tr.web.DataAccessLayer;
 import at.sheldor5.tr.web.jsf.beans.UserController;
+import at.sheldor5.tr.web.jsf.converter.ProjectConverter;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -23,7 +26,7 @@ public class ProjectManager extends HttpServlet {
   private static final Logger LOGGER = Logger.getLogger(ProjectManager.class.getName());
 
   @Inject
-  private DataAccessLayer dataAccessLayer;
+  private BusinessLayer businessLayer;
   @Inject
   private UserController user;
 
@@ -56,7 +59,7 @@ public class ProjectManager extends HttpServlet {
       return;
     }
     Project project = new Project(projectName);
-    dataAccessLayer.save(project);
+    businessLayer.save(project);
   }
 
   private void renameProject(HttpServletRequest req) {
@@ -72,9 +75,9 @@ public class ProjectManager extends HttpServlet {
     if(newName == null || newName.isEmpty()) {
       return;
     }
-    final Project project = dataAccessLayer.getProject(id);
+    final Project project = businessLayer.getProject(id);
     project.setName(newName);
-    dataAccessLayer.save(project);
+    businessLayer.save(project);
   }
 
 }
