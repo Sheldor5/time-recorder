@@ -4,6 +4,9 @@ import at.sheldor5.tr.api.time.Day;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -32,36 +35,28 @@ public class RuleManager {
     rules.add(rule);
  }
 
-  public void load(final File rulePath) throws Exception {
-    if (rulePath == null) {
-      LOGGER.severe("Path is null");
-      throw new FileNotFoundException("null");
-    }
-    if (!rulePath.exists()) {
-      final File executionPath = new File("");
-      LOGGER.severe("Path \"" + rulePath.getName() + "\" does not exist in: " + executionPath.getAbsoluteFile());
-      throw new FileNotFoundException(rulePath.getName());
-    }
+ private InputStream xsd = null;
 
-    final File xsd = new File(this.getClass().getResource("/rules/rules.xsd").toURI());
-    if (!xsd.exists()) {
-      LOGGER.severe("RuleClass XSD file not found");
-      throw new FileNotFoundException("/rules/rules.xsd");
-    }
+ public void setXSD(final InputStream xsd) {
+    this.xsd = xsd;
+ }
 
-    final RuleLoader loader = new RuleLoader(xsd);
-    for (final File xml : rulePath.listFiles()) {
-      if (xml.getName().endsWith(".xml")) {
-        LOGGER.fine("Validating rule file: " + xml.getName());
-        if (loader.validateXML(xml)) {
-          LOGGER.fine("Loading rules from: " + xml.getName());
-          rules.addAll(loader.getRules(xml));
-        } else {
-          LOGGER.warning("RuleClass file is not valid: " + xml.getName());
-        }
-      }
-    }
-  }
+ public boolean load(final InputStream xml) {
+   if (xsd == null || xml == null) {
+     return false;
+   }
+
+   try {
+     final RuleLoader loader = new RuleLoader(xsd);
+     rules.addAll(loader.getRules(xml));
+   } catch (IOException e) {
+     e.printStackTrace();
+     return false;
+   }
+
+   return true;
+ }
+
   public boolean applies(final Day day) {
     for (final IRule rule : rules) {
       if (rule.applies(day)) {

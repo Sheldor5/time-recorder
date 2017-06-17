@@ -1,6 +1,6 @@
 package at.sheldor5.tr.rules;
 
-import java.io.File;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -13,13 +13,19 @@ import org.junit.Test;
 
 public class RuleManagerTest {
 
-  private static final File rules = new File("src/test/resources/rules");
-  private static RuleManager manager;
+  private static final String XSD = "/rules/rules.xsd";
+  private static final String RULES = "/rules/austria.xml";
+  private static final RuleManager RULE_MANAGER = RuleManager.getInstance();
 
   @Before
   public void test() throws Exception {
-    manager = RuleManager.getInstance();
-    manager.load(rules);
+    final InputStream xsd = this.getClass().getResourceAsStream(XSD);
+    Assert.assertNotNull(xsd);
+    RULE_MANAGER.setXSD(xsd);
+
+    final InputStream xml = this.getClass().getResourceAsStream(RULES);
+    Assert.assertNotNull(xml);
+    RULE_MANAGER.load(xml);
   }
 
   @Test
@@ -55,9 +61,9 @@ public class RuleManagerTest {
     session = new Session(monday, begin, end);
     day.addItem(session);
 
-    Assert.assertTrue("RuleClass should apply", manager.applies(day));
+    Assert.assertTrue("RuleClass should apply", RULE_MANAGER.applies(day));
 
-    manager.apply(day);
+    RULE_MANAGER.apply(day);
     final List<Session> sessions = day.getItems();
 
     Assert.assertEquals("RuleClass should split session into 7 sessions", 7, sessions.size());

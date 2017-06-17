@@ -69,16 +69,16 @@ public class RuleLoaderTest {
 
   @Test
   public void test_load_rules() throws IOException {
-    final RuleLoader loader = new RuleLoader(FILE_XSD);
-    final List<Rule> rules = loader.getRules(FILE_XML);
+    final RuleLoader loader = new RuleLoader(new FileInputStream(FILE_XSD));
+    final List<Rule> rules = loader.getRules(new FileInputStream(FILE_XML));
 
     // TODO
   }
 
   @Test
   public void test_apply_day() throws IOException {
-    final RuleLoader loader = new RuleLoader(FILE_XSD);
-    final List<Rule> rules = loader.getRules(FILE_XML);
+    final RuleLoader loader = new RuleLoader(new FileInputStream(FILE_XSD));
+    final List<Rule> rules = loader.getRules(new FileInputStream(FILE_XML));
     final LocalDate monday = LocalDate.of(2017, 1, 2);
     final Day day = new Day(monday);
     LocalTime begin;

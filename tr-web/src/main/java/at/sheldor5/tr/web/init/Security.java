@@ -18,7 +18,6 @@ public class Security implements ServletContextListener {
 
   @Override
   public void contextInitialized(ServletContextEvent sce) {
-    LOGGER.info("Security#contextInitialized()");
     if(System.getProperty(JAAS_ENVIRONMENT_VARIABLE) == null) {
       try {
         final URL jaasConfigURL = sce.getServletContext().getResource(JAAS_CONFIG_FILE);

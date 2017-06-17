@@ -15,14 +15,15 @@ public class Configuration implements ServletContextListener {
   private static final Logger LOGGER = Logger.getLogger(Configuration.class.getName());
 
   private static final String PROPERTIES = "time-recorder/time-recorder.properties";
-  private static final String DEFAULT = "WEB-INF/classes/time-recorder/time-recorder-default.properties";
+  private static final String DEFAULT = "time-recorder/time-recorder-default.properties";
 
   @Override
   public void contextInitialized(ServletContextEvent servletContextEvent) {
     Logger.getGlobal().setLevel(Level.FINE);
-    final ServletContext servletContext = servletContextEvent.getServletContext();
+
+    final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
     try {
-      GlobalProperties.load(servletContext.getResourceAsStream(DEFAULT));
+      GlobalProperties.load(classLoader.getResourceAsStream(DEFAULT));
       final InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(PROPERTIES);
       if (in == null) {
         logNoConfigProvided();

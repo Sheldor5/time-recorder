@@ -1,8 +1,5 @@
 package at.sheldor5.tr.rules;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
@@ -41,52 +38,21 @@ public class RuleLoader {
     DAY_VALUE_MAP.put("sunday", 7);
   }
 
-  private final File xsd;
+  private final InputStream xsd;
 
-  public RuleLoader(final String xsdPath) throws IOException {
-    if (xsdPath == null || xsdPath.isEmpty()) {
-      LOGGER.severe("XSD path is null or empty");
-      throw new FileNotFoundException("XSD path is null or empty");
-    }
-    final File file = new File(xsdPath);
-    if (!file.exists() || file.isDirectory()) {
-      LOGGER.severe("XSD file does not exist or is no file");
-      throw new FileNotFoundException("XSD file does not exist or is no file");
-    }
-    this.xsd = file;
+  public RuleLoader(final InputStream xsd) throws IOException {
+    this.xsd = xsd;
   }
 
-  public RuleLoader(final File xsdFile) throws IOException {
-    if (!xsdFile.exists() || xsdFile.isDirectory()) {
-      LOGGER.severe("XSD file does not exist or is no file");
-      throw new FileNotFoundException("XSD file does not exist or is no file");
-    }
-    this.xsd = xsdFile;
-  }
-
-  public List<Rule> getRules(final String xmlPath) throws IOException {
+  public List<Rule> getRules(final InputStream xml) throws IOException {
     final List<Rule> list = new ArrayList<>();
-
-    if (xmlPath == null || xmlPath.isEmpty()) {
-      LOGGER.severe("XML path is null or empty");
-      throw new FileNotFoundException("XML path is null or empty");
-    }
-    return getRules(new File(xmlPath));
-  }
-
-  public List<Rule> getRules(final File xmlFile) throws IOException {
-    final List<Rule> list = new ArrayList<>();
-    if (!xmlFile.exists()) {
-      LOGGER.severe("XML file does not exist or is no file");
-      throw new FileNotFoundException("XML file does not exist or is no file");
-    }
 
     Element root;
 
     try {
       final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
       final DocumentBuilder builder = factory.newDocumentBuilder();
-      final Document document = builder.parse(xmlFile);
+      final Document document = builder.parse(xml);
       root = document.getDocumentElement();
     } catch (final ParserConfigurationException | SAXException pce) {
       LOGGER.severe(pce.getMessage());
@@ -214,13 +180,17 @@ public class RuleLoader {
     return days.toArray(new Integer[days.size()]);
   }
 
-  public boolean validateXML(final File xml) {
-    try (final FileInputStream xmlfis = new FileInputStream(xml);
-         final FileInputStream xsdfis = new FileInputStream(xsd)) {
+  public boolean validateXML(final InputStream xmlfis) {
+    try {
       final SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-      final Schema schema = factory.newSchema(new StreamSource(xsdfis));
+      final Schema schema = factory.newSchema(new StreamSource(xsd));
       Validator validator = schema.newValidator();
       validator.validate(new StreamSource(xmlfis));
+      try {
+        xsd.reset();
+      } catch (final IOException ioe) {
+        ioe.printStackTrace();
+      }
       return true;
     } catch (final Exception generalException) {
       LOGGER.warning(generalException.getMessage());

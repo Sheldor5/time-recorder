@@ -93,6 +93,7 @@ public class RegistrationController {
       if (userProvider.get(username) != null) {
         FacesContext.getCurrentInstance().addMessage("form:username",
             new FacesMessage(FacesMessage.SEVERITY_ERROR, msg.getString("register.username.duplication"), null));
+        return;
       }
     }
 
