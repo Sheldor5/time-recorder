@@ -10,6 +10,11 @@ import java.time.LocalDate;
  */
 public class QueryUtils {
 
+  public enum Restrictions {
+    AND,
+    OR
+  }
+
   public static <E, T> TypedQuery<E> findByField(EntityManager entityManager,
                                                  Class<E> entityClass, String fieldName, Class<T> fieldType, T fieldValue) {
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();

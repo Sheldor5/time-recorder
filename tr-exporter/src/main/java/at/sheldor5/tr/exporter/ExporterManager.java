@@ -47,6 +47,7 @@ public class ExporterManager implements PluginManager<ExporterPlugin> {
         plugin = plugin.getClass().newInstance();
       } catch (Exception e) {
         e.printStackTrace();
+        return null;
       }
     }
     return plugin;

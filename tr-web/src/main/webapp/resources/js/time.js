@@ -21,12 +21,12 @@ function update() {
         timeParam.value = time;
     }
 
-    for (var index in clocks) {
-        clocks[index].innerHTML = time;
+    for (var c in clocks) {
+        clocks[c].innerHTML = time;
     }
 
-    for (var index in dates) {
-        dates[index].innerHTML = date;
+    for (var d in dates) {
+        dates[d].innerHTML = date;
     }
 }
 

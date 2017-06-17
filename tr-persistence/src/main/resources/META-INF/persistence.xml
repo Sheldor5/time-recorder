@@ -13,6 +13,7 @@
         <mapping-file>UserProjects.hbm.xml</mapping-file>
         <mapping-file>Session.hbm.xml</mapping-file>
         <mapping-file>Schedule.hbm.xml</mapping-file>
+        <mapping-file>Account.hbm.xml</mapping-file>
         <mapping-file>User.hbm.xml</mapping-file>
         <properties>
             <property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>

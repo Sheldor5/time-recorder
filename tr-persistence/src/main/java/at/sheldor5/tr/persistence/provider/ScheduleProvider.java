@@ -81,7 +81,6 @@ public class ScheduleProvider extends GenericProvider<Schedule, Integer> {
 
     try {
       schedule = findByFields.getSingleResult();
-      transaction.commit();
     } catch (final NoResultException nre) {
       // SELECT returns no Entity
     } catch (final Exception e) {

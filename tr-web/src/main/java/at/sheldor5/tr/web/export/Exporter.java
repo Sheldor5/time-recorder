@@ -1,9 +1,12 @@
 package at.sheldor5.tr.web.export;
 
 import at.sheldor5.tr.api.plugins.ExporterPlugin;
+import at.sheldor5.tr.api.time.Day;
 import at.sheldor5.tr.api.time.Month;
+import at.sheldor5.tr.api.user.Schedule;
 import at.sheldor5.tr.exporter.ExporterManager;
 import at.sheldor5.tr.web.BusinessLayer;
+import at.sheldor5.tr.web.dev.DevUtils;
 
 import javax.inject.Inject;
 import javax.servlet.ServletException;
@@ -80,7 +83,13 @@ public class Exporter extends HttpServlet {
 
     switch (exportType) {
       case "month":
-        Month month = businessLayer.getMonth(date);
+        // TODO
+        // Month month = businessLayer.getMonth(date);
+        Schedule schedule = businessLayer.getSchedule();
+        Month month = DevUtils.getDefaultMonth(date);
+        for (final Day day : month.getItems()) {
+          day.setSchedule(schedule);
+        }
         plugin.export(month);
         break;
       case "year":

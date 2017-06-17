@@ -14,3 +14,21 @@
     font-weight: bold;
     color: #ff0000;
 }
+
+.nav-tabs {
+    display:table;
+    width:100%;
+    margin: 0;
+}
+
+.nav-tabs > li {
+    float:none;
+    display:table-cell;
+    text-align:center;
+}
+
+.nav-tabs > li.active > a {
+    background-color: #337ab7;
+    color: #ffffff;
+    font-weight: bold;
+}

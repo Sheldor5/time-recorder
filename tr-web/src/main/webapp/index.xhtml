@@ -15,7 +15,7 @@
                     <div class="panel-heading">
                         <div class="row vertical-align">
                             <div class="col-md-4">
-                                <h2 class="clock"><span class="label label-danger">#{msg['system.error.javascript']}</span></h2>
+                                <h2 class="clock" style="font-family: 'Lucida Console', Monaco, monospace;"><span class="label label-danger">#{msg['system.error.javascript']}</span></h2>
                             </div>
                             <div class="col-md-4">
                                 <c:choose>
@@ -62,7 +62,7 @@
             </h:form>
 
             <div class="panel panel-default">
-                <div class="panel-heading"><h3>#{msg['clock.today']}<span class="date"><span class="label label-danger">#{msg['system.error.javascript']}</span></span></h3></div>
+                <div class="panel-heading"><h3>#{msg['clock.today']}<span class="date" style="font-family: 'Lucida Console', Monaco, monospace;"><span class="label label-danger">#{msg['system.error.javascript']}</span></span></h3></div>
                 <h:dataTable value="#{clock.today.items}" var="s" styleClass="table table-striped" columnClasses="col-md-3">
                     <h:column>
                         <h:outputText value="#{s.start}"/>

@@ -1,6 +1,7 @@
 package at.sheldor5.tr.web;
 
 import at.sheldor5.tr.api.project.Project;
+import at.sheldor5.tr.api.time.Account;
 import at.sheldor5.tr.api.time.Day;
 import at.sheldor5.tr.api.time.Month;
 import at.sheldor5.tr.api.time.Session;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Logger;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -27,6 +29,8 @@ import javax.inject.Named;
 @Named("businessLayer")
 @SessionScoped
 public class BusinessLayer implements Serializable {
+
+  private static final Logger LOGGER = Logger.getLogger(BusinessLayer.class.getName());
 
   private DataAccessLayer dataAccessLayer;
   private UserController user;
@@ -98,9 +102,12 @@ public class BusinessLayer implements Serializable {
 
     Collections.sort(sessions);
 
+    final Schedule schedule = dataAccessLayer.getSchedule(user.getUserMapping());
+
     int d = 1;
     LocalDate last = sessions.get(0).getDate();
     Day day = new Day(LocalDate.of(y, m, last.getDayOfMonth()));
+    day.setSchedule(schedule);
     LocalDate current;
     for (final Session session : sessions) {
       current = session.getDate();
@@ -110,6 +117,7 @@ public class BusinessLayer implements Serializable {
         d++;
         month.addItem(day);
         day = new Day(LocalDate.of(y, m, current.getDayOfMonth()));
+        day.setSchedule(schedule);
         day.addItem(session);
       }
       last = current;
@@ -168,6 +176,48 @@ public class BusinessLayer implements Serializable {
   public void save(final Schedule schedule) {
     schedule.setUserMapping(user.getUserMapping());
     dataAccessLayer.save(schedule);
+  }
+
+  /**
+   * Gets the Account of the date's month.
+   * e.g. the date "5. January 2017" would return the
+   * Account for the month January in 2017.
+   *
+   * @param date the date of which month's Account is requested.
+   * @return The Account of the date's month.
+   */
+  public Account getAccountOfMonth(LocalDate date) {
+    // the date will be modified to represent the last day of month
+    // of the date's month, e.g. "14.01.2017 -> 01.01.2017"
+    date = LocalDate.of(date.getYear(), date.getMonthValue(), 1);
+    return dataAccessLayer.getAccount(user.getUserMapping(), date);
+  }
+
+  /**
+   * Get the Account of the date's year.
+   * @param date
+   * @return
+   */
+  public Account getAccountOfYear(LocalDate date) {
+    // the date will be modified to represent the last day
+    // of the date's year, e.g. "14.11.2017 -> 31.12.2017"
+    date = LocalDate.of(date.getYear(), 12, 31);
+    return dataAccessLayer.getAccount(user.getUserMapping(), date);
+  }
+
+  public void save(final Account account, boolean ofYear) {
+    if (ofYear) {
+      final LocalDate date = LocalDate.of(account.getDate().getYear(), 12, 31);
+      if (!date.equals(account.getDate())) {
+        account.setDate(date);
+      }
+    } else {
+      final LocalDate date = LocalDate.of(account.getDate().getYear(), account.getDate().getMonthValue(), 1);
+      if (!date.equals(account.getDate())) {
+        account.setDate(date);
+      }
+    }
+    dataAccessLayer.save(account);
   }
 
   public List<Session> getMockupSessions(){

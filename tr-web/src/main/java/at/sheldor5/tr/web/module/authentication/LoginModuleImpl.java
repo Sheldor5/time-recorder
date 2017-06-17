@@ -1,18 +1,13 @@
 package at.sheldor5.tr.web.module.authentication;
 
 import at.sheldor5.tr.api.user.Role;
-import at.sheldor5.tr.api.user.User;
 import at.sheldor5.tr.api.user.UserMapping;
-import at.sheldor5.tr.persistence.provider.UserMappingProvider;
-
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
+import java.util.*;
+import java.util.logging.Logger;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.*;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
-import java.util.*;
-import java.util.logging.Logger;
 
 /**
  * @author Michael Palata
@@ -35,13 +30,8 @@ public class LoginModuleImpl implements LoginModule {
   private String username;
   private List<Role> roles = new ArrayList<>();
 
-  public LoginModuleImpl() {
-    LOGGER.info("LoginModuleImpl()");
-  }
-
   @Override
   public void initialize(Subject subject, CallbackHandler callbackHandler, Map<String, ?> sharedState, Map<String, ?> options) {
-    LOGGER.info("initialize");
     this.subject = subject;
     this.callbackHandler = callbackHandler;
     this.sharedState = sharedState;
@@ -50,9 +40,7 @@ public class LoginModuleImpl implements LoginModule {
 
   @Override
   public boolean login() throws LoginException {
-    LOGGER.info("LoginModuleImpl#login()");
-
-    Callback[] callbacks = new Callback[2];
+    final Callback[] callbacks = new Callback[2];
     callbacks[0] = new NameCallback("username");
     callbacks[1] = new PasswordCallback("password", true);
 
