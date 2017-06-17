@@ -9,47 +9,58 @@
 <f:view>
     <ui:composition template="template.xhtml">
         <ui:define name="content">
-            <f:event type="preRenderView" listener="#{adminPermissions.check}" />
+            <f:event type="preRenderView" listener="#{adminPermissions.check}"/>
             <br/>
-            <table class="cellspacing">
-                <tbody>
-                <tr>
-                    <td style="padding:0 15px 0 15px">
-                        <form name="newProject" method="get" action="#{request.contextPath}/manageProject">
-                            <input type="hidden" name="cmd" value="add" />
-                            <input type="text" name="name" placeholder="#{msg['project.name.placeholder']}"/>
-                            <input type="submit" value="#{msg['project.add.button']}"/>
-                        </form>
-                    </td>
-                    <td>
-                        <h:form>
-                            <h:inputText id="name" value="#{projectSearch.name}"/>
-                            <h:commandButton value="#{msg['project.search.button']}" action="#{projectSearch.search}"/>
-                        </h:form>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-            <br/>
-            <h:dataTable value="#{projectSearch.hasProjects() ? projectSearch.projects : projectList.projects}" var="project" styleClass="table">
-                <h:column>
-                    <f:facet name="header">#{msg['project.id']}</f:facet>
-                    <h:outputLabel value="#{project.id}"/>
-                </h:column>
-                <h:column>
-                    <f:facet name="header">#{msg['project.name']}</f:facet>
-                    <h:outputLabel value="#{project.name}"/>
-                </h:column>
-                <h:column>
-                    <f:facet name="header">#{msg['project.action']}</f:facet>
-                    <form name="renameProject" method="get" action="#{request.contextPath}/manageProject">
-                        <input type="hidden" name="cmd" value="rename" />
-                        <input type="hidden" name="id" value="#{project.id}"/>
-                        <input type="text" name="newName" placeholder="#{msg['project.name.placeholder']}"/>
-                        <input type="submit" value="#{msg['project.rename.button']}"/>
+            <div class="row justify-content-start">
+                <div class="col-md-4">
+                    <form name="newProject" method="get" action="#{request.contextPath}/manageProject">
+                        <div class="input-group">
+                            <input type="hidden" name="cmd" value="add"/>
+                            <input type="text" name="name" placeholder="#{msg['project.name.placeholder']}" class="form-control"/>
+                            <span class="input-group-btn">
+                                <button type="submit" class="btn btn-primary">#{msg['project.add.button']}</button>
+                            </span>
+                        </div>
                     </form>
-                </h:column>
-            </h:dataTable>
+                </div>
+                <div class="col-md-4">
+                    <h:form>
+                        <div class="input-group">
+                            <h:inputText id="name" value="#{projectSearch.name}" styleClass="form-control"/>
+                            <span class="input-group-btn">
+                                <h:commandButton value="#{msg['project.search.button']}" action="#{projectSearch.search}" class="btn btn-primary"/>
+                            </span>
+                        </div>
+                    </h:form>
+                </div>
+            </div>
+            <br/>
+            <div class="row justify-content-start">
+                <div class="col-md-8">
+                    <h:dataTable value="#{projectSearch.hasProjects() ? projectSearch.projects : projectList.projects}"
+                                 var="project" styleClass="table">
+                        <h:column>
+                            <f:facet name="header">#{msg['project.id']}</f:facet>
+                            <h:outputLabel value="#{project.id}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">#{msg['project.name']}</f:facet>
+                            <h:outputLabel value="#{project.name}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">#{msg['project.action']}</f:facet>
+                            <form name="renameProject" method="get" action="#{request.contextPath}/manageProject">
+                                <div class="input-group">
+                                    <input type="text" name="newName" placeholder="#{msg['project.name.placeholder']}" class="form-control"/>
+                                    <span class="input-group-btn">
+                                    <input type="submit" value="#{msg['project.rename.button']}" class="btn btn-primary"/>
+                                </span>
+                                </div>
+                            </form>
+                        </h:column>
+                    </h:dataTable>
+                </div>
+            </div>
         </ui:define>
     </ui:composition>
 </f:view>

@@ -13,25 +13,25 @@
     <composite:attribute name="passwordRepeat"/>
 </composite:interface>
 <composite:implementation>
-    <tr>
-        <td><label for="username">#{msg['user.edit.username']}</label></td>
-        <td><h:inputText id="username" value="#{cc.attrs.username}"/></td>
-    </tr>
-    <tr>
-        <td><label for="forename">#{msg['user.edit.forename']}</label></td>
-        <td><h:inputText id="forename" value="#{cc.attrs.forename}"/></td>
-    </tr>
-    <tr>
-        <td><label for="surname">#{msg['user.edit.surname']}</label></td>
-        <td><h:inputText id="surname" value="#{cc.attrs.surname}"/></td>
-    </tr>
-    <tr>
-        <td><label for="newPassword">#{msg['user.edit.password.new']}</label></td>
-        <td><h:inputSecret id="newPassword" value="#{cc.attrs.password}"/></td>
-    </tr>
-    <tr>
-        <td><label for="newPasswordRepeat">#{msg['user.edit.password.new.repeat']}</label></td>
-        <td><h:inputSecret id="newPasswordRepeat" value="#{cc.attrs.passwordRepeat}"/></td>
-    </tr>
+    <div class="form-group">
+        <label for="username">#{msg['user.edit.username']}</label>
+        <h:inputText id="username" value="#{cc.attrs.username}" styleClass="form-control"/>
+    </div>
+    <div class="form-group">
+        <label for="forename">#{msg['user.edit.forename']}</label>
+        <h:inputText id="forename" value="#{cc.attrs.forename}" styleClass="form-control"/>
+    </div>
+    <div class="form-group">
+        <label for="surname">#{msg['user.edit.surname']}</label>
+        <h:inputText id="surname" value="#{cc.attrs.surname}" styleClass="form-control"/>
+    </div>
+    <div class="form-group">
+        <label for="newPassword">#{msg['user.edit.password.new']}</label>
+        <h:inputSecret id="newPassword" value="#{cc.attrs.password}" styleClass="form-control"/>
+    </div>
+    <div class="form-group">
+        <label for="newPasswordRepeat">#{msg['user.edit.password.new.repeat']}</label>
+        <h:inputSecret id="newPasswordRepeat" value="#{cc.attrs.passwordRepeat}" styleClass="form-control"/>
+    </div>
 </composite:implementation>
 </html>

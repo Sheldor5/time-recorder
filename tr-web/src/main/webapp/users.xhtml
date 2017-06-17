@@ -10,23 +10,27 @@
         <ui:define name="content">
             <f:event type="preRenderView" listener="#{adminPermissions.check}" />
             <br/>
-            <c:if test="#{userList.hasUsers()}">
-                <h:dataTable value="#{userList.users}" var="currentUser" styleClass="table">
-                    <h:column>
-                        <f:facet name="header">#{msg['userlist.username']}</f:facet>
-                        <h:outputLabel value="#{currentUser.username}"/>
-                    </h:column>
-                    <h:column>
-                        <form name="editUser" method="get" action="#{request.contextPath}/editUser.xhtml">
-                            <input type="hidden" name="uuid" value="#{currentUser.uuid}" />
-                            <input type="submit" value="#{msg['userlist.edit.button']}" />
-                        </form>
-                    </h:column>
-                </h:dataTable>
-            </c:if>
-            <c:if test="#{!userList.hasUsers()}">
-                <h:outputLabel value="#{msg['userlist.noUsers']}"/>
-            </c:if>
+            <div class="col-md-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading"><h4>Benutzer bearbeiten</h4></div>
+                        <c:if test="#{userList.hasUsers()}">
+                            <h:dataTable value="#{userList.users}" var="currentUser" styleClass="table">
+                                <h:column>
+                                    <h:outputLabel value="#{currentUser.username}"/>
+                                </h:column>
+                                <h:column>
+                                    <form name="editUser" method="get" action="#{request.contextPath}/editUser.xhtml">
+                                        <input type="hidden" name="uuid" value="#{currentUser.uuid}" />
+                                        <input type="submit" value="#{msg['userlist.edit.button']}" class="btn btn-primary"/>
+                                    </form>
+                                </h:column>
+                            </h:dataTable>
+                        </c:if>
+                        <c:if test="#{!userList.hasUsers()}">
+                            <h:outputLabel value="#{msg['userlist.noUsers']}"/>
+                        </c:if>
+                </div>
+            </div>
         </ui:define>
     </ui:composition>
 </f:view>

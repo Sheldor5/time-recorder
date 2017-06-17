@@ -9,54 +9,54 @@
 <f:view>
     <ui:composition template="template.xhtml">
         <ui:define name="content">
-            <c:if test="#{editUser.hasPermission()}">
-                #{editUser.getUserData()}
-                <br/>
-                <c:if test="#{editUser.passwordRepeatWrongMsg}">
-                    <div class="alert alert-danger">
-                        #{msg['user.edit.password.repeat.wrong']}
-                    </div>
-                </c:if>
-                <c:if test="#{editUser.changeSuccessfulMsg}">
-                    <div class="alert alert-success">
-                        #{msg['user.edit.successful']}
-                    </div>
-                </c:if>
-                <h2><h:outputText value="#{msg['user.edit']}"/></h2>
-                <h:form id="form">
-                    <table class="table">
-                        <tbody>
-                        <compositeComponent:userDetails username="#{editUser.username}" forename="#{editUser.forename}"
-                                                        surname="#{editUser.surname}" password="#{editUser.newPassword}"
-                                                        passwordRepeat="#{editUser.newPasswordRepeat}"/>
-                        <c:if test="#{adminPermissions.hasPermissions()}">
-                            <tr>
-                                <td>
-                                    <ul>
-                                        <ui:repeat value="#{editUser.assignedProjects}" var="projectName">
-                                            <li>#{projectName}</li>
-                                        </ui:repeat>
-                                    </ul>
-                                </td>
-                                <td>
-                                    <h:selectManyCheckbox layout="pageDirection" value="#{editUser.selectedProjects}">
-                                        <f:selectItems value="#{editUser.availableProjects}"/>
-                                        <f:converter binding="#{projectConverter}"/>
-                                    </h:selectManyCheckbox>
-                                </td>
-                            </tr>
+            <div class="row">
+                <div class="col-md-3">
+                    <br/>
+                </div>
+                <div class="col-md-4">
+                    <c:if test="#{editUser.hasPermission()}">
+                        #{editUser.getUserData()}
+                        <br/>
+                        <c:if test="#{editUser.passwordRepeatWrongMsg}">
+                            <div class="alert alert-danger">
+                                #{msg['user.edit.password.repeat.wrong']}
+                            </div>
                         </c:if>
-                        <tr>
-                            <td colspan="2">
-                                <h:commandButton value="#{msg['user.edit.submit.button']}" action="#{editUser.saveUser()}">
-                                    <f:param name="uuid" value="#{editUser.getUuidFromRequest()}"/>
-                                </h:commandButton>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </h:form>
-            </c:if>
+                        <c:if test="#{editUser.changeSuccessfulMsg}">
+                            <div class="alert alert-success">
+                                #{msg['user.edit.successful']}
+                            </div>
+                        </c:if>
+                        <h2><h:outputText value="#{msg['user.edit']}"/></h2>
+                        <h:form id="form">
+                            <compositeComponent:userDetails username="#{editUser.username}" forename="#{editUser.forename}"
+                                                            surname="#{editUser.surname}" password="#{editUser.newPassword}"
+                                                            passwordRepeat="#{editUser.newPasswordRepeat}"/>
+                            <c:if test="#{adminPermissions.hasPermissions()}">
+                                <label for="assignedProjects">#{msg['user.edit.assignedProjects']}</label>
+                                <ul id="assignedProjects">
+                                    <ui:repeat value="#{editUser.assignedProjects}" var="projectName">
+                                        <li>#{projectName}</li>
+                                    </ui:repeat>
+                                </ul>
+                                <c:if test="#{editUser.availableProjects.size() > 0}">
+                                    <label for="availableProjects">#{msg['user.edit.add.projects']}</label>
+                                </c:if>
+                                <h:selectManyCheckbox layout="pageDirection" value="#{editUser.selectedProjects}" id="availableProjects">
+                                    <f:selectItems value="#{editUser.availableProjects}"/>
+                                    <f:converter binding="#{projectConverter}"/>
+                                </h:selectManyCheckbox>
+                            </c:if>
+                            <h:commandButton value="#{msg['user.edit.submit.button']}" action="#{editUser.saveUser()}" styleClass="btn btn-primary">
+                                <f:param name="uuid" value="#{editUser.getUuidFromRequest()}"/>
+                            </h:commandButton>
+                        </h:form>
+                    </c:if>
+                    <div class="col-md-5">
+                        <br/>
+                    </div>
+                </div>
+            </div>
         </ui:define>
     </ui:composition>
 </f:view>
