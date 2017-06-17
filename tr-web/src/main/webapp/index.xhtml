@@ -15,21 +15,7 @@
                     <div class="panel-heading">
                         <div class="row vertical-align">
                             <div class="col-md-4">
-                                <c:choose>
-                                    <c:when test="#{true}">
-                                        <h2 class="clock" style="font-family: 'Lucida Console', Monaco, monospace;"><span class="label label-danger">#{msg['system.error.javascript']}</span></h2>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <!-- https://github.com/rheh/HTML5-canvas-projects/tree/master/flip_clock -->
-                                        <canvas id="clock" width="120" height="45"></canvas>
-                                        <h:outputScript library="js" name="flip_clock.js"/>
-                                        <script type="application/javascript">
-                                            var contextPath = "#{request.contextPath}/";
-                                            (function () {
-                                                init();
-                                            })();</script>
-                                    </c:otherwise>
-                                </c:choose>
+                                <h2 class="clock" style="font-family: 'Lucida Console', Monaco, monospace;"><span class="label label-danger">#{msg['system.error.javascript']}</span></h2>
                             </div>
                             <div class="col-md-4">
                                 <c:choose>
