@@ -6,8 +6,13 @@ import at.sheldor5.tr.api.time.Month;
 import at.sheldor5.tr.api.time.Session;
 import at.sheldor5.tr.api.user.Schedule;
 import at.sheldor5.tr.api.user.User;
+import at.sheldor5.tr.rules.After;
+import at.sheldor5.tr.rules.Holiday;
 import at.sheldor5.tr.web.jsf.beans.UserController;
+
+import java.io.IOException;
 import java.io.Serializable;
+import java.security.GeneralSecurityException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -28,6 +33,8 @@ public class BusinessLayer implements Serializable {
 
   private DataAccessLayer dataAccessLayer;
   private UserController user;
+  private Holiday holiday = new Holiday();
+
 
   public BusinessLayer() {
     // CDI
@@ -71,6 +78,30 @@ public class BusinessLayer implements Serializable {
     return day;
   }
 
+  public long evaluateSession(Session session){
+
+
+    try {
+      holiday.applies(session);
+    } catch (GeneralSecurityException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    return session.getValuedSummary();
+  }
+
+  public long evaluateSessionList(List<Session> sessionList){
+    long evaluatedHours=0;
+
+      for (Session session: sessionList) {
+        evaluatedHours+=evaluateSession(session);
+      }
+      //evaluatedHours +=
+    return evaluatedHours;
+
+  }
   public Month getMonth(final LocalDate date) {
     Month month = new Month(date);
 
@@ -80,8 +111,9 @@ public class BusinessLayer implements Serializable {
     LocalDate from = LocalDate.of(y, m, 1);
     LocalDate to = LocalDate.of(y, m, date.lengthOfMonth());
 
-    final List<Session> sessions = dataAccessLayer.getSessions(user.getUserMapping(), from, to);
+    //final List<Session> sessions = dataAccessLayer.getSessions(user.getUserMapping(), from, to);
 
+    final List<Session> sessions = getMockupSessions();
     if (sessions.size() == 0) {
       return month;
     }
@@ -168,7 +200,7 @@ public class BusinessLayer implements Serializable {
 
     begin = LocalTime.of(12,0);
     end = LocalTime.MAX;
-    Session session2 = new Session(LocalDate.of(2017, 1, 3), begin, end);
+    Session session2 = new Session(LocalDate.of(2017, 1, 1), begin, end);
 
     begin = LocalTime.of(8,0);
     end =  LocalTime.of(12,0);
@@ -180,7 +212,7 @@ public class BusinessLayer implements Serializable {
 
     begin =  LocalTime.MIN;
     end =  LocalTime.of(12, 0);
-    Session session5 = new Session(LocalDate.of(2017, 1, 6), begin, end);
+    Session session5 = new Session(LocalDate.of(2017, 1, 8), begin, end);
 
     begin =  LocalTime.of(12,0);
     end = LocalTime.MAX;

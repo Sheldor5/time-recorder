@@ -81,7 +81,9 @@ public class Holiday {
             session.setMultiplier(2);
             return false;
         }
-        session.setMultiplier(2);
+        if(isHoliday()){
+            session.setMultiplier(2);
+        }
         return isHoliday();
     }
 

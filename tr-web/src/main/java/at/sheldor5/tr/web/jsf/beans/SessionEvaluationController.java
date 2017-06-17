@@ -1,5 +1,6 @@
 package at.sheldor5.tr.web.jsf.beans;
 
+import at.sheldor5.tr.api.time.Day;
 import at.sheldor5.tr.api.time.Session;
 import at.sheldor5.tr.web.BusinessLayer;
 import java.io.Serializable;
@@ -18,6 +19,7 @@ import javax.inject.Inject;
 public class SessionEvaluationController implements Serializable{
     
     private List<Session> sessionList = new ArrayList<>();
+    private Day day;
 
     public SessionEvaluationController() {
         // CDI
@@ -31,6 +33,7 @@ public class SessionEvaluationController implements Serializable{
     public List<Session> getSessionList() {
         return sessionList;
     }
+
 
     /*private DataProvider dataProvider;
     private List<Session> sessionList = new ArrayList<>();
