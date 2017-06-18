@@ -80,14 +80,7 @@ public class BusinessLayer implements Serializable {
 
   public long evaluateSession(Session session){
 
-
-    try {
       holiday.applies(session);
-    } catch (GeneralSecurityException e) {
-      e.printStackTrace();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
 
     return session.getValuedSummary();
   }
