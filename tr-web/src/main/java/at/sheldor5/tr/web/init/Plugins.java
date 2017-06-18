@@ -42,6 +42,7 @@ public class Plugins implements ServletContextListener {
           LOGGER.warning("Authentication plugin <" + c.getName() + "> failed to initialize: name is null or empty");
           return;
         }
+        LOGGER.fine(String.format("Loaded Authentication Plugin: %s", plugin.getName()));
         authenticationManager.addPlugin(plugin);
       } catch (final Exception e) {
         LOGGER.warning("Authentication plugin <" + c.getName() + "> failed to initialize: " + e.getMessage());
@@ -59,6 +60,7 @@ public class Plugins implements ServletContextListener {
           LOGGER.warning("Exporter plugin <" + c.getName() + "> failed to initialize: name is null or empty");
           return;
         }
+        LOGGER.fine(String.format("Loaded Exporter Plugin: %s", plugin.getName()));
         exporterManager.addPlugin(plugin);
       } catch (final Exception e) {
         LOGGER.warning("Exporter plugin <" + c.getName() + "> failed to initialize: " + e.getMessage());

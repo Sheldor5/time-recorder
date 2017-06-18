@@ -19,8 +19,6 @@ public class Configuration implements ServletContextListener {
 
   @Override
   public void contextInitialized(ServletContextEvent servletContextEvent) {
-    Logger.getGlobal().setLevel(Level.FINE);
-
     final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
     try {
       GlobalProperties.load(classLoader.getResourceAsStream(DEFAULT));
