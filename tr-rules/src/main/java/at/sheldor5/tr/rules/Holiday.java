@@ -154,107 +154,11 @@ public class Holiday implements IRule {
         return sundaycheck.applies();
     }
 
+
     private boolean isHoliday() throws GeneralSecurityException, IOException {
-        Calendar service = getAccessToCalendarAPI();
-        String calendarID = getCountryCalendarID("Austrian Holidays");
+        HolidayList holi = HolidayList.getInstance();
         DateTime now = new DateTime(nowinlong);
-        long hours=3600000;
-        DateTime tomorrow = new DateTime(nowinlong+hours);
-
-        Events events = service.events().list(calendarID)
-                //.setMaxResults(10) to just get 10 results
-                .setTimeMin(now)
-                .setTimeMax(tomorrow)
-                .setSingleEvents(true)
-                .execute();
-        List<Event> items = events.getItems();
-        if (items.size() == 0) {
-            System.out.println("No Holidays found");
-            return false;
-        } else {
-            System.out.println("Holiday found!");
-            return true;
-        }
+        return holi.searchForHoliday(now);
     }
 
-    private Calendar getAccessToCalendarAPI() throws GeneralSecurityException, IOException {
-        HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-        String client_id="1099400721753-k327qrlvue3dahmg5au24j7qbojn1sj9.apps.googleusercontent.com";
-        String client_secret = "BJBPI1iS6fMpupK-2RLP9UvJ";
-        String access_token= "ya29.GlttBNgJBf_Vfa6Yr-Ld0aXGu15_JKdOGe6NjPaovfpEG6zOpaKDbbgR5kbCxYrJf137FzgIKwl5JjVod6rhw1bhTl-RauuYkxUzTVl9ueWmNNuFjVgyqic4kewo";
-        String refresh_token="1/scBJE3FJQ7AiY2IuCOzbyjlznv1i2KKELsSFJknc7Ws";
-
-        /*final GoogleCredential credential = new GoogleCredential.Builder()
-                .setTransport(HTTP_TRANSPORT)
-                .setJsonFactory(JSON_FACTORY)
-                .setClientSecrets(client_id, client_secret).build();
-        credential.setRefreshToken(refresh_token);
-        credential.refreshToken();
-
-        String newAccessToken = credential.getAccessToken();*/
-
-        GoogleCredential credentials =
-                new GoogleCredential.Builder()
-                        .setTransport(HTTP_TRANSPORT)
-                        .setJsonFactory(JSON_FACTORY)
-                        .setClientSecrets(client_id, client_secret).build();
-
-        credentials.setRefreshToken(refresh_token);
-        credentials.setAccessToken(access_token);
-       /* //credentials.refreshToken();
-        String newAccessToken = credentials.getAccessToken();
-        credentials.setAccessToken(newAccessToken);*/
-
-
-
-        // Initialize Calendar service with valid OAuth credentials
-        return new Calendar.Builder(HTTP_TRANSPORT, JSON_FACTORY, credentials)
-                .setApplicationName("time_recorder").build();
-    }
-
-    private String getCountryCalendarID(String country){
-        switch(country){
-            case "Australian Holidays": return  "en.australian#holiday@group.v.calendar.google.com";
-            case "Austrian Holidays": return  "en.austrian#holiday@group.v.calendar.google.com";
-            case "Brazilian Holidays": return  "en.brazilian#holiday@group.v.calendar.google.com";
-            case "Canadian Holidays": return  "en.canadian#holiday@group.v.calendar.google.com";
-            case "China Holidays": return  "en.china#holiday@group.v.calendar.google.com";
-            case "Christian Holidays": return  "en.christian#holiday@group.v.calendar.google.com";
-            case "Danish Holidays": return  "en.danish#holiday@group.v.calendar.google.com";
-            case "Dutch Holidays": return  "en.dutch#holiday@group.v.calendar.google.com";
-            case "Finnish Holidays": return  "en.finnish#holiday@group.v.calendar.google.com";
-            case "French Holidays": return  "en.french#holiday@group.v.calendar.google.com";
-            case "German Holidays": return  "en.german#holiday@group.v.calendar.google.com";
-            case "Greek Holidays": return  "en.greek#holiday@group.v.calendar.google.com";
-            case "Hong Kong (C) Holidays": return  "en.hong_kong_c#holiday@group.v.calendar.google.com";
-            case "Hong Kong Holidays": return  "en.hong_kong#holiday@group.v.calendar.google.com";
-            case "Indian Holidays": return  "en.indian#holiday@group.v.calendar.google.com";
-            case "Indonesian Holidays": return  "en.indonesian#holiday@group.v.calendar.google.com";
-            case "Iranian Holidays": return  "en.iranian#holiday@group.v.calendar.google.com";
-            case "Irish Holidays": return  "en.irish#holiday@group.v.calendar.google.com";
-            case "Islamic Holidays": return  "en.islamic#holiday@group.v.calendar.google.com";
-            case "Italian Holidays": return  "en.italian#holiday@group.v.calendar.google.com";
-            case "Japanese Holidays": return  "en.japanese#holiday@group.v.calendar.google.com";
-            case "Jewish Holidays": return  "en.jewish#holiday@group.v.calendar.google.com";
-            case "Malaysian Holidays": return  "en.malaysia#holiday@group.v.calendar.google.com";
-            case "Mexican Holidays": return  "en.mexican#holiday@group.v.calendar.google.com";
-            case "New Zealand Holidays": return  "en.new_zealand#holiday@group.v.calendar.google.com";
-            case "Norwegian Holidays": return  "en.norwegian#holiday@group.v.calendar.google.com";
-            case "Philippines Holidays": return  "en.philippines#holiday@group.v.calendar.google.com";
-            case "Polish Holidays": return  "en.polish#holiday@group.v.calendar.google.com";
-            case "Portuguese Holidays": return  "en.portuguese#holiday@group.v.calendar.google.com";
-            case "Russian Holidays": return  "en.russian#holiday@group.v.calendar.google.com";
-            case "Singapore Holidays": return  "en.singapore#holiday@group.v.calendar.google.com";
-            case "South Africa Holidays": return  "en.sa#holiday@group.v.calendar.google.com";
-            case "South Korean Holidays": return  "en.south_korea#holiday@group.v.calendar.google.com";
-            case "Spain Holidays": return  "en.spain#holiday@group.v.calendar.google.com";
-            case "Swedish Holidays": return  "en.swedish#holiday@group.v.calendar.google.com";
-            case "Taiwan Holidays": return  "en.taiwan#holiday@group.v.calendar.google.com";
-            case "Thai Holidays": return  "en.thai#holiday@group.v.calendar.google.com";
-            case "UK Holidays": return  "en.uk#holiday@group.v.calendar.google.com";
-            case "US Holidays": return  "en.usa#holiday@group.v.calendar.google.com";
-            case "Vietnamese Holidays": return  "en.vietnamese#holiday@group.v.calendar.google.com";
-            default: return "";
-        }
-    }
 }
