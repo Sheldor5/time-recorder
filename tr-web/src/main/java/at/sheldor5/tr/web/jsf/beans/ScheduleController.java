@@ -162,9 +162,9 @@ public class ScheduleController implements Serializable {
         endDate = relevantSchedules.get(i + 1).getDueDate();
       }
       for(Schedule currentSchedule = relevantSchedules.get(i); currentDate.getDayOfMonth() < endDate.getDayOfMonth(); currentDate = currentDate.plusDays(1)){
-        //if(!isHoliday(currentDate)) { todo uncomment!
+        if(!isHoliday(currentDate)) { 
           time += currentSchedule.getTime(currentDate.getDayOfWeek());
-        //}
+        }
       }
     }
     return time;

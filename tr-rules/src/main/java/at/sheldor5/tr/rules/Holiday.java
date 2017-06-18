@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * Created by Vanessa on 23.04.2017.
  */
-public class Holiday {
+public class Holiday extends AbstractRule {
     private static HttpTransport HTTP_TRANSPORT;
     private static final JsonFactory JSON_FACTORY =
             JacksonFactory.getDefaultInstance();
@@ -59,12 +59,19 @@ public class Holiday {
         return isHoliday();
     }
 
-    public boolean applies(LocalDate date) throws GeneralSecurityException, IOException {
+    public boolean applies(LocalDate date) {
         setNowFromLocalDate(date);
         if(sundayRuleApplies()){
             return false;
         }
-        return isHoliday();
+        try {
+            return isHoliday();
+        } catch (GeneralSecurityException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public boolean applies(Date date) throws GeneralSecurityException, IOException {
@@ -75,14 +82,23 @@ public class Holiday {
         return isHoliday();
     }
 
-    public boolean applies(Session session) throws GeneralSecurityException, IOException {
+    public boolean applies(Session session) {
         setNowFromLocalDate(session.getDate());
         if(sundayRuleApplies()){
             session.setMultiplier(2);
             return false;
         }
-        session.setMultiplier(2);
-        return isHoliday();
+        try {
+            if(isHoliday()){
+                session.setMultiplier(2);
+                return true;
+            }
+        } catch (GeneralSecurityException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public HashMap<Session,Boolean> applies(List<Session> sessionList) throws GeneralSecurityException, IOException {
@@ -135,16 +151,31 @@ public class Holiday {
         HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
         String client_id="1099400721753-k327qrlvue3dahmg5au24j7qbojn1sj9.apps.googleusercontent.com";
         String client_secret = "BJBPI1iS6fMpupK-2RLP9UvJ";
-        String access_token= "ya29.GlttBNNVSuLg5LSe3vxkVQNMBVHFPjopQaxcswo6506uCDO05bSjBRK5RriC94S6TuVO8dCcc3oaWwf1-bsgEFVTAZmHIeE84NaRkF2srhUJ5Z2lwjeYLibyiBT7";
+        String access_token= "ya29.GlttBNgJBf_Vfa6Yr-Ld0aXGu15_JKdOGe6NjPaovfpEG6zOpaKDbbgR5kbCxYrJf137FzgIKwl5JjVod6rhw1bhTl-RauuYkxUzTVl9ueWmNNuFjVgyqic4kewo";
         String refresh_token="1/scBJE3FJQ7AiY2IuCOzbyjlznv1i2KKELsSFJknc7Ws";
+
+        /*final GoogleCredential credential = new GoogleCredential.Builder()
+                .setTransport(HTTP_TRANSPORT)
+                .setJsonFactory(JSON_FACTORY)
+                .setClientSecrets(client_id, client_secret).build();
+        credential.setRefreshToken(refresh_token);
+        credential.refreshToken();
+
+        String newAccessToken = credential.getAccessToken();*/
 
         GoogleCredential credentials =
                 new GoogleCredential.Builder()
                         .setTransport(HTTP_TRANSPORT)
                         .setJsonFactory(JSON_FACTORY)
                         .setClientSecrets(client_id, client_secret).build();
-        credentials.setAccessToken(access_token);
+
         credentials.setRefreshToken(refresh_token);
+        credentials.setAccessToken(access_token);
+       /* //credentials.refreshToken();
+        String newAccessToken = credentials.getAccessToken();
+        credentials.setAccessToken(newAccessToken);*/
+
+
 
         // Initialize Calendar service with valid OAuth credentials
         return new Calendar.Builder(HTTP_TRANSPORT, JSON_FACTORY, credentials)

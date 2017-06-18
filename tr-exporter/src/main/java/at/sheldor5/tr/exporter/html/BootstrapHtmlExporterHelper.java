@@ -50,7 +50,7 @@ public class BootstrapHtmlExporterHelper {
       writer.write(String.format("<div class=\"col-md-1\">%s</div>", session.getStart()));
       writer.write(String.format("<div class=\"col-md-1\">%s</div>", session.getEnd()));
       writer.write(String.format("<div class=\"col-md-1\">%s</div>", TimeUtils.getHumanReadableSummary(session.getSummary())));
-      writer.write(String.format("<div class=\"col-md-2\">%s</div>", session.getProject().getName()));
+      writer.write(String.format("<div class=\"col-md-2\">%s</div>", session.getProject() == null ? "" : session.getProject().getName()));
       writer.write(String.format("<div class=\"col-md-1\">%s</div>", TimeUtils.getHumanReadableSummary(session.getValuedSummary())));
       writer.write("<div class=\"col-md-5\">&nbsp;</div>");
       writer.write("</div>");

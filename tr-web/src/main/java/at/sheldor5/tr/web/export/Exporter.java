@@ -4,6 +4,7 @@ import at.sheldor5.tr.api.plugins.ExporterPlugin;
 import at.sheldor5.tr.api.time.Day;
 import at.sheldor5.tr.api.time.Month;
 import at.sheldor5.tr.api.user.Schedule;
+import at.sheldor5.tr.api.utils.GlobalProperties;
 import at.sheldor5.tr.exporter.ExporterManager;
 import at.sheldor5.tr.web.BusinessLayer;
 import at.sheldor5.tr.web.dev.DevUtils;
@@ -16,7 +17,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.DateTimeException;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,16 +87,25 @@ public class Exporter extends HttpServlet {
     switch (exportType) {
       case "month":
         // TODO
-        // Month month = businessLayer.getMonth(date);
-        Schedule schedule = businessLayer.getSchedule();
-        Month month = DevUtils.getDefaultMonth(date);
-        for (final Day day : month.getItems()) {
-          day.setSchedule(schedule);
-        }
+        final Month month = getMonth(date);
         plugin.export(month);
         break;
       case "year":
         break;
     }
+  }
+
+  private Month getMonth(final LocalDate date) {
+    if (GlobalProperties.getBoolean("system.test.data")) {
+      final Schedule schedule = new Schedule();
+      schedule.setDueDate(date);
+      schedule.setTime(DayOfWeek.MONDAY, LocalTime.of(8, 0));
+      schedule.setTime(DayOfWeek.TUESDAY, LocalTime.of(8, 0));
+      schedule.setTime(DayOfWeek.WEDNESDAY, LocalTime.of(8, 0));
+      schedule.setTime(DayOfWeek.THURSDAY, LocalTime.of(8, 0));
+      schedule.setTime(DayOfWeek.FRIDAY, LocalTime.of(6, 30));
+      return businessLayer.getValuedMonthMock(DevUtils.getRandomMonth(date), schedule);
+    }
+    return businessLayer.getValuedMonth(date);
   }
 }

@@ -1,6 +1,7 @@
 package at.sheldor5.tr.web.init;
 
 import at.sheldor5.tr.api.utils.GlobalProperties;
+import at.sheldor5.tr.rules.Holiday;
 import at.sheldor5.tr.rules.RuleManager;
 
 import java.io.InputStream;
@@ -42,6 +43,7 @@ public class Rules implements ServletContextListener {
       ruleManager.setXSD(xsd);
 
       ruleManager.load(xml);
+      //ruleManager.addRule(new Holiday());
     } catch (final Exception e) {
       throw new RuntimeException(String.format("Failed to load rules: %s", e.getMessage()));
     }

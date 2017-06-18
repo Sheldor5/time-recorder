@@ -11,8 +11,6 @@ import java.time.LocalTime;
 
 /**
  * This class represents a period in the time line.
- * Each {@link Session} has a {@link Record} representing the session's start
- * and a {@link Record} representing the session's end.
  * A session has also a multiplier to value the time between the start and end time.
  *
  * @author Michael Palata
@@ -167,6 +165,7 @@ public class Session implements Comparable<Session> {
     session.start = time;
     session.end = end;
     session.multiplier = multiplier;
+    session.project = project;
 
     this.end = time;
 
