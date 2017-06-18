@@ -3,6 +3,7 @@ package at.sheldor5.tr.web.init;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.logging.Logger;
@@ -11,6 +12,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import at.sheldor5.tr.api.project.Project;
+import at.sheldor5.tr.api.time.Account;
 import at.sheldor5.tr.api.user.Role;
 import at.sheldor5.tr.api.user.User;
 import at.sheldor5.tr.api.user.UserMapping;
@@ -21,6 +23,7 @@ import at.sheldor5.tr.persistence.provider.ProjectProvider;
 import at.sheldor5.tr.persistence.provider.UserMappingProvider;
 import at.sheldor5.tr.persistence.provider.UserProjectMappingProvider;
 import at.sheldor5.tr.persistence.provider.UserProvider;
+import at.sheldor5.tr.web.BusinessLayer;
 import at.sheldor5.tr.web.DataAccessLayer;
 import at.sheldor5.tr.web.module.authentication.AuthenticationManager;
 import at.sheldor5.tr.web.module.authentication.InternalAuthentication;
@@ -72,6 +75,8 @@ public class Persistence implements ServletContextListener {
     if (PROJECT_DEFAULT == null) {
       throw new RuntimeException("Unable to create default project \"time-recorder\"");
     }
+
+    addScheduleAccount(ADMIN_MAPPING);
   }
 
   private UserMapping get(final User user, final Role role) {
@@ -100,10 +105,25 @@ public class Persistence implements ServletContextListener {
     final Project tr = project("time-recorder", new UserMapping[]{TEST_MAPPING});
     final Project x = project("Project X", new UserMapping[]{TEST_MAPPING});
     final Project hl3 = project("Half Life 3", new UserMapping[]{TEST_MAPPING});
+    addScheduleAccount(TEST_MAPPING);
 
     TestData testData = new TestData();
     testData.setup(DATA_ACCESS_LAYER, TEST_MAPPING, tr);
 
+  }
+
+  private void addScheduleAccount(UserMapping userMapping) {
+    Account accountOfYear = new Account(LocalDate.now());
+    Account accountOfMonth = new Account(LocalDate.now());
+    accountOfMonth.setUserMapping(userMapping);
+    accountOfMonth.setTime(0);
+    accountOfMonth.setTimeWorked(0);
+    accountOfYear.setUserMapping(userMapping);
+    accountOfYear.setTime(0);
+    accountOfYear.setTimeWorked(0);
+    BusinessLayer businessLayer = new BusinessLayer(DATA_ACCESS_LAYER, null);
+    businessLayer.save(accountOfMonth, false);
+    businessLayer.save(accountOfYear, true);
   }
 
   private Project project(final String name, final UserMapping userMappings[]) {

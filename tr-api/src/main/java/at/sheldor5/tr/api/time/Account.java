@@ -13,6 +13,7 @@ public class Account {
   protected UserMapping userMapping;
   protected LocalDate date;
   protected long time;
+  protected long timeWorked;
 
   public Account() {
     this(null);
@@ -46,12 +47,34 @@ public class Account {
     this.date = date;
   }
 
+  /**
+   * @return returns the difference between the worked time and the
+   * time that is listed in the schedule.
+   * Negative if one has worked too little, positive if one has
+   * worked more than what's listed in the schedule.
+   */
   public long getTime() {
     return time;
   }
 
   public void setTime(long time) {
     this.time = time;
+  }
+
+  public void addToTime(long time) {
+    this.timeWorked += time;
+    this.time += time;
+  }
+
+  /**
+   * @return returns the time that one has worked
+   */
+  public long getTimeWorked() {
+    return timeWorked;
+  }
+
+  public void setTimeWorked(long timeWorked) {
+    this.timeWorked = timeWorked;
   }
 
   @Override

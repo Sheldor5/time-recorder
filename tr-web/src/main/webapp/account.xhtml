@@ -9,7 +9,10 @@
 <f:view>
     <ui:composition template="template.xhtml">
         <ui:define name="content">
-            Gleitzeitkonto
+            <div>
+                balance: #{flexitimeAccount.overallBalance}
+                month balance: #{flexitimeAccount.monthBalance}
+            </div>
         </ui:define>
     </ui:composition>
 </f:view>

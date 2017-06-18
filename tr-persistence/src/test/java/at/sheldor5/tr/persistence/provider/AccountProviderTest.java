@@ -46,6 +46,7 @@ public class AccountProviderTest extends TestFixture {
     Assert.assertEquals(account, actual);
 
     actual.setTime(1337L);
+    actual.setTimeWorked(1337L);
 
     ACCOUNT_ENGINE.save(account);
 
@@ -54,5 +55,6 @@ public class AccountProviderTest extends TestFixture {
     final Account actual2 = ACCOUNT_ENGINE.get(userMapping, date);
     Assert.assertNotNull(actual2);
     Assert.assertEquals(1337L, actual2.getTime());
+    Assert.assertEquals(1337L, actual2.getTimeWorked());
   }
 }

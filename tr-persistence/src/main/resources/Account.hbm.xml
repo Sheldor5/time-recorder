@@ -5,11 +5,12 @@
 
 <hibernate-mapping package="at.sheldor5.tr.api.time">
     <class name="Account" table="ACCOUNTS">
-        <id name="id" type="int" column="PK_SESSION_ID">
+        <id name="id" type="int" column="PK_ACCOUNT_ID">
             <generator class="native"/>
         </id>
         <many-to-one name="userMapping" column="FK_USER_MAPPING_ID" class="at.sheldor5.tr.api.user.UserMapping" index="I_USER_MAPPING" cascade="none"/>
         <property name="date" type="java.time.LocalDate" column="DATE"/>
         <property name="time" type="long" column="TIME"/>
+        <property name="timeWorked" type="long" column="TIME_WORKED"/>
     </class>
 </hibernate-mapping>

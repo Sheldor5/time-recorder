@@ -1,6 +1,7 @@
 package at.sheldor5.tr.web.jsf.beans;
 
 import at.sheldor5.tr.api.project.Project;
+import at.sheldor5.tr.api.time.Account;
 import at.sheldor5.tr.api.time.Day;
 import at.sheldor5.tr.api.time.Session;
 import at.sheldor5.tr.api.user.Schedule;
@@ -136,11 +137,22 @@ public class ClockController implements Serializable {
       } else {
         session.setEnd(time);
         businessLayer.save(session);
+        updateScheduleAccount(LocalDate.now(), session.getSummary());
         session = null;
       }
     } else {
       LOGGER.info("null");
     }
+  }
+
+  private void updateScheduleAccount(LocalDate now, long summary) {
+    Account accountOfMonth = businessLayer.getAccountOfMonth(now);
+    if(accountOfMonth.getDate().getMonthValue() != now.getMonthValue()) {
+      // it's already the next month, so create a new account object
+      accountOfMonth = new Account(now);
+    }
+    accountOfMonth.addToTime(summary);
+    businessLayer.save(accountOfMonth, false);
   }
 
   public void setSchedule(final Schedule schedule) {

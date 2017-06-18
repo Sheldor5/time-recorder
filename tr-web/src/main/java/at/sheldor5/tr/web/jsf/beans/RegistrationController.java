@@ -1,13 +1,17 @@
 package at.sheldor5.tr.web.jsf.beans;
 
 import at.sheldor5.tr.api.project.Project;
+import at.sheldor5.tr.api.time.Account;
 import at.sheldor5.tr.api.user.User;
 import at.sheldor5.tr.api.user.UserMapping;
 import at.sheldor5.tr.persistence.mappings.UserProjectMapping;
+import at.sheldor5.tr.persistence.provider.AccountProvider;
 import at.sheldor5.tr.persistence.provider.UserProvider;
 import at.sheldor5.tr.web.BusinessLayer;
 import at.sheldor5.tr.web.DataAccessLayer;
 import at.sheldor5.tr.web.module.authentication.AuthenticationManager;
+
+import java.time.LocalDate;
 import java.util.PropertyResourceBundle;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
@@ -21,6 +25,7 @@ public class RegistrationController {
 
   private final PropertyResourceBundle msg;
   private final DataAccessLayer dataAccessLayer;
+  private final BusinessLayer businessLayer;
 
   private String username;
   private String password;
@@ -34,12 +39,14 @@ public class RegistrationController {
     // CDI
     this.msg = null;
     this.dataAccessLayer = null;
+    this.businessLayer = null;
   }
 
   @Inject
-  public RegistrationController(final PropertyResourceBundle msg, final DataAccessLayer dataAccessLayer) {
+  public RegistrationController(final PropertyResourceBundle msg, final DataAccessLayer dataAccessLayer, final BusinessLayer businessLayer) {
     this.msg = msg;
     this.dataAccessLayer = dataAccessLayer;
+    this.businessLayer = businessLayer;
   }
 
   public String getUsername() {
@@ -102,7 +109,21 @@ public class RegistrationController {
     final Project project = dataAccessLayer.getProject("time-recorder");
     final UserProjectMapping userProjectMapping = new UserProjectMapping(userMapping, project);
     dataAccessLayer.save(userProjectMapping);
+    createScheduleAccount(userMapping);
     successful = true;
+  }
+
+  private void createScheduleAccount(UserMapping userMapping) {
+    Account accountOfYear = new Account(LocalDate.now());
+    Account accountOfMonth = new Account(LocalDate.now());
+    accountOfMonth.setUserMapping(userMapping);
+    accountOfMonth.setTime(0);
+    accountOfMonth.setTimeWorked(0);
+    accountOfYear.setUserMapping(userMapping);
+    accountOfYear.setTime(0);
+    accountOfYear.setTimeWorked(0);
+    businessLayer.save(accountOfMonth, false);
+    businessLayer.save(accountOfYear, true);
   }
 
   public boolean isSuccessful() {
