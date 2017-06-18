@@ -2,12 +2,18 @@ package at.sheldor5.tr.web.jsf.beans;
 
 import at.sheldor5.tr.api.time.Account;
 import at.sheldor5.tr.web.BusinessLayer;
+import at.sheldor5.tr.web.jsf.converter.LocalTimeConverter;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.text.DateFormatSymbols;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 /**
@@ -24,6 +30,7 @@ public class FlexitimeAccountController {
 
   private long overallBalance;
   private long monthBalance;
+  private List<String> months = new ArrayList<>();
 
   @Inject
   public FlexitimeAccountController(final BusinessLayer businessLayer) {
@@ -36,15 +43,35 @@ public class FlexitimeAccountController {
 
   @PostConstruct
   private void getAccoutnData() {
-    Account yearAccount = businessLayer.getAccountOfYear(LocalDate.now());
-    Account monthAccount = businessLayer.getAccountOfMonth(LocalDate.now());
-//    Account yearAccount2 = businessLayer.getAccountOfYear(LocalDate.now().plusYears(1));
-//    Account monthAccount2 = businessLayer.getAccountOfMonth(LocalDate.now().plusMonths(1));
-//    Account yearAccount3 = businessLayer.getAccountOfYear(LocalDate.now().minusYears(1));
-//    Account monthAccount3 = businessLayer.getAccountOfMonth(LocalDate.now().minusMonths(1));
-//    businessLayer.save
-    monthBalance = monthAccount.getTime();
-    overallBalance = yearAccount.getTime();
+    LocalDate now = LocalDate.now();
+    DateFormatSymbols dfs = getDateFormatSymbols();
+    LocalDate currentDate;
+    Account currentAccount;
+    String str = "";
+    for(int i = 0; i < now.getMonthValue(); i++) {
+      currentDate = LocalDate.of(now.getYear(), i + 1, 1);
+      currentAccount = businessLayer.getAccountOfMonth(currentDate);
+      if(currentAccount != null) {
+        str = convertToHours(currentAccount.getTime());
+      }
+      else {
+        str = "/";
+      }
+      months.add(dfs.getMonths()[i] + ": " + str);
+    }
+  }
+
+  private String convertToHours(long time) {
+    boolean isNegative = false;
+    if(time < 0) {
+      isNegative = true;
+    }
+    time = Math.abs(time);
+    return (isNegative ? "-" : "") + LocalTime.MIN.plusSeconds(time).toString();
+  }
+
+  private DateFormatSymbols getDateFormatSymbols() {
+    return new DateFormatSymbols(Locale.GERMANY);
   }
 
   public long getOverallBalance() {
@@ -61,5 +88,13 @@ public class FlexitimeAccountController {
 
   public void setMonthBalance(long monthBalance) {
     this.monthBalance = monthBalance;
+  }
+
+  public List<String> getMonths() {
+    return months;
+  }
+
+  public void setMonths(List<String> months) {
+    this.months = months;
   }
 }

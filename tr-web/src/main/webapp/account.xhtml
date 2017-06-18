@@ -10,8 +10,13 @@
     <ui:composition template="template.xhtml">
         <ui:define name="content">
             <div>
-                balance: #{flexitimeAccount.overallBalance}
-                month balance: #{flexitimeAccount.monthBalance}
+                <ul>
+                    <ui:repeat value="#{flexitimeAccount.months}" var="month">
+                        <li>
+                            #{month}
+                        </li>
+                    </ui:repeat>
+                </ul>
             </div>
         </ui:define>
     </ui:composition>
