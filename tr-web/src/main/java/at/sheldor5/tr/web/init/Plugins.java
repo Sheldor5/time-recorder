@@ -10,6 +10,7 @@ import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import java.lang.reflect.Modifier;
 import java.util.logging.Logger;
 
 public class Plugins implements ServletContextListener {
@@ -32,6 +33,9 @@ public class Plugins implements ServletContextListener {
 
     // Authentication Plugins
     classpathScanner.matchClassesImplementing(AuthenticationPlugin.class, c -> {
+      if (Modifier.isAbstract(c.getModifiers())) {
+        return;
+      }
       try {
         AuthenticationPlugin plugin = c.newInstance();
         if (plugin.getName() == null || plugin.getName().isEmpty()) {
@@ -46,6 +50,9 @@ public class Plugins implements ServletContextListener {
 
     // Exporter Plugins
     classpathScanner.matchClassesImplementing(ExporterPlugin.class, c -> {
+      if (Modifier.isAbstract(c.getModifiers())) {
+        return;
+      }
       try {
         ExporterPlugin plugin = c.newInstance();
         if (plugin.getName() == null || plugin.getName().isEmpty()) {
