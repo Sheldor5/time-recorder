@@ -1,5 +1,6 @@
 package at.sheldor5.tr.rules;
 
+import at.sheldor5.tr.api.time.Day;
 import at.sheldor5.tr.api.time.Session;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
@@ -22,7 +23,7 @@ import java.util.List;
 /**
  * Created by Vanessa on 23.04.2017.
  */
-public class Holiday extends AbstractRule {
+public class Holiday implements IRule {
     private static HttpTransport HTTP_TRANSPORT;
     private static final JsonFactory JSON_FACTORY =
             JacksonFactory.getDefaultInstance();
@@ -35,6 +36,7 @@ public class Holiday extends AbstractRule {
     public Holiday(LocalDate localDate){
         setNowFromLocalDate(localDate);
     }
+
     private void setNowFromLocalDate(LocalDate localDate){
         Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
         setNowFromDate(date);
@@ -48,6 +50,38 @@ public class Holiday extends AbstractRule {
         nowinlong=date.getTime();
     }
 
+    @Override
+    public String getName() {
+        return "Holiday";
+    }
+
+    @Override
+    public String getDescription() {
+        return "Rule applies if day is a national holiday";
+    }
+
+    @Override
+    public boolean applies(Day day) {
+        return applies(day.getDate());
+    }
+
+    @Override
+    public void apply(Day day) {
+        List<Session> sessions = day.getItems();
+        apply(sessions);
+    }
+
+    public void apply(Session session){
+        if(applies(session)){
+            session.setMultiplier(2);
+        }
+    }
+
+    public void apply(List<Session> sessions){
+        for(Session session : sessions){
+            apply(session);
+        }
+    }
     public Holiday(){
         nowinlong=System.currentTimeMillis();
     }
@@ -85,14 +119,10 @@ public class Holiday extends AbstractRule {
     public boolean applies(Session session) {
         setNowFromLocalDate(session.getDate());
         if(sundayRuleApplies()){
-            session.setMultiplier(2);
             return false;
         }
         try {
-            if(isHoliday()){
-                session.setMultiplier(2);
-                return true;
-            }
+            return isHoliday();
         } catch (GeneralSecurityException e) {
             e.printStackTrace();
         } catch (IOException e) {

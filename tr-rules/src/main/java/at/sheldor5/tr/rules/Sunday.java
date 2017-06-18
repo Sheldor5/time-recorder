@@ -1,5 +1,6 @@
 package at.sheldor5.tr.rules;
 
+import at.sheldor5.tr.api.time.Day;
 import at.sheldor5.tr.api.time.Session;
 
 import java.io.IOException;
@@ -14,7 +15,7 @@ import java.util.List;
 /**
  * Created by Vanessa on 25.05.2017.
  */
-public class Sunday extends AbstractRule{
+public class Sunday implements IRule{
     private Date date;
 
     public Sunday(LocalDate localDate) {
@@ -33,6 +34,41 @@ public class Sunday extends AbstractRule{
         setDate(date);
     }
 
+    @Override
+    public String getName() {
+        return "Sunday";
+    }
+
+    @Override
+    public String getDescription() {
+        return "Rule applies if day is a sunday";
+    }
+
+    @Override
+    public boolean applies(Day day) {
+        return applies(day.getDate());
+    }
+
+    @Override
+    public void apply(Day day) {
+        if(applies(day.getDate())){
+            List<Session> sessions = day.getItems();
+            apply(sessions);
+        }
+    }
+
+    public void apply(Session session){
+        if(applies(session)){
+            session.setMultiplier(2);
+        }
+    }
+
+    public void apply(List<Session> sessions){
+        for(Session session : sessions){
+            apply(session);
+        }
+    }
+
     private void setDate(Date date) {
         this.date = date;
     }
@@ -42,12 +78,9 @@ public class Sunday extends AbstractRule{
     }
 
     public boolean applies(Session session) {
-        if(applies(session.getDate())){
-            session.setMultiplier(2);
-            return true;
-        };
-        return false;
+        return applies(session.getDate());
     }
+
 
     public HashMap<Session,Boolean> applies(List<Session> sessionList) throws GeneralSecurityException, IOException {
         HashMap<Session,Boolean> evaluatedList=new HashMap<>();
