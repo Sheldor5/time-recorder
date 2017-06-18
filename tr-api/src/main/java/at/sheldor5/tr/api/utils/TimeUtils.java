@@ -5,18 +5,22 @@ import java.time.chrono.IsoChronology;
 public class TimeUtils {
 
   private static final String TIME_FORMAT_STRING = "%02d:%02d:%02d";
-  private static final String SUMMARY_FORMAT_STRING = "%d:%02d:%02d";
+  private static final String SUMMARY_FORMAT_STRING = "%s%d:%02d:%02d";
 
   public static final long SECOND_IN_MILLIS = 1000L;
   public static final long MINUTE_IN_MILLIS = SECOND_IN_MILLIS * 60L;
   public static final long HOUR_IN_MILLIS = MINUTE_IN_MILLIS * 60L;
 
   public static String getHumanReadableSummary(long value) {
+    final String prefix = value < 0 ? "-" : "";
+    if (value < 0) {
+      value *= -1;
+    }
     int s = (int) (value / TimeUtils.getConfiguretUnitSecondsMultiplier());
     long seconds = s % 60L;
     long minutes = (s / 60L) % 60L;
     long hours = s / 3600L;
-    return String.format(SUMMARY_FORMAT_STRING, hours, minutes, seconds);
+    return String.format(SUMMARY_FORMAT_STRING, prefix, hours, minutes, seconds);
   }
 
   public static long getSeconds(int hours, int minutes, int seconds) {

@@ -109,6 +109,10 @@ public class DataAccessLayer implements Serializable, AutoCloseable {
     return scheduleProvider.getLatest(userMapping);
   }
 
+  public Schedule getSchedule(final UserMapping userMapping, final LocalDate date) {
+    return scheduleProvider.getLatest(userMapping);
+  }
+
   public List<Schedule> getSchedules(final UserMapping userMapping) {
     return scheduleProvider.get(userMapping);
   }

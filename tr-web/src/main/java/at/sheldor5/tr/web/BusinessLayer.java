@@ -9,14 +9,12 @@ import at.sheldor5.tr.api.user.Role;
 import at.sheldor5.tr.api.user.Schedule;
 import at.sheldor5.tr.api.user.User;
 import at.sheldor5.tr.api.user.UserMapping;
+import at.sheldor5.tr.rules.RuleManager;
 import at.sheldor5.tr.web.jsf.beans.UserController;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Logger;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
@@ -125,6 +123,72 @@ public class BusinessLayer implements Serializable {
     month.addItem(day);
 
     return month;
+  }
+
+  public Month getValuedMonthMock(final Month month, final Schedule schedule) {
+    for (final Day day : month.getItems()) {
+      RuleManager.getInstance().apply(day);
+    }
+    final Iterator<Day> iterator = month.getItems().iterator();
+
+    final LocalDate date = month.getDate();
+    final Month valued = new Month(date);
+
+    final LocalDate beginOfMonth = LocalDate.of(date.getYear(), date.getMonthValue(), 1);
+    LocalDate c;
+    Day d = iterator.next();
+    for (int i = 0; i < date.lengthOfMonth(); i++) {
+      c = beginOfMonth.plusDays(i);
+      if (c.equals(d.getDate())) {
+        d.setSchedule(schedule);
+        valued.addItem(d);
+        if (iterator.hasNext()) {
+          d = iterator.next();
+        } else {
+          d = new Day(c);
+        }
+      } else {
+        d = new Day(c);
+        d.setSchedule(schedule);
+      }
+    }
+
+    return valued;
+  }
+
+  public Month getValuedMonth(final LocalDate date) {
+    final Month month = getMonth(date);
+
+    for (final Day day : month.getItems()) {
+      RuleManager.getInstance().apply(day);
+    }
+
+    final Schedule schedule = dataAccessLayer.getSchedule(user.getUserMapping(),
+        LocalDate.of(date.getYear(), date.getMonthValue(), date.lengthOfMonth()));
+    final Iterator<Day> iterator = month.getItems().iterator();
+
+    final Month valued = new Month(date);
+
+    final LocalDate beginOfMonth = LocalDate.of(date.getYear(), date.getMonthValue(), 1);
+    LocalDate c;
+    Day d = iterator.next();
+    for (int i = 0; i < date.lengthOfMonth(); i++) {
+      c = beginOfMonth.plusDays(i);
+      if (c.equals(d.getDate())) {
+        d.setSchedule(schedule);
+        valued.addItem(d);
+        if (iterator.hasNext()) {
+          d = iterator.next();
+        } else {
+          d = new Day(c);
+        }
+      } else {
+        d = new Day(c);
+        d.setSchedule(schedule);
+      }
+    }
+
+    return valued;
   }
 
   public Schedule getSchedule() {

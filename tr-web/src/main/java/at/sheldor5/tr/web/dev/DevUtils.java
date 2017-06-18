@@ -6,6 +6,7 @@ import at.sheldor5.tr.api.time.Month;
 import at.sheldor5.tr.api.time.Session;
 import at.sheldor5.tr.api.utils.GlobalConfiguration;
 
+import java.security.SecureRandom;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -56,8 +57,49 @@ public class DevUtils {
     }
     return month;
   }
+
+  public static Month getRandomMonth(LocalDate date) {
+    date = LocalDate.of(date.getYear(), date.getMonthValue(), 1);
+    Month month = new Month(date);
+    for (int i = 0; i < date.lengthOfMonth(); i++) {
+      month.addItem(getRandomDay(date.plusDays(i)));
+    }
+    return month;
+  }
+
   public static Month getDefaultMonth() {
     return getDefaultMonth(LocalDate.of(2017, 1, 1));
+  }
+
+  private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+  private static final Project PROJECT = new Project("mockup");
+
+  public static Day getRandomDay(final LocalDate date) {
+    final Day day = new Day(date);
+
+    final Session session1 = new Session();
+    session1.setDate(date);
+    session1.setStart(LocalTime.of(4 + SECURE_RANDOM.nextInt(5), SECURE_RANDOM.nextInt(60), SECURE_RANDOM.nextInt(60)));
+    session1.setEnd(LocalTime.of(10 + SECURE_RANDOM.nextInt(3), SECURE_RANDOM.nextInt(60), SECURE_RANDOM.nextInt(60)));
+    session1.setProject(PROJECT);
+    day.addItem(session1);
+
+    final Session session2 = new Session();
+    session2.setDate(date);
+    session2.setStart(LocalTime.of(13, SECURE_RANDOM.nextInt(60), SECURE_RANDOM.nextInt(60)));
+    session2.setEnd(LocalTime.of(15 + SECURE_RANDOM.nextInt(3), SECURE_RANDOM.nextInt(60), SECURE_RANDOM.nextInt(60)));
+    session2.setProject(PROJECT);
+    day.addItem(session2);
+
+    if (SECURE_RANDOM.nextDouble() < 0.2D) {
+      final Session session3 = new Session();
+      session3.setDate(date);
+      session3.setStart(LocalTime.of(18 + SECURE_RANDOM.nextInt(3), SECURE_RANDOM.nextInt(60), SECURE_RANDOM.nextInt(60)));
+      session3.setEnd(LocalTime.of(21 + SECURE_RANDOM.nextInt(3), SECURE_RANDOM.nextInt(60), SECURE_RANDOM.nextInt(60)));
+      session3.setProject(PROJECT);
+      day.addItem(session3);
+    }
+    return day;
   }
 
   public static Day getDefaultDay(final LocalDate date) {

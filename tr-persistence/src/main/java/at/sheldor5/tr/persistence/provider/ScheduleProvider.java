@@ -11,6 +11,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -66,12 +67,11 @@ public class ScheduleProvider extends GenericProvider<Schedule, Integer> {
   }
 
   public Schedule getLatest(final UserMapping userMapping) {
-
     if (userMapping == null) {
-      return new Schedule();
+      return null;
     }
 
-    TypedQuery<Schedule> findByFields = QueryUtils.findByFieldOrdered(entityManager, Schedule.class, "userMapping", UserMapping.class, userMapping, "dueDate", false);
+    final TypedQuery<Schedule> findByFields = QueryUtils.findByFieldOrdered(entityManager, Schedule.class, "userMapping", UserMapping.class, userMapping, "dueDate", false);
     findByFields.setMaxResults(1);
 
     Schedule schedule = null;
@@ -80,13 +80,64 @@ public class ScheduleProvider extends GenericProvider<Schedule, Integer> {
     transaction.begin();
 
     try {
-      schedule = findByFields.getSingleResult();
-    } catch (final NoResultException nre) {
-      // SELECT returns no Entity
-    } catch (final Exception e) {
-      e.printStackTrace();
-    } finally {
+      final List<Schedule> resultList = findByFields.getResultList();
+      if (resultList.size() == 1) {
+        schedule = resultList.get(0);
+      }
       transaction.commit();
+    } catch (final Exception e) {
+      transaction.rollback();
+      e.printStackTrace();
+    }
+
+    return schedule;
+  }
+
+  public Schedule getFirst(final UserMapping userMapping, final LocalDate date) {
+    if (userMapping == null || date == null) {
+      return null;
+    }
+
+    Schedule schedule = null;
+
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Schedule> criteriaQuery = criteriaBuilder.createQuery(entityClass);
+
+    // SELECT Object FROM ObjectTable
+    Root<Schedule> entity = criteriaQuery.from(entityClass);
+    criteriaQuery.select(entity);
+
+    Order order = criteriaBuilder.desc(entity.get("date"));
+    criteriaQuery.orderBy(order);
+
+    // WHERE field1Name = field1Value
+    ParameterExpression<UserMapping> parameter1 = criteriaBuilder.parameter(UserMapping.class);
+    Path<UserMapping> path1 = entity.get("userMapping");
+    Predicate predicate1 = criteriaBuilder.equal(path1, parameter1);
+
+    // field2Name <= field2Value
+    Expression<LocalDate> path2 = entity.get("date");
+    Predicate predicate2 = criteriaBuilder.lessThanOrEqualTo(path2, date);
+
+    Predicate predicate = criteriaBuilder.and(predicate1, predicate2);
+    criteriaQuery.where(predicate);
+
+    TypedQuery<Schedule> query = entityManager.createQuery(criteriaQuery);
+    query.setParameter(parameter1, userMapping);
+    query.setMaxResults(1);
+
+    EntityTransaction transaction = entityManager.getTransaction();
+    transaction.begin();
+
+    try {
+      final List<Schedule> resultList = query.getResultList();
+      if (resultList.size() == 1) {
+        schedule = resultList.get(0);
+      }
+      transaction.commit();
+    } catch (final Exception e) {
+      transaction.rollback();
+      e.printStackTrace();
     }
 
     return schedule;

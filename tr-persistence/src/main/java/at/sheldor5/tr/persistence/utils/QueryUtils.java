@@ -36,9 +36,10 @@ public class QueryUtils {
 
     return query;
   }
+
   public static <E, T, O> TypedQuery<E> findByFieldOrdered(EntityManager entityManager, Class<E> entityClass,
-                                                        String fieldName, Class<T> fieldType, T fieldValue,
-                                                        String orderField, boolean asc) {
+                                                           String fieldName, Class<T> fieldType, T fieldValue,
+                                                           String orderField, boolean asc) {
     CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
     CriteriaQuery<E> criteriaQuery = criteriaBuilder.createQuery(entityClass);
 
@@ -47,10 +48,11 @@ public class QueryUtils {
     criteriaQuery.select(entity);
 
     Order order;
-
     if (asc) {
+      // ORDER BY orderField ASC
       order = criteriaBuilder.asc(entity.get(orderField));
     } else {
+      // ORDER BY orderField DESC
       order = criteriaBuilder.desc(entity.get(orderField));
     }
 
@@ -68,6 +70,46 @@ public class QueryUtils {
 
     return query;
   }
+
+  /*public static <E, F1, F2, O> TypedQuery<E> findByFieldsOrdered(EntityManager entityManager, Class<E> entityClass,
+                                                                String field1Name, Class<F1> field1Type, F1 field1Value,
+                                                                String field2Name, Class<F2> field2Type, F2 field2Value,
+                                                           String orderField, boolean asc) {
+    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<E> criteriaQuery = criteriaBuilder.createQuery(entityClass);
+
+    // SELECT Object FROM ObjectTable
+    Root<E> entity = criteriaQuery.from(entityClass);
+    criteriaQuery.select(entity);
+
+    Order order;
+    if (asc) {
+      // ORDER BY orderField ASC
+      order = criteriaBuilder.asc(entity.get(orderField));
+    } else {
+      // ORDER BY orderField DESC
+      order = criteriaBuilder.desc(entity.get(orderField));
+    }
+
+    criteriaQuery.orderBy(order);
+
+    // WHERE field1Name = field1Value
+    ParameterExpression<F1> parameter1 = criteriaBuilder.parameter(field1Type);
+    Path<F1> path1 = entity.get(field1Name);
+    Predicate predicate1 = criteriaBuilder.equal(path1, parameter1);
+
+    // field2Name <= field2Value
+    Path<F2> path2 = entity.get(field2Name);
+    Predicate predicate2 = criteriaBuilder.lessThanOrEqualTo(path2, field2Value);
+
+    Predicate predicate = criteriaBuilder.and(predicate1, predicate2);
+    criteriaQuery.where(predicate);
+
+    TypedQuery<E> query = entityManager.createQuery(criteriaQuery);
+    query.setParameter(parameter1, field1Value);
+
+    return query;
+  }*/
 
   public static <E, T> TypedQuery<E> findByFields(EntityManager entityManager,
                                                   Class<E> entityClass, String fieldName, Class<T> fieldType, T fieldValue,
@@ -143,7 +185,6 @@ public class QueryUtils {
     Predicate predicate2 = criteriaBuilder.equal(path2, parameter2);
 
     Predicate predicate;
-
     if (andRestriction) {
       // AND
       predicate = criteriaBuilder.and(predicate1, predicate2);
