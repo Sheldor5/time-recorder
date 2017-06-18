@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Created by Vanessa on 25.05.2017.
  */
-public class Sunday {
+public class Sunday extends AbstractRule{
     private Date date;
 
     public Sunday(LocalDate localDate) {
@@ -41,7 +41,7 @@ public class Sunday {
         return isSunday();
     }
 
-    public boolean applies(Session session) throws GeneralSecurityException, IOException {
+    public boolean applies(Session session) {
         if(applies(session.getDate())){
             session.setMultiplier(2);
             return true;
@@ -67,7 +67,7 @@ public class Sunday {
         return Boolean.FALSE;
     }
 
-    public boolean applies(LocalDate date) throws GeneralSecurityException, IOException {
+    public boolean applies(LocalDate date) {
         setDateFromLocalDate(date);
         return isSunday();
     }

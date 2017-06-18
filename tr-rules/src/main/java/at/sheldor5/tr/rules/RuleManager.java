@@ -30,32 +30,31 @@ public class RuleManager {
 
   }
 
-
-  public void addRule(IRule rule){
+  public void addRule(IRule rule) {
     rules.add(rule);
- }
+  }
 
- private InputStream xsd = null;
+  private InputStream xsd = null;
 
- public void setXSD(final InputStream xsd) {
+  public void setXSD(final InputStream xsd) {
     this.xsd = xsd;
- }
+  }
 
- public boolean load(final InputStream xml) {
-   if (xsd == null || xml == null) {
-     return false;
-   }
+  public boolean load(final InputStream xml) {
+    if (xsd == null || xml == null) {
+      return false;
+    }
 
-   try {
-     final RuleLoader loader = new RuleLoader(xsd);
-     rules.addAll(loader.getRules(xml));
-   } catch (IOException e) {
-     e.printStackTrace();
-     return false;
-   }
+    try {
+      final RuleLoader loader = new RuleLoader(xsd);
+      rules.addAll(loader.getRules(xml));
+    } catch (IOException e) {
+      e.printStackTrace();
+      return false;
+    }
 
-   return true;
- }
+    return true;
+  }
 
   public boolean applies(final Day day) {
     for (final IRule rule : rules) {
