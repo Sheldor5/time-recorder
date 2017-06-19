@@ -9,14 +9,22 @@
 <f:view>
     <ui:composition template="template.xhtml">
         <ui:define name="content">
-            <div>
-                <ul>
-                    <ui:repeat value="#{flexitimeAccount.months}" var="month">
-                        <li>
-                            #{month}
-                        </li>
-                    </ui:repeat>
-                </ul>
+            <div class="panel panel-default">
+                <div class="panel-heading text-center"><h4>#{msg['account.list.heading']}</h4></div>
+                <div class="row vertical-align">
+                    <div class="col-md-3 col-md-offset-4"><label>#{msg['account.list.month.label']}</label></div>
+                    <div class="col-md-3"><label>#{msg['account.list.time.label']}</label></div>
+                </div>
+                <ui:repeat value="#{flexitimeAccount.monthTimes}" var="monthTime" varStatus="loop">
+                    <div class="row vertical-align">
+                        <div class="col-md-3 col-md-offset-4">#{flexitimeAccount.monthNames.get(loop.index)}</div>
+                        <div class="col-md-3">#{monthTime}</div>
+                    </div>
+                </ui:repeat>
+            </div>
+            <div class="row vertical-align">
+                <div class="col-md-3 col-md-offset-4">#{msg['account.list.overall']}</div>
+                <div class="col-md-3">#{flexitimeAccount.overallBalance}</div>
             </div>
         </ui:define>
     </ui:composition>
