@@ -79,4 +79,28 @@ public class UserProjectMappingProvider extends GenericProvider<UserProjectMappi
 
     return projects;
   }
+
+  public List<UserProjectMapping> getUserProjectMappings(final UserMapping userMapping) {
+    if (userMapping == null) {
+      return new ArrayList<>();
+    }
+
+    List<UserProjectMapping> result = new ArrayList<>();
+
+    final TypedQuery<UserProjectMapping> findByUserMapping = QueryUtils.findByField(entityManager,
+            UserProjectMapping.class, "userMapping", UserMapping.class, userMapping);
+
+    EntityTransaction transaction = entityManager.getTransaction();
+    transaction.begin();
+
+    try {
+      result = findByUserMapping.getResultList();
+      transaction.commit();
+    } catch (final Exception e) {
+      transaction.rollback();
+      e.printStackTrace();
+    }
+
+    return result;
+  }
 }

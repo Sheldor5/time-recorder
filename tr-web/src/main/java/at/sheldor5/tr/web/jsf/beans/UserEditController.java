@@ -5,7 +5,6 @@ import at.sheldor5.tr.api.user.User;
 import at.sheldor5.tr.api.user.UserMapping;
 import at.sheldor5.tr.persistence.provider.UserMappingProvider;
 import at.sheldor5.tr.web.BusinessLayer;
-import at.sheldor5.tr.web.DataAccessLayer;
 import at.sheldor5.tr.web.utils.SessionUtils;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -40,8 +39,9 @@ public class UserEditController implements Serializable {
   private String newPassword = "";
   private String newPasswordRepeat = "";
   private Map<String, Project> availableProjects = new HashMap<>();
-  private List<Project> selectedProjects;
-  private List<String> assignedProjects = new ArrayList<>();
+  private List<Project> selectedProjectsForAdding;
+  private List<Project> selectedProjectsForRemoving;
+  private Map<String, Project> assignedProjects = new HashMap<>();
   private boolean validUUID = true;
   private boolean editOk = true;
   private boolean passwordRepeatWrongMsg = false;
@@ -84,10 +84,10 @@ public class UserEditController implements Serializable {
     availableProjects.clear();
     UserMapping userMapping = getUserMappingFromUUID(uuidFromRequest);
     for(Project project : businessLayer.getProjects(userMapping)) {
-      assignedProjects.add(project.getName());
+      assignedProjects.put(project.getName(), project);
     }
     for(Project project : businessLayer.getAllProjects()) {
-      if(!assignedProjects.contains(project.getName())){
+      if(!assignedProjects.containsKey(project.getName())){
         availableProjects.put(project.getName(), project);
       }
     }
@@ -165,32 +165,11 @@ public class UserEditController implements Serializable {
 
   private void handleProjects() {
     if(userController.getAdmin()) {
-      businessLayer.addUserProjectMappings(getUserMappingFromUUID(uuidFromRequest), selectedProjects);
+      UserMapping userMapping = getUserMappingFromUUID(uuidFromRequest);
+      businessLayer.addUserProjectMappings(userMapping, selectedProjectsForAdding);
+      businessLayer.removeUserProjectMappings(userMapping, selectedProjectsForRemoving);
     }
   }
-
-  /*public void saveUser() {
-    if(!hasPermission()) {
-      return;
-    }
-    User user = businessLayer.getUser(uuidFromRequest);
-    if(!username.isEmpty()) {
-      user.setUsername(username);
-    }
-    if(!forename.isEmpty()) {
-      user.setForename(forename);
-    }
-    if(!surname.isEmpty()) {
-      user.setSurname(surname);
-    }
-    if(!newPassword.isEmpty() || !newPasswordRepeat.isEmpty()) {
-      handlePassword(user);
-    }
-    if(editOk) {
-      changeSuccessfulMsg = true;
-      //dataProvider.save(user); // todo nicht notwendig?
-    }
-  }*/
 
   private void redirect() throws IOException {
     SessionUtils.getResponse().sendRedirect(SessionUtils.getRequest().getContextPath() + "/index.xhtml");
@@ -265,19 +244,27 @@ public class UserEditController implements Serializable {
     this.availableProjects = availableProjects;
   }
 
-  public List<Project> getSelectedProjects() {
-    return selectedProjects;
+  public List<Project> getSelectedProjectsForAdding() {
+    return selectedProjectsForAdding;
   }
 
-  public void setSelectedProjects(List<Project> selectedProjects) {
-    this.selectedProjects = selectedProjects;
+  public void setSelectedProjectsForAdding(List<Project> selectedProjectsForAdding) {
+    this.selectedProjectsForAdding = selectedProjectsForAdding;
   }
 
-  public List<String> getAssignedProjects() {
+  public Map<String, Project> getAssignedProjects() {
     return assignedProjects;
   }
 
-  public void setAssignedProjects(List<String> assignedProjects) {
+  public void setAssignedProjects(Map<String, Project> assignedProjects) {
     this.assignedProjects = assignedProjects;
+  }
+
+  public List<Project> getSelectedProjectsForRemoving() {
+    return selectedProjectsForRemoving;
+  }
+
+  public void setSelectedProjectsForRemoving(List<Project> selectedProjectsForRemoving) {
+    this.selectedProjectsForRemoving = selectedProjectsForRemoving;
   }
 }

@@ -98,6 +98,8 @@ public class GenericProvider<Entity, Identifier> implements EntityProvider<Entit
     return entity;
   }
 
+
+
   @Override
   public void delete(Entity entity) {
     if (entity == null) {
