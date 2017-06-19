@@ -54,7 +54,7 @@ public class Configuration implements ServletContextListener {
     stringBuilder.append("\t\t${catalina.base}/shared/classes\n");
     stringBuilder.append("\t\t${catalina.base}/shared/lib\n");
     stringBuilder.append("\t2. modify \"${catalina.base}/conf/catalina.properties\" and define:\n");
-    stringBuilder.append("\t\tshared.loader=\"${catalina.base}/shared/classes\",\"${catalina.base}/shared/lib/*.jar\n");
+    stringBuilder.append("\t\tshared.loader=\"${catalina.base}/shared/classes\",\"${catalina.base}/shared/lib/*.jar\"\n");
     stringBuilder.append("\t3. add a file named \"time-recorder.properties\" to the directory \"${catalina.base}/shared/classes/time-recorder/\"\n");
     stringBuilder.append("\t4. configure the application by modifying \"time-recorder.properties\"\n");
     stringBuilder.append("\t5. add the JDBC JAR of your database provider to the classpath (put the JAR either into \"${catalina.base}/lib/\" or \"${catalina.base}/shared/lib/\"\n");

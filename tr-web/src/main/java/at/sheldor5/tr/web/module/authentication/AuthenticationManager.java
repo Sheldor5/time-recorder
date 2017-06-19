@@ -72,7 +72,11 @@ public class AuthenticationManager implements PluginManager<AuthenticationPlugin
     UserMapping userMapping;
     User user;
     for (final AuthenticationPlugin plugin : plugins) {
-      user = plugin.getUser(username, password);
+      try {
+        user = plugin.getUser(username, password);
+      } catch (final Exception e) {
+        user = null;
+      }
       if (user != null) {
         userMapping = mapUser(user);
         if (userMapping != null) {
