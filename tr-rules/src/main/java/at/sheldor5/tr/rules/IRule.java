@@ -24,18 +24,4 @@ public interface IRule {
 
     void apply(final Day day);
 
-    /**
-     * Result list does not include initial session.
-     * @param session
-     * @return
-     */
-    List<Session> applyExcluding(final Session session);
-
-    /**
-     * Result list does not include initial session.
-     * @param session
-     * @return
-     */
-    List<Session> applyIncluding(final Session session);
-
 }
