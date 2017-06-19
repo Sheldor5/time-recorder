@@ -6,6 +6,7 @@ import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.model.CalendarList;
 import com.google.api.services.calendar.model.CalendarListEntry;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential.Builder;
@@ -14,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -23,9 +25,16 @@ import java.util.List;
 public class Main {
     public static void main(String [ ] args)
     {
-        LocalDate holidaydate = LocalDate.of(2017, 5, 28);
-        Sunday sun = new Sunday(holidaydate);
+        Serialize se = Serialize.getInstance();
+        Deserialize de = Deserialize.getInstance();
+        List<String> list = new ArrayList<>();
+        list = de.getHolidayList();
+        long now = 15094908;
+        now=now*100000;
+        DateTime date = new DateTime(now);
 
-        sun.applies();
+        HolidayCheck check = HolidayCheck.getInstance();
+        DateTime nowdate = new DateTime(now);
+        System.out.println( check.searchForHoliday(nowdate));
     }
 }

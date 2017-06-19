@@ -1,5 +1,8 @@
 package at.sheldor5.tr.rules;
 
+import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.auth.oauth2.TokenResponse;
+import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpTransport;
@@ -11,11 +14,15 @@ import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.Events;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static com.google.api.client.googleapis.testing.auth.oauth2.MockGoogleCredential.REFRESH_TOKEN;
 
 /**
  * Created by Vanessa on 18.06.2017.
@@ -27,8 +34,13 @@ public class HolidayList {
     private List<Event> holidayList;
     private static HolidayList INSTANCE;
 
-    public HolidayList() {
+
+    private HolidayList() {
         storeHolidays();
+    }
+
+    public List<Event> getHolidayList(){
+        return holidayList;
     }
 
     public static HolidayList getInstance(){
@@ -44,7 +56,7 @@ public class HolidayList {
         Calendar service = getAccessToCalendarAPI();
         String calendarID = getCountryCalendarID("Austrian Holidays");
         DateTime start = new DateTime(setDateFromLocalDate(LocalDate.of(2000,1,1)));
-        DateTime end= new DateTime(setDateFromLocalDate(LocalDate.of(2100,1,1)));
+        DateTime end= new DateTime(setDateFromLocalDate(LocalDate.of(2100,12,1)));
         Events events = null;
         try {
             events = service.events().list(calendarID)
@@ -88,8 +100,23 @@ public class HolidayList {
         }
         String client_id="1099400721753-k327qrlvue3dahmg5au24j7qbojn1sj9.apps.googleusercontent.com";
         String client_secret = "BJBPI1iS6fMpupK-2RLP9UvJ";
-        String access_token= "ya29.GlxtBNO6UfjsHl8tgY3Fa6jJHvlLSF70OkvVbP5DfWRR4gI2uUiLEi1LP1Dgfe0jaUQRqPuq5y2NdtDD0DQ5KsVmNYSwBVa9W9NlZ1DUj-87uoPweEhqpmOM_-7fwA";
-        String refresh_token="1/PqznRm7at2uUVjMDyADNBm3Opll4QkoIBQRdiOmMjsU";
+        String access_token= "ya29.GltuBGHdi_vKYe5UXDOSoZn2Op5npHs5GcC9RMu0AbjMupNPWPsXvp7O6jRNOoOm72txoH7PR6UM3nlB4q25AEoh08J8egnpOLFhendvvMzGCm20Mzt6JAm3HAvy";
+        String refresh_token="1/yClJ4YqCFkBcxU2KolGoe39U6tA2tq_GokmbmEly-64";
+
+        /*GoogleCredential credential = new GoogleCredential.Builder()
+                .setClientSecrets(client_id, client_secret)
+                .setJsonFactory(JSON_FACTORY).setTransport(HTTP_TRANSPORT).build()
+                .setRefreshToken(refresh_token);
+
+
+        try {
+            credential.refreshToken();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        String newaccessToken = credential.getAccessToken();
+*/
 
         GoogleCredential credentials =
                 new GoogleCredential.Builder()

@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -156,9 +157,28 @@ public class Holiday implements IRule {
 
 
     private boolean isHoliday() throws GeneralSecurityException, IOException {
-        HolidayList holi = HolidayList.getInstance();
+        /*HolidayList holidayList = HolidayList.getInstance();
         DateTime now = new DateTime(nowinlong);
-        return holi.searchForHoliday(now);
+        return holidayList.searchForHoliday(now);
+*/
+        HolidayCheck check = HolidayCheck.getInstance();
+        DateTime now = new DateTime(nowinlong);
+        return check.searchForHoliday(now);
+//        return Test();
+    }
+
+    private boolean Test(){
+        Deserialize de = Deserialize.getInstance();
+        List<String> list = new ArrayList<>();
+        list = de.getHolidayList();
+        long now = 15094908;
+        now=now*100000;
+        DateTime date = new DateTime(now);
+
+        HolidayCheck check = HolidayCheck.getInstance();
+        DateTime nowdate = new DateTime(now);
+        System.out.println( check.searchForHoliday(nowdate));
+        return check.searchForHoliday(nowdate);
     }
 
 }
