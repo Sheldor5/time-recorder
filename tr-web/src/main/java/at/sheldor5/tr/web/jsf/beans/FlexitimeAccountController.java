@@ -2,7 +2,6 @@ package at.sheldor5.tr.web.jsf.beans;
 
 import at.sheldor5.tr.api.time.Account;
 import at.sheldor5.tr.web.BusinessLayer;
-import at.sheldor5.tr.web.jsf.converter.LocalTimeConverter;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
@@ -13,7 +12,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 /**
@@ -27,14 +25,18 @@ public class FlexitimeAccountController {
   private static final Logger LOGGER = Logger.getLogger(FlexitimeAccountController.class.getName());
 
   private BusinessLayer businessLayer;
+  private UserController userController;
 
-  private long overallBalance;
-  private long monthBalance;
-  private List<String> months = new ArrayList<>();
+  private String overallBalance;
+  private List<String> monthNames = new ArrayList<>();
+  private List<String> monthTimes = new ArrayList<>();
+  private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+
 
   @Inject
-  public FlexitimeAccountController(final BusinessLayer businessLayer) {
+  public FlexitimeAccountController(final BusinessLayer businessLayer, final UserController userController) {
     this.businessLayer = businessLayer;
+    this.userController = userController;
   }
 
   public FlexitimeAccountController() {
@@ -44,20 +46,38 @@ public class FlexitimeAccountController {
   @PostConstruct
   private void getAccoutnData() {
     LocalDate now = LocalDate.now();
+    createNewAccountObjectIfNecessary(now);
     DateFormatSymbols dfs = getDateFormatSymbols();
+    monthNames = Arrays.asList(dfs.getMonths());
     LocalDate currentDate;
     Account currentAccount;
-    String str = "";
+    String timeDisplay = "";
+    long totalTime = 0;
     for(int i = 0; i < now.getMonthValue(); i++) {
       currentDate = LocalDate.of(now.getYear(), i + 1, 1);
       currentAccount = businessLayer.getAccountOfMonth(currentDate);
       if(currentAccount != null) {
-        str = convertToHours(currentAccount.getTime());
+        timeDisplay = convertToHours(currentAccount.getTime());
+        totalTime += currentAccount.getTime();
       }
       else {
-        str = "/";
+        timeDisplay = "/";
       }
-      months.add(dfs.getMonths()[i] + ": " + str);
+      monthTimes.add(timeDisplay);
+    }
+    overallBalance = convertToHours(totalTime);
+  }
+
+  private void createNewAccountObjectIfNecessary(LocalDate now) {
+    Account accountOfMonth = businessLayer.getAccountOfMonth(now);
+    if(accountOfMonth == null || accountOfMonth.getDate().getMonthValue() != now.getMonthValue()) {
+      // it's already the next month, so create a new account object
+      accountOfMonth = new Account(now);
+      accountOfMonth.setUserMapping(userController.getUserMapping());
+      accountOfMonth.setTime(0);
+      accountOfMonth.setTimeWorked(0);
+      businessLayer.save(accountOfMonth, false);
+      businessLayer.updateScheduleAccounts(now, businessLayer.getSchedules());
     }
   }
 
@@ -67,34 +87,34 @@ public class FlexitimeAccountController {
       isNegative = true;
     }
     time = Math.abs(time);
-    return (isNegative ? "-" : "") + LocalTime.MIN.plusSeconds(time).toString();
+    return (isNegative ? "-" : "") + LocalTime.MIN.plusSeconds(time).format(formatter);
   }
 
   private DateFormatSymbols getDateFormatSymbols() {
     return new DateFormatSymbols(Locale.GERMANY);
   }
 
-  public long getOverallBalance() {
+  public String getOverallBalance() {
     return overallBalance;
   }
 
-  public void setOverallBalance(long overallBalance) {
+  public void setOverallBalance(String overallBalance) {
     this.overallBalance = overallBalance;
   }
 
-  public long getMonthBalance() {
-    return monthBalance;
+  public List<String> getMonthTimes() {
+    return monthTimes;
   }
 
-  public void setMonthBalance(long monthBalance) {
-    this.monthBalance = monthBalance;
+  public void setMonthTimes(List<String> monthTimes) {
+    this.monthTimes = monthTimes;
   }
 
-  public List<String> getMonths() {
-    return months;
+  public List<String> getMonthNames() {
+    return monthNames;
   }
 
-  public void setMonths(List<String> months) {
-    this.months = months;
+  public void setMonthNames(List<String> monthNames) {
+    this.monthNames = monthNames;
   }
 }

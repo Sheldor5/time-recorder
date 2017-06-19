@@ -31,6 +31,7 @@ public class ClockController implements Serializable {
   private static final long serialVersionUID = 1L;
 
   private BusinessLayer businessLayer;
+  private UserController userController;
 
   private Project project;
 
@@ -48,8 +49,9 @@ public class ClockController implements Serializable {
   }
 
   @Inject
-  public ClockController(final BusinessLayer businessLayer) {
+  public ClockController(final BusinessLayer businessLayer, final UserController userController) {
     this.businessLayer = businessLayer;
+    this.userController = userController;
     if (businessLayer == null) {
       throw new NullPointerException("@Inject BusinessLayer");
     }
@@ -147,9 +149,13 @@ public class ClockController implements Serializable {
 
   private void updateScheduleAccount(LocalDate now, long summary) {
     Account accountOfMonth = businessLayer.getAccountOfMonth(now);
-    if(accountOfMonth.getDate().getMonthValue() != now.getMonthValue()) {
+    if(accountOfMonth == null || accountOfMonth.getDate().getMonthValue() != now.getMonthValue()) {
       // it's already the next month, so create a new account object
       accountOfMonth = new Account(now);
+      accountOfMonth.setUserMapping(userController.getUserMapping());
+      accountOfMonth.setTime(0);
+      accountOfMonth.setTimeWorked(0);
+      businessLayer.updateScheduleAccounts(now, businessLayer.getSchedules());
     }
     accountOfMonth.addToTime(summary);
     businessLayer.save(accountOfMonth, false);
