@@ -168,10 +168,18 @@ public class DataAccessLayer implements Serializable, AutoCloseable {
 
   public void addUserProjectMappings(UserMapping usermapping, List<Project> projects) {
     if(projects.size() > 0) {
-      UserProjectMappingProvider userProjectMappingProvider = new UserProjectMappingProvider(entityManager);
       for(Project project : projects) {
         userProjectMappingProvider.save(new UserProjectMapping(usermapping, project));
+      }
+    }
+  }
 
+  public void removeUserProjectMappings(UserMapping usermapping, List<Project> projects) {
+    if(projects != null && projects.size() > 0) {
+      for(UserProjectMapping userProjectMapping : userProjectMappingProvider.getUserProjectMappings(usermapping)) {
+        if(projects.contains(userProjectMapping.getProject())) {
+          userProjectMappingProvider.delete(userProjectMapping);
+        }
       }
     }
   }

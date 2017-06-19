@@ -9,6 +9,7 @@ import at.sheldor5.tr.api.user.Role;
 import at.sheldor5.tr.api.user.Schedule;
 import at.sheldor5.tr.api.user.User;
 import at.sheldor5.tr.api.user.UserMapping;
+import at.sheldor5.tr.persistence.provider.UserProjectMappingProvider;
 import at.sheldor5.tr.rules.Holiday;
 import at.sheldor5.tr.rules.RuleManager;
 import at.sheldor5.tr.web.jsf.beans.UserController;
@@ -69,6 +70,10 @@ public class BusinessLayer implements Serializable {
 
   public void addUserProjectMappings(UserMapping usermapping, List<Project> projects) {
     dataAccessLayer.addUserProjectMappings(usermapping, projects);
+  }
+
+  public void removeUserProjectMappings(UserMapping userMapping, List<Project> projects) {
+    dataAccessLayer.removeUserProjectMappings(userMapping, projects);
   }
 
   public void save(final Session session) {

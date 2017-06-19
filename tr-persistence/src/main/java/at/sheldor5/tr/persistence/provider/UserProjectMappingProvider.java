@@ -49,14 +49,27 @@ public class UserProjectMappingProvider extends GenericProvider<UserProjectMappi
   }
 
   public List<Project> getProjects(final UserMapping userMapping) {
+    List<UserProjectMapping> userProjectMappings = getUserProjectMappings(userMapping);
+
+    final List<Project> projects = new ArrayList<>();
+    if (userProjectMappings != null) {
+      for (final UserProjectMapping userProjectMapping : userProjectMappings) {
+        projects.add(userProjectMapping.getProject());
+      }
+    }
+
+    return projects;
+  }
+
+  public List<UserProjectMapping> getUserProjectMappings(final UserMapping userMapping) {
     if (userMapping == null) {
       return new ArrayList<>();
     }
 
-    List<UserProjectMapping> result = null;
+    List<UserProjectMapping> result = new ArrayList<>();
 
     final TypedQuery<UserProjectMapping> findByUserMapping = QueryUtils.findByField(entityManager,
-        UserProjectMapping.class, "userMapping", UserMapping.class, userMapping);
+            UserProjectMapping.class, "userMapping", UserMapping.class, userMapping);
 
     EntityTransaction transaction = entityManager.getTransaction();
     transaction.begin();
@@ -69,14 +82,6 @@ public class UserProjectMappingProvider extends GenericProvider<UserProjectMappi
       e.printStackTrace();
     }
 
-    final List<Project> projects = new ArrayList<>();
-
-    if (result != null) {
-      for (final UserProjectMapping userProjectMapping : result) {
-        projects.add(userProjectMapping.getProject());
-      }
-    }
-
-    return projects;
+    return result;
   }
 }

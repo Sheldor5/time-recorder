@@ -13,7 +13,7 @@
                 <div class="col-md-3">
                     <br/>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-8">
                     <c:if test="#{editUser.hasPermission()}">
                         #{editUser.getUserData()}
                         <br/>
@@ -36,16 +36,17 @@
                                                                         surname="#{editUser.surname}" password="#{editUser.newPassword}"
                                                                         passwordRepeat="#{editUser.newPasswordRepeat}"/>
                                         <c:if test="#{adminPermissions.hasPermissions()}">
+                                            <br/>
                                             <label for="assignedProjects">#{msg['user.edit.assignedProjects']}</label>
-                                            <ul id="assignedProjects">
-                                                <ui:repeat value="#{editUser.assignedProjects}" var="projectName">
-                                                    <li>#{projectName}</li>
-                                                </ui:repeat>
-                                            </ul>
+                                            <h:selectManyCheckbox layout="pageDirection" value="#{editUser.selectedProjectsForRemoving}" id="assignedProjects">
+                                                <f:selectItems value="#{editUser.assignedProjects}"/>
+                                                <f:converter binding="#{projectConverter}"/>
+                                            </h:selectManyCheckbox>
+                                            <br/>
                                             <c:if test="#{editUser.availableProjects.size() > 0}">
                                                 <label for="availableProjects">#{msg['user.edit.add.projects']}</label>
                                             </c:if>
-                                            <h:selectManyCheckbox layout="pageDirection" value="#{editUser.selectedProjects}" id="availableProjects">
+                                            <h:selectManyCheckbox layout="pageDirection" value="#{editUser.selectedProjectsForAdding}" id="availableProjects">
                                                 <f:selectItems value="#{editUser.availableProjects}"/>
                                                 <f:converter binding="#{projectConverter}"/>
                                             </h:selectManyCheckbox>
